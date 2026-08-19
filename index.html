@@ -1573,7 +1573,7 @@ async function sendMessage(text) {
             if (delta.tool_calls) {
               for (const tc of delta.tool_calls) {
                 const idx = tc.index ?? 0;
-                msgObj.tool_calls[idx] = msgObj.tool_calls[idx] || { id: "", function: { name: "", arguments: "" } };
+                msgObj.tool_calls[idx] = msgObj.tool_calls[idx] || { type: "function", id: "", function: { name: "", arguments: "" } };
                 if (tc.id) msgObj.tool_calls[idx].id = tc.id;
                 if (tc.function?.name) msgObj.tool_calls[idx].function.name += tc.function.name;
                 if (tc.function?.arguments) msgObj.tool_calls[idx].function.arguments += tc.function.arguments;
@@ -1583,7 +1583,7 @@ async function sendMessage(text) {
         }
       }
       setTyping(false);
-      msgObj.tool_calls = (msgObj.tool_calls || []).filter(t => t && t.function?.name);
+      msgObj.tool_calls = (msgObj.tool_calls || []).filter(t => t && t.function?.name).map(t => ({ type: "function", ...t }));
 
       if (!started && !msgObj.tool_calls.length) { addMsg("bot", "（空响应）"); break; }
 
@@ -1630,8 +1630,11 @@ function loadChat() {
     for (const m of saved) {
       if (m.role === "user" && !m.content.startsWith("（系统提示")) addMsg("user", m.content);
       else if (m.role === "assistant" && m.content) {
-        const tc = (m.tool_calls || []).map(t => t.function.name).join(", ");
+        const tc = ((m.tool_calls || []).map(t => t.function.name).join(", "));
         addMsg("bot", m.content, tc ? `调用工具：${tc}` : "");
+      }
+      if (m.tool_calls) {
+        m.tool_calls = m.tool_calls.map(t => ({ type: "function", ...t }));
       }
     }
     history = saved;
