@@ -548,11 +548,115 @@
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
 
-  @media (max-width: 600px) {
-    .bubble { max-width: 88%; }
-    .hud-line { display: none; }
-    .gate-title { font-size: 30px; }
+  /* ===== 触控设备：弱化 hover 位移，保留点击反馈 ===== */
+  @media (hover: none) {
+    select:hover, button.icon-btn:hover, .foot-btn:hover, .pv-btn:hover,
+    .gen-img:hover, .suggestions button:hover, .gate-btn:not(:disabled):hover {
+      transform: none; box-shadow: none;
+    }
   }
+
+  /* ===== 手机端（≤600px） ===== */
+  @media (max-width: 600px) {
+    /* 顶栏 */
+    header { padding: 9px 10px; gap: 8px; }
+    .logo { width: 35px; height: 35px; font-size: 18px; border-radius: 11px; }
+    .title-wrap h1 { font-size: 14.5px; letter-spacing: 1px; }
+    .hud-line { display: none; }
+    .controls { gap: 5px; }
+    select, button.icon-btn { padding: 7px 8px; font-size: 11.5px; border-radius: 9px; }
+    #modelSel { max-width: 122px; text-overflow: ellipsis; }
+    button.icon-btn { padding: 7px 9px; font-size: 14px; }
+    .doc-badge[data-count]:not([data-count="0"])::after { top: -4px; right: -4px; min-width: 15px; height: 15px; font-size: 9px; }
+
+    /* 消息区 */
+    main { padding: 13px 10px 8px; }
+    .chat { gap: 13px; }
+    .msg { gap: 8px; }
+    .avatar { width: 29px; height: 29px; border-radius: 9px; font-size: 15px; }
+    .msg.user .avatar { font-size: 10px; }
+    .msg.bot .avatar { font-size: 15px; }
+    .bubble { max-width: 86%; padding: 9px 12px; font-size: 14px; border-radius: 13px; line-height: 1.65; }
+    .welcome { padding: 28px 10px 18px; }
+    .welcome .big { font-size: 34px; }
+    .welcome h2 { font-size: 18px; letter-spacing: 2px; }
+    .welcome p { font-size: 12px; }
+    .suggestions { gap: 8px; }
+    .suggestions button { padding: 8px 13px; font-size: 11.5px; border-radius: 10px; }
+    .img-card { max-width: 100%; }
+
+    /* 输入区 */
+    footer { padding: 9px 10px calc(10px + env(safe-area-inset-bottom)); }
+    .input-row { gap: 7px; }
+    #input { font-size: 16px; padding: 9px 12px; border-radius: 12px; max-height: 110px; }
+    .foot-btn { width: 40px; height: 40px; border-radius: 12px; font-size: 16px; }
+    .foot-tip { font-size: 9.5px; letter-spacing: .2px; }
+
+    /* 入口页 */
+    .gate-logo { width: 90px; height: 90px; font-size: 40px; margin-bottom: 18px; }
+    .gate-title { font-size: 27px; letter-spacing: 3px; }
+    .gate-title small { letter-spacing: 5px; font-size: 10.5px; }
+    .gate-sub { font-size: 12.5px; margin-top: 12px; }
+    .gate-chips { gap: 7px; margin-top: 16px; }
+    .chip { padding: 6px 13px; font-size: 11px; }
+    .gate-boot { width: min(300px, 82vw); font-size: 11px; min-height: 70px; margin-top: 20px; }
+    .gate-btn { padding: 13px 38px; font-size: 15px; letter-spacing: 5px; text-indent: 5px; }
+
+    /* 弹窗全屏化 */
+    .modal-mask { padding: 0; align-items: stretch; }
+    .modal { max-width: 100% !important; border-radius: 0; padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); max-height: 100vh; overflow-y: auto; }
+    .pv-modal { width: 100vw; height: 100vh; border-radius: 0; }
+    .pv-head { padding: 11px 13px; gap: 9px; }
+    .pv-title b { font-size: 13.5px; }
+    .pv-body { padding: 13px; }
+    .pv-doc { padding: 16px 14px; }
+    .pv-text { padding: 16px 14px; font-size: 12.5px; }
+    .pv-table { min-width: 340px; font-size: 11.5px; }
+    .pv-slide { padding: 4.6% 5.6%; }
+    .pv-slide li { font-size: clamp(10px, 3.4vw, 13px); }
+    .pv-slide h4 { font-size: clamp(14px, 4.6vw, 19px); }
+    .doc-row { padding: 10px 12px; }
+    .doc-row .pv-btn { padding: 5px 10px; }
+
+    /* 提示 */
+    #toast { top: 12px; font-size: 12px; padding: 9px 16px; }
+  }
+
+  /* ===== 平板端（601–900px） ===== */
+  @media (min-width: 601px) and (max-width: 900px) {
+    main { padding: 20px 14px 10px; }
+    .chat { max-width: 720px; }
+  }
+
+  /* ===== 超宽屏（>1600px）适度拉宽阅读区 ===== */
+  @media (min-width: 1600px) {
+    .chat, .input-row, .foot-tip { max-width: 980px; }
+  }
+
+  /* ===== 设置弹窗：自定义模型列表 ===== */
+  .model-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; margin-bottom: 7px; border-radius: 9px;
+    background: rgba(6,12,24,.6); border: 1px solid rgba(255,255,255,.08);
+  }
+  .model-row .tag {
+    flex-shrink: 0; font-size: 10px; font-family: var(--mono);
+    padding: 2px 8px; border-radius: 999px; letter-spacing: 1px;
+    color: #9fe8f5; border: 1px solid rgba(0,229,255,.4);
+  }
+  .model-row b { color: #9fe8f5; font-size: 12.5px; flex-shrink: 0; }
+  .model-row span {
+    color: var(--text-dim); font-family: var(--mono); font-size: 10.5px;
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .model-row .rm {
+    background: rgba(255,95,122,.12); border: 1px solid rgba(255,95,122,.3);
+    color: var(--danger); border-radius: 8px; padding: 4px 10px;
+    cursor: pointer; font-size: 11px; font-family: var(--mono); flex-shrink: 0;
+  }
+  .model-row .rm:hover { background: rgba(255,95,122,.22); box-shadow: 0 0 10px rgba(255,95,122,.3); }
+  .model-empty { color: var(--text-dim); font-size: 12px; padding: 8px 2px; font-family: var(--mono); }
+  .model-hint { font-size: 11px; color: var(--text-dim); margin: 6px 0 2px; line-height: 1.7; font-family: var(--mono); }
 </style>
 </head>
 <body>
@@ -577,6 +681,7 @@
       <span class="chip">👁 文件预览</span>
       <span class="chip">🧠 本地记忆</span>
       <span class="chip">⚡ 智能模型路由</span>
+      <span class="chip">🔌 自定义多模型 API</span>
     </div>
     <div class="gate-boot" id="gateBoot"></div>
     <button class="gate-btn" id="gateEnter" disabled>初 始 化 中 …</button>
@@ -610,6 +715,7 @@
       <h2>小 银 XIAOYIN</h2>
       <p>你好，我是小银 —— 一个完全运行在浏览器里的智能体。<br>
       我有真实工具：精确计算 🧮 · 云笔记 📝 · 办公文件读写与预览 👁（Word / Excel / PPT / PDF / CSV / TXT）· PPT 制作 📽 · AI 绘图 🎨<br>
+      模型随心换：顶栏可切换内置智谱 / DeepSeek，⚙ 设置里还能接入任意 OpenAI 兼容 API（通义、Kimi、Ollama…）<br>
       对话记忆保存在本地，刷新不丢。给我派个任务试试：</p>
       <div class="suggestions">
         <button data-q="帮我画一张图：一只银色的小机器人站在霓虹城市街头，赛博朋克风格，深色背景，横版">🎨 AI 绘图</button>
@@ -629,13 +735,13 @@
     <textarea id="input" rows="1" placeholder="给小银派个任务…（Enter 发送，Shift+Enter 换行）"></textarea>
     <button class="foot-btn" id="send" title="发送">➤</button>
   </div>
-  <div class="foot-tip">XIAOYIN v3.0 · 内容由 AI 生成请自行甄别 · Key 可在 ⚙ 设置中更换</div>
+  <div class="foot-tip">XIAOYIN v3.3 · 内容由 AI 生成请自行甄别 · ⚙ 设置中可接入任意 OpenAI 兼容模型</div>
   <input type="file" id="fileInput" hidden accept=".txt,.md,.json,.csv,.docx,.xlsx,.xls,.pptx,.pdf">
 </footer>
 
 <!-- 设置弹窗 -->
 <div class="modal-mask" id="settingsMask">
-  <div class="modal">
+  <div class="modal" style="max-width:540px;">
     <h3>◈ SYSTEM SETTINGS</h3>
     <div class="field">
       <label>智谱 API Key（bigmodel.cn）</label>
@@ -646,10 +752,32 @@
       <input id="cfgDeepseekKey" type="password" placeholder="sk-...">
     </div>
     <div class="field">
-      <label>系统提示词（小银的性格与规则）</label>
+      <label>自定义模型（任意 OpenAI 兼容 API，保存后出现在顶栏模型选择器）</label>
+      <div id="customModelList"></div>
+    </div>
+    <div class="field">
+      <label>模型名称</label>
+      <input id="cfgMName" type="text" placeholder="如：通义千问 Qwen-Max">
+    </div>
+    <div class="field">
+      <label>API 端点（OpenAI 兼容 /chat/completions 完整地址）</label>
+      <input id="cfgMEndpoint" type="text" placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions">
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input id="cfgMKey" type="password" placeholder="sk-...">
+    </div>
+    <div class="field">
+      <label>模型 ID（接口中的 model 参数）</label>
+      <input id="cfgMModel" type="text" placeholder="如：qwen-max / deepseek-chat / gpt-4o-mini">
+    </div>
+    <p class="model-hint">小提示：支持任何 OpenAI 兼容接口 —— DeepSeek、通义千问、Kimi、智谱、Ollama 本地模型（http://localhost:11434/v1/chat/completions）等。</p>
+    <div class="field" style="margin-top:4px;">
+      <label>系统提示词（小银的性格与规则，可自定义人设）</label>
       <input id="cfgSystem" type="text" placeholder="留空使用默认">
     </div>
     <div class="modal-btns">
+      <button id="btnAddModel" class="btn-primary" style="margin-right:auto;">➕ 添加模型</button>
       <button class="btn-danger" id="btnReset">恢复默认</button>
       <button id="btnCancel">取消</button>
       <button class="btn-primary" id="btnSave">保存</button>
@@ -681,10 +809,10 @@
 
 <script>
 /* ================================================================
-   小银 XIAOYIN v3.0 —— 浏览器端智能体
-   新增：入口欢迎页 / 渐变科技 UI / 文件预览 / PPT 制作
+   小银 XIAOYIN v3.3 —— 浏览器端智能体
+   新增：入口欢迎页 / 渐变科技 UI / 文件预览 / PPT 制作 / 双端响应式 / 自定义多模型
    模块：配置 / 入口页 / 背景粒子 / 消息粒子动效 / 工具（计算·笔记·办公·PPT）
-        文件解析与预览 / 智能路由 / Agent Loop
+        文件解析与预览 / 智能路由 / Agent Loop / 自定义模型管理
    ================================================================ */
 
 /* ================= 配置 ================= */
@@ -697,6 +825,12 @@ const MAX_STEPS = 8;
 
 const cfg = (() => { try { return JSON.parse(localStorage.getItem(LS_CFG)) || {}; } catch { return {}; } })();
 function zhipuKey() { return cfg.zhipuKey || DEFAULT_ZHIPU_KEY; }
+
+/* ===== 自定义模型（OpenAI 兼容 API） ===== */
+const LS_MODELS = "xiaoyin_models";
+let customModels = (() => { try { return JSON.parse(localStorage.getItem(LS_MODELS)) || []; } catch { return []; } })();
+function saveModels() { try { localStorage.setItem(LS_MODELS, JSON.stringify(customModels)); } catch {} }
+function findCustomModel(id) { return customModels.find(m => m.id === id); }
 
 const DEFAULT_SYSTEM = `你是"小银"，一个运行在浏览器里的科技感智能体助手。你有真实可用的工具：
 
@@ -1223,10 +1357,42 @@ async function runTool(name, args) {
 
 /* ================= 模型调用 & 智能路由 ================= */
 function apiEndpoint(model) {
+  const cm = findCustomModel(model);
+  if (cm) return cm.endpoint;
   return model === "deepseek" ? "https://api.deepseek.com/chat/completions"
                               : "https://open.bigmodel.cn/api/paas/v4/chat/completions";
 }
-function apiKey(model) { return model === "deepseek" ? (cfg.deepseekKey || "") : zhipuKey(); }
+function apiKey(model) {
+  const cm = findCustomModel(model);
+  if (cm) return cm.apiKey;
+  return model === "deepseek" ? (cfg.deepseekKey || "") : zhipuKey();
+}
+function apiModelId(model) {
+  const cm = findCustomModel(model);
+  if (cm) return cm.model;
+  return model === "deepseek" ? "deepseek-chat" : model;
+}
+function modelDisplayName(model) {
+  const cm = findCustomModel(model);
+  if (cm) return cm.name;
+  return { "glm-4-flash": "GLM-4-Flash", "glm-4-flashx": "GLM-4-FlashX", "glm-4-plus": "GLM-4-Plus", "deepseek": "DeepSeek" }[model] || model;
+}
+
+/* 重建顶栏模型选择器选项（内置 + 自定义） */
+function renderModelSel() {
+  const cur = modelSel.value;
+  let html = `<option value="auto">◈ 智能路由（推荐）</option>
+    <option value="glm-4-flash">GLM-4-Flash（免费）</option>
+    <option value="glm-4-flashx">GLM-4-FlashX（免费）</option>
+    <option value="glm-4-plus">GLM-4-Plus（付费）</option>
+    <option value="deepseek">DeepSeek（需自配 key）</option>`;
+  if (customModels.length) {
+    html += `<option disabled>── 自定义模型 ──</option>` +
+      customModels.map(m => `<option value="${esc(m.id)}">✦ ${esc(m.name)}</option>`).join("");
+  }
+  modelSel.innerHTML = html;
+  modelSel.value = customModels.some(m => m.id === cur) || ["auto", "glm-4-flash", "glm-4-flashx", "glm-4-plus", "deepseek"].includes(cur) ? cur : "auto";
+}
 
 async function routeModel(userText) {
   const candidates = ["glm-4-flash", "glm-4-flashx", "glm-4-plus"];
@@ -1251,9 +1417,9 @@ async function routeModel(userText) {
 
 async function callModel(model, messages, stream) {
   const key = apiKey(model);
-  if (!key) throw new Error(model === "deepseek" ? "未配置 DeepSeek API Key，请点右上角 ⚙ 填写" : "未配置 API Key");
+  if (!key) throw new Error("未配置该模型的 API Key，请点右上角 ⚙ 填写");
   const body = {
-    model: model === "deepseek" ? "deepseek-chat" : model,
+    model: apiModelId(model),
     messages, stream: !!stream, tools: TOOLS
   };
   const resp = await fetch(apiEndpoint(model), {
@@ -1551,7 +1717,7 @@ async function sendMessage(text) {
     statusLine.textContent = "ROUTING · 分析任务类型，选择最优模型 …";
     model = await routeModel(text);
   }
-  const modelName = { "glm-4-flash": "GLM-4-Flash", "glm-4-flashx": "GLM-4-FlashX", "glm-4-plus": "GLM-4-Plus", "deepseek": "DeepSeek" }[model] || model;
+  const modelName = modelDisplayName(model);
   statusLine.textContent = `RUNNING · ${modelName} · 工具就绪`;
 
   addMsg("user", text);
@@ -1694,7 +1860,9 @@ document.querySelectorAll(".suggestions button").forEach(b => {
 });
 modelSel.addEventListener("change", () => {
   statusLine.textContent = "SYSTEM ONLINE · " + modelSel.options[modelSel.selectedIndex].text + " · 记忆已启用 · 办公模块就绪";
-  if (modelSel.value === "deepseek" && !cfg.deepseekKey) toast("使用 DeepSeek 需先在 ⚙ 设置里填 API Key");
+  const v = modelSel.value;
+  if (v === "deepseek" && !cfg.deepseekKey) toast("使用 DeepSeek 需先在 ⚙ 设置里填 API Key");
+  else if (findCustomModel(v) && !findCustomModel(v).apiKey) toast("该自定义模型未填 API Key，请到 ⚙ 设置里补充");
 });
 
 /* 清空对话（带退出粒子效果） */
@@ -1708,10 +1876,39 @@ document.getElementById("btnClear").addEventListener("click", () => {
 
 /* 设置弹窗 */
 const mask = document.getElementById("settingsMask");
+const customModelList = document.getElementById("customModelList");
+
+function renderCustomModels() {
+  customModelList.innerHTML = customModels.length
+    ? customModels.map(m => `<div class="model-row"><span class="tag">API</span><b>${esc(m.name)}</b><span title="${esc(m.endpoint)}">${esc(m.model)} · ${esc(m.endpoint)}</span><button class="rm" data-rm="${esc(m.id)}">✕ 删除</button></div>`).join("")
+    : `<div class="model-empty">暂无自定义模型 —— 在下方填写名称 / 端点 / Key / 模型 ID 后点「添加模型」</div>`;
+}
+customModelList.addEventListener("click", e => {
+  const rm = e.target.closest("[data-rm]");
+  if (!rm) return;
+  customModels = customModels.filter(m => m.id !== rm.dataset.rm);
+  saveModels(); renderCustomModels(); renderModelSel();
+  toast("已删除该模型");
+});
+document.getElementById("btnAddModel").addEventListener("click", () => {
+  const name = document.getElementById("cfgMName").value.trim();
+  const endpoint = document.getElementById("cfgMEndpoint").value.trim();
+  const key = document.getElementById("cfgMKey").value.trim();
+  const model = document.getElementById("cfgMModel").value.trim();
+  if (!name || !endpoint || !key || !model) { toast("请完整填写 名称 / 端点 / Key / 模型 ID"); return; }
+  if (!/^https?:\/\/.+/.test(endpoint)) { toast("API 端点需以 http(s):// 开头"); return; }
+  const id = "cm_" + Date.now();
+  customModels.push({ id, name, endpoint, apiKey: key, model, added: new Date().toISOString() });
+  saveModels(); renderCustomModels(); renderModelSel();
+  ["cfgMName", "cfgMEndpoint", "cfgMKey", "cfgMModel"].forEach(x => document.getElementById(x).value = "");
+  toast("✦ 模型已添加，可在顶栏选择器中切换");
+});
+
 document.getElementById("btnSettings").addEventListener("click", () => {
   document.getElementById("cfgZhipuKey").value = cfg.zhipuKey || "";
   document.getElementById("cfgDeepseekKey").value = cfg.deepseekKey || "";
   document.getElementById("cfgSystem").value = cfg.system || "";
+  renderCustomModels();
   mask.classList.add("show");
 });
 document.getElementById("btnCancel").addEventListener("click", () => mask.classList.remove("show"));
@@ -1734,6 +1931,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
 });
 
 /* 启动 */
+renderModelSel();
 loadChat();
 </script>
 </body>
