@@ -220,17 +220,22 @@
   .msg { display: flex; gap: 11px; position: relative; }
   .avatar {
     width: 37px; height: 37px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
-    border: 1px solid rgba(255,255,255,.14);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; letter-spacing: .5px;
+    border: 1px solid rgba(255,255,255,.14); user-select: none;
   }
   .msg.user { flex-direction: row-reverse; }
   .msg.user .avatar {
     background: linear-gradient(135deg, rgba(124,108,255,.5), rgba(255,110,199,.3));
     box-shadow: 0 0 14px rgba(124,108,255,.4);
+    font-size: 13px; letter-spacing: 0; color: #eafcff;
+    text-shadow: 0 0 8px rgba(255,110,199,.6);
   }
   .msg.bot .avatar {
     background: linear-gradient(135deg, rgba(0,229,255,.45), rgba(79,140,255,.25));
     box-shadow: 0 0 14px rgba(0,229,255,.4);
+    font-size: 20px; letter-spacing: 0; color: #eafcff;
+    text-shadow: 0 0 10px rgba(0,229,255,.7);
   }
   .bubble {
     position: relative; overflow: hidden;
@@ -601,7 +606,7 @@
 <main id="main">
   <div class="chat" id="chat">
     <div class="welcome" id="welcome">
-      <div class="big">🤖</div>
+      <div class="big" style="font-weight:800;background:linear-gradient(135deg,#eafcff,#00e5ff 40%,#7c6cff 90%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 20px rgba(0,229,255,.5));">银</div>
       <h2>小 银 XIAOYIN</h2>
       <p>你好，我是小银 —— 一个完全运行在浏览器里的智能体。<br>
       我有真实工具：精确计算 🧮 · 云笔记 📝 · 办公文件读写与预览 👁（Word / Excel / PPT / PDF / CSV / TXT）· PPT 制作 📽 · AI 绘图 🎨<br>
@@ -1306,7 +1311,7 @@ function addMsg(role, text, toolInfo) {
   div.className = "msg " + (role === "user" ? "user" : "bot");
   const avatar = document.createElement("div");
   avatar.className = "avatar";
-  avatar.textContent = role === "user" ? "🙂" : "🤖";
+  avatar.textContent = role === "user" ? "用户" : "银";
   const bubble = document.createElement("div");
   bubble.className = "bubble";
   bubble.innerHTML = fmt(text) + (toolInfo ? `<div class="tool-card">${esc(toolInfo)}</div>` : "") + fileLinkCard();
@@ -1328,7 +1333,7 @@ function setTyping(on) {
   if (on) {
     const div = document.createElement("div");
     div.className = "msg bot"; div.id = "typingMsg";
-    div.innerHTML = `<div class="avatar">🤖</div><div class="bubble"><span class="typing"><span></span><span></span><span></span></span></div>`;
+    div.innerHTML = `<div class="avatar">银</div><div class="bubble"><span class="typing"><span></span><span></span><span></span></span></div>`;
     chatEl.appendChild(div);
     mainEl.scrollTop = mainEl.scrollHeight;
   }
@@ -1523,6 +1528,24 @@ async function sendMessage(text) {
   Object.keys(generatedPreviews).forEach(k => delete generatedPreviews[k]);
   Object.keys(generatedImages).forEach(k => delete generatedImages[k]);
 
+  let statusTimer = null, phaseStart = Date.now();
+  function clearStatusTimer() { if (statusTimer) { clearInterval(statusTimer); statusTimer = null; } }
+  function fmtSec(t) { return ((t) / 1000).toFixed(1); }
+  function startThinking() {
+    clearStatusTimer();
+    phaseStart = Date.now();
+    statusTimer = setInterval(() => {
+      statusLine.textContent = `THINKING · ${modelName} · 已思考 ${fmtSec(Date.now() - phaseStart)}s`;
+    }, 100);
+  }
+  function startExecuting(toolName) {
+    clearStatusTimer();
+    phaseStart = Date.now();
+    statusTimer = setInterval(() => {
+      statusLine.textContent = `EXECUTING · ${toolName} · 已运行 ${fmtSec(Date.now() - phaseStart)}s`;
+    }, 100);
+  }
+
   let model = modelSel.value;
   if (model === "auto") {
     statusLine.textContent = "ROUTING · 分析任务类型，选择最优模型 …";
@@ -1540,6 +1563,7 @@ async function sendMessage(text) {
   try {
     for (let step = 0; step < MAX_STEPS; step++) {
       const messages = [{ role: "system", content: systemPrompt() }, ...history];
+      startThinking();
       const resp = await callModel(model, messages, true);
 
       setTyping(true);
@@ -1564,7 +1588,13 @@ async function sendMessage(text) {
             const j = JSON.parse(data);
             const delta = j.choices?.[0]?.delta || {};
             if (delta.content) {
-              if (!started) { setTyping(false); bubble = addMsg("bot", ""); started = true; }
+              if (!started) {
+                setTyping(false);
+                bubble = addMsg("bot", "");
+                started = true;
+                clearStatusTimer();
+                statusLine.textContent = `GENERATING · ${modelName} · 生成回复中 …`;
+              }
               msgObj.content += delta.content;
               fullText = msgObj.content;
               bubble.innerHTML = fmt(fullText) + (toolLog ? `<div class="tool-card">${esc(toolLog)}</div>` : "") + fileLinkCard();
@@ -1592,7 +1622,7 @@ async function sendMessage(text) {
         for (const tc of msgObj.tool_calls) {
           let args = {};
           try { args = JSON.parse(tc.function.arguments || "{}"); } catch {}
-          statusLine.textContent = `EXECUTING · ${tc.function.name} · 工具调用中 …`;
+          startExecuting(tc.function.name);
           const result = await runTool(tc.function.name, args);
           toolLog += `${tc.function.name}(${JSON.stringify(args)}) → ${String(result).slice(0, 300)}\n`;
           history.push({ role: "tool", tool_call_id: tc.id, content: String(result) });
@@ -1613,6 +1643,7 @@ async function sendMessage(text) {
     setTyping(false);
     addMsg("bot", "❌ 出错了：" + e.message);
   } finally {
+    clearStatusTimer();
     busy = false; sendEl.disabled = false;
     statusLine.textContent = "SYSTEM ONLINE · 智能路由 · 记忆已启用 · 办公模块就绪";
   }
