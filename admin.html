@@ -226,7 +226,13 @@
 const LS_ADMIN = "xiaoyin_admin_cfg";   // {url, anon}
 const LS_AUTH = "xiaoyin_auth";         // 复用主站的会话存储
 
+/* 内嵌默认凭据（与主站 agent.html 保持一致，登录页自动带出，可覆盖） */
+const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";
+const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";
+
 let cfg = (() => { try { return JSON.parse(localStorage.getItem(LS_ADMIN)) || {}; } catch { return {}; } })();
+if (!cfg.url) cfg.url = SUPA_URL;
+if (!cfg.anon) cfg.anon = SUPA_ANON;
 let session = null;   // supabase session
 let report = null;    // xy_admin_report 结果
 
