@@ -2120,18 +2120,20 @@ const mask = document.getElementById("settingsMask");
 const customModelList = document.getElementById("customModelList");
 
 function renderCustomModels() {
+  if (!customModelList) return;
   customModelList.innerHTML = customModels.length
     ? customModels.map(m => `<div class="model-row"><span class="tag">API</span><b>${esc(m.name)}</b><span title="${esc(m.endpoint)}">${esc(m.model)} · ${esc(m.endpoint)}</span><button class="rm" data-rm="${esc(m.id)}">✕ 删除</button></div>`).join("")
     : `<div class="model-empty">暂无自定义模型 —— 在下方填写名称 / 端点 / Key / 模型 ID 后点「添加模型」</div>`;
 }
-customModelList.addEventListener("click", e => {
+if (customModelList) customModelList.addEventListener("click", e => {
   const rm = e.target.closest("[data-rm]");
   if (!rm) return;
   customModels = customModels.filter(m => m.id !== rm.dataset.rm);
   saveModels(); renderCustomModels(); renderModelSel();
   toast("已删除该模型");
 });
-document.getElementById("btnAddModel").addEventListener("click", () => {
+const btnAddModel = document.getElementById("btnAddModel");
+if (btnAddModel) btnAddModel.addEventListener("click", () => {
   const name = document.getElementById("cfgMName").value.trim();
   const endpoint = document.getElementById("cfgMEndpoint").value.trim();
   const key = document.getElementById("cfgMKey").value.trim();
@@ -2145,17 +2147,19 @@ document.getElementById("btnAddModel").addEventListener("click", () => {
   toast("✦ 模型已添加，可在顶栏选择器中切换");
 });
 
-document.getElementById("btnSettings").addEventListener("click", () => {
+const btnSettings = document.getElementById("btnSettings");
+if (btnSettings) btnSettings.addEventListener("click", () => {
   document.getElementById("cfgZhipuKey").value = cfg.zhipuKey || "";
   document.getElementById("cfgDeepseekKey").value = cfg.deepseekKey || "";
   document.getElementById("cfgSupaUrl").value = cfg.supaUrl || "";
   document.getElementById("cfgSupaKey").value = cfg.supaKey || "";
   document.getElementById("cfgSystem").value = cfg.system || "";
   renderCustomModels();
-  mask.classList.add("show");
+  if (mask) mask.classList.add("show");
 });
-document.getElementById("btnCancel").addEventListener("click", () => mask.classList.remove("show"));
-mask.addEventListener("click", e => { if (e.target === mask) mask.classList.remove("show"); });
+const btnCancel = document.getElementById("btnCancel");
+if (btnCancel) btnCancel.addEventListener("click", () => { if (mask) mask.classList.remove("show"); });
+if (mask) mask.addEventListener("click", e => { if (e.target === mask) mask.classList.remove("show"); });
 document.getElementById("btnSave").addEventListener("click", () => {
   const z = document.getElementById("cfgZhipuKey").value.trim();
   const d = document.getElementById("cfgDeepseekKey").value.trim();
@@ -2181,9 +2185,11 @@ document.getElementById("btnReset").addEventListener("click", () => {
 /* ================= 账号弹窗交互 ================= */
 (function authUI() {
   const mask = document.getElementById("authMask");
+  if (!mask) { console.warn("[authUI] authMask 不存在"); return; }
   const loginForm = document.getElementById("authLoginForm");
   const infoForm = document.getElementById("authInfoForm");
   let regMode = false;
+  console.log("[authUI] 账号弹窗模块已加载");
 
   function refreshView() {
     const logged = !!account.profile;
