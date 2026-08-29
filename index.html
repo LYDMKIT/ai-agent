@@ -814,10 +814,6 @@
         <label>密码</label>
         <input id="authPass" type="password" placeholder="至少 6 位" autocomplete="current-password">
       </div>
-      <div class="field" id="authOwnerField" style="display:none;">
-        <label>管理员码（可选，仅注册时填写，填对即成为管理员）</label>
-        <input id="authOwner" type="text" placeholder="如：XY-OWNER-2026">
-      </div>
       <div class="auth-tab"><span id="authSwitch">没有账号？点此注册 →</span></div>
       <div class="modal-btns">
         <button class="btn-danger" id="authCancel" style="margin-right:auto;">取 消</button>
@@ -2211,7 +2207,6 @@ document.getElementById("btnReset").addEventListener("click", () => {
     regMode = reg;
     document.getElementById("authTitle").textContent = reg ? "◈ 注册新账号" : "◈ 账号登录";
     document.getElementById("authGo").textContent = reg ? "注 册" : "登 录";
-    document.getElementById("authOwnerField").style.display = reg ? "" : "none";
     document.getElementById("authSwitch").textContent = reg ? "← 已有账号？点此登录" : "没有账号？点此注册 →";
   }
   document.getElementById("btnAccount").addEventListener("click", () => {
@@ -2231,7 +2226,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
     btn.disabled = true; btn.textContent = "连接中 …";
     try {
       if (regMode) {
-        await authRegister(u, p, document.getElementById("authOwner").value.trim());
+        await authRegister(u, p, "");
         toast("✦ 注册成功，欢迎 " + account.profile.username);
       } else {
         await authLogin(u, p);
