@@ -885,8 +885,8 @@ function saveModels() { try { localStorage.setItem(LS_MODELS, JSON.stringify(cus
 function findCustomModel(id) { return customModels.find(m => m.id === id); }
 
 /* ================= 后台服务（Supabase 账号 / 云同步 / 权限） ================= */
-const SUPA_URL = "";    // 可在此内嵌 Supabase 项目地址（留空则用 ⚙ 设置里填的）
-const SUPA_ANON = "";   // 可在此内嵌 anon key
+const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";  // 内嵌 Supabase 项目地址
+const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";  // 内嵌 anon key
 const LS_AUTH = "xiaoyin_auth";
 const account = {
   session: (() => { try { return JSON.parse(localStorage.getItem(LS_AUTH)) || null; } catch { return null; } })(),
