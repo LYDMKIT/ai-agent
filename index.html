@@ -996,7 +996,7 @@ async function cloudPushAll(msgs) {
   const del = await supa("/rest/v1/xy_chats?user_id=eq." + uid, { method: "DELETE" });
   if (!del.ok) throw new Error("清空云端对话失败（" + del.status + "）");
   for (let i = 0; i < msgs.length; i += 100) {
-    const body = msgs.slice(i, i + 100).map(m => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
+    const body = msgs.slice(i, i + 100).map(m => ({ user_id: uid, role: m.role, content: String(m.content).slice(0, 4000) }));
     const r = await supa("/rest/v1/xy_chats", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify(body) });
     if (!r.ok) throw new Error("上传云端对话失败（" + r.status + "）");
   }
@@ -1013,7 +1013,8 @@ async function cloudMerge() {
 }
 function cloudPushOne(m) {
   if (!account.user || !account.session || !m.content) return;
-  supa("/rest/v1/xy_chats", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ role: m.role, content: String(m.content).slice(0, 4000) }) }).catch(() => {});
+  const uid = account.user.id;
+  supa("/rest/v1/xy_chats", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ user_id: uid, role: m.role, content: String(m.content).slice(0, 4000) }) }).catch(() => {});
 }
 
 /* 权限过滤（管理员可远程开关） */
@@ -1031,7 +1032,7 @@ function deepseekAllowed() { const p = account.profile && account.profile.perms;
 /* 用量上报（fire-and-forget） */
 function reportUsage(model, tools, chars) {
   if (!account.user || !account.session) return;
-  const body = JSON.stringify({ model: String(model).slice(0, 60), tool: (tools && tools.length) ? tools.join(",").slice(0, 120) : null, tokens: Math.max(1, Math.ceil((chars || 0) / 4)) });
+  const body = JSON.stringify({ user_id: account.user.id, model: String(model).slice(0, 60), tool: (tools && tools.length) ? tools.join(",").slice(0, 120) : null, tokens: Math.max(1, Math.ceil((chars || 0) / 4)) });
   supa("/rest/v1/xy_usage", { method: "POST", headers: { Prefer: "return=minimal" }, body }).catch(() => {});
 }
 
