@@ -275,6 +275,27 @@ async function refresh() {
 }
 function unameToEmail(u) { return String(u).trim().toLowerCase().replace(/[^a-z0-9_-]/g, "") + "@xy.local"; }
 
+/* 读取 Supabase 错误体并翻译成可操作的原因 */
+async function readErr(resp) {
+  let txt = "";
+  try { txt = await resp.text(); } catch {}
+  let j = null; try { j = JSON.parse(txt); } catch {}
+  const msg = (j && (j.message || j.error_description || j.msg || j.details || j.hint)) || txt || "";
+  return { status: resp.status, code: (j && j.code) || "", msg: String(msg).slice(0, 300), raw: txt.slice(0, 600) };
+}
+function explainSupa(e) {
+  const m = e.msg || "", tips = [];
+  if (e.status === 404 || /schema cache|Could not find the function|PGRST20/i.test(m + e.code))
+    tips.push("后端没有这个函数/表（SQL 脚本没在这个项目跑过，或 PostgREST 缓存没刷新）");
+  if (/does not exist|undefined_table|42P01/i.test(m + e.code))
+    tips.push("数据表 xy_* 不存在，请重新执行 supabase-setup.sql");
+  if (e.status === 401 || e.status === 403 || /JWT|Invalid API key|apikey|permission denied/i.test(m))
+    tips.push("API Key / 登录凭证无效（key 与项目不匹配，或 token 已过期）");
+  if (e.status === 400 && !tips.length) tips.push("后端函数报错或参数不匹配");
+  if (e.status >= 500 || e.status === 0) tips.push("Supabase 项目可能已暂停 / 网络被拦截");
+  return tips.length ? tips.join("；") + "｜服务端：" + (m || "无返回内容") : (m || ("HTTP " + e.status));
+}
+
 /* ---------- 登录 ---------- */
 function showLogin(msg) {
   $("appView").style.display = "none";
@@ -321,7 +342,11 @@ $("inPass").addEventListener("keydown", e => { if (e.key === "Enter") $("btnLogi
 
 async function loadReport() {
   const resp = await supa("/rest/v1/rpc/xy_admin_report", { method: "POST", body: "{}" });
-  if (!resp.ok) return { ok: false, error: "报表加载失败（" + resp.status + "）" };
+  if (!resp.ok) {
+    const e = await readErr(resp);
+    console.error("[小银后台] xy_admin_report 失败 →", resp.status, e.raw || "(空响应体)");
+    return { ok: false, error: "报表加载失败（" + resp.status + "）：" + explainSupa(e) };
+  }
   const j = await resp.json();
   return j || { ok: false, error: "空响应" };
 }
