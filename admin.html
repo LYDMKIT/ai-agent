@@ -126,6 +126,202 @@
     transition: transform .3s; z-index: 99; box-shadow: 0 0 22px rgba(0, 229, 255, .2); max-width: 86vw;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
+  /* ---- v4.6 同步新增 ---- */
+  .built-in {
+    margin: 0 0 16px; padding: 9px 12px; border-radius: 9px; font-size: 11px;
+    font-family: var(--mono); line-height: 1.7; color: #7fe6c0;
+    background: rgba(60, 220, 160, .07); border: 1px solid rgba(60, 220, 160, .25);
+  }
+  header.bar h1 .ver {
+    font-size: 10px; letter-spacing: 1px; color: var(--dim); font-family: var(--mono);
+    margin-left: 8px; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .14); vertical-align: 2px;
+  }
+  .seg { display: inline-flex; gap: 6px; margin-bottom: 12px; }
+  .seg .mini-btn:disabled { opacity: .38; cursor: not-allowed; }
+  .seg .mini-btn.on {
+    border-color: rgba(0, 229, 255, .5); color: #9fe8f5; background: rgba(0, 229, 255, .12);
+  }
+  .panel .note.hint { margin: -4px 0 12px; }
+  @media (max-width: 600px) {
+    .login-box { padding: 26px 20px; }
+    .bar-row .nm { width: 96px; }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  /* ---- v4.7 ---- */
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .toolbar input, .toolbar select {
+    padding: 7px 10px; border-radius: 8px; font-size: 12px; font-family: var(--mono);
+    color: var(--text); background: rgba(5,10,20,.7); border: 1px solid rgba(255,255,255,.12); outline: none;
+  }
+  .toolbar input { flex: 1; min-width: 150px; }
+  .toolbar input:focus, .toolbar select:focus { border-color: var(--cyan); }
+  .toolbar select option { background: #0a1222; }
+  .toolbar .cnt { font-size: 11px; color: var(--dim); font-family: var(--mono); margin-left: auto; }
+  .diag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+  .diag-item {
+    padding: 10px 12px; border-radius: 10px; font-family: var(--mono); font-size: 11px;
+    background: rgba(5,10,20,.55); border: 1px solid rgba(255,255,255,.08); line-height: 1.7;
+  }
+  .diag-item b { display: block; font-size: 15px; color: #eafcff; font-weight: 700; margin-bottom: 2px; }
+  .diag-item .d { color: var(--dim); }
+  .diag-item.good { border-color: rgba(60,220,160,.3); }
+  .diag-item.warn { border-color: rgba(255,180,80,.4); background: rgba(255,180,80,.06); }
+  .diag-item.warn b { color: #ffc46b; }
+  .diag-note { margin-top: 11px; font-size: 11px; color: var(--dim); font-family: var(--mono); line-height: 1.85; }
+  .diag-note code { color: #9fe8f5; }
+  .err-box {
+    margin-top: 12px; padding: 12px 14px; border-radius: 10px; font-size: 11.5px;
+    font-family: var(--mono); line-height: 1.8; color: #ff8fa3;
+    background: rgba(255,95,122,.07); border: 1px solid rgba(255,95,122,.3);
+    white-space: pre-wrap; word-break: break-all;
+  }
+  .spin { display: inline-block; animation: sp 1s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  .safe-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+  .safe-row input {
+    flex: 1; min-width: 190px; padding: 9px 12px; border-radius: 9px; font-size: 12.5px;
+    color: var(--text); background: rgba(5,10,20,.7);
+    border: 1px solid rgba(255,255,255,.12); outline: none; font-family: var(--mono);
+  }
+  .safe-row input:focus { border-color: var(--cyan); }
+  input[type="checkbox"] { accent-color: var(--cyan); }
+  .bar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .swipe-hint { display: none; font-size: 10.5px; color: var(--dim); font-family: var(--mono); margin: -4px 0 9px; }
+  .foot-meta { text-align: center; font-size: 10.5px; color: var(--dim); font-family: var(--mono); margin-top: 18px; letter-spacing: 1px; }
+  /* ---- v4.8 平台模型池 ---- */
+  .pm-stat { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pm-stat .s {
+    flex: 1; min-width: 110px; padding: 9px 11px; border-radius: 9px; font-family: var(--mono); font-size: 10.5px;
+    color: var(--dim); background: rgba(5,10,20,.5); border: 1px solid rgba(255,255,255,.08);
+  }
+  .pm-stat .s b { display: block; font-size: 17px; color: #eafcff; margin-bottom: 2px; }
+  .pm-stat .s.good b { color: #7fe6c0; }
+  .pm-stat .s.warn b { color: #ffc46b; }
+  .pm-row {
+    display: flex; align-items: center; gap: 9px; flex-wrap: wrap; padding: 9px 11px; margin-bottom: 7px;
+    border-radius: 10px; font-size: 11.5px; font-family: var(--mono);
+    background: rgba(5,10,20,.5); border: 1px solid rgba(255,255,255,.09);
+  }
+  .pm-row .nm { flex: 1; min-width: 150px; color: #eafcff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pm-row .md { color: var(--dim); font-size: 10px; }
+  .pm-row.off { opacity: .55; }
+  .pm-row .mini-btn { flex-shrink: 0; }
+  .pm-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 12px; }
+  .pm-form .full { grid-column: 1 / -1; }
+  .pm-form label { display: block; font-size: 10.5px; color: var(--dim); font-family: var(--mono); margin-bottom: 5px; }
+  .pm-form input, .pm-form select {
+    width: 100%; padding: 8px 10px; border-radius: 8px; font-size: 12px; font-family: var(--mono);
+    color: var(--text); background: rgba(5,10,20,.7); border: 1px solid rgba(255,255,255,.12); outline: none;
+  }
+  .pm-form input:focus, .pm-form select:focus { border-color: var(--cyan); }
+  .pm-form select option { background: #0a1222; }
+  .mode-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .mode-row select { padding: 8px 10px; border-radius: 8px; font-size: 12px; font-family: var(--mono);
+    color: var(--text); background: rgba(5,10,20,.7); border: 1px solid rgba(255,255,255,.12); outline: none; }
+  .mode-row select option { background: #0a1222; }
+  .risk { margin-top: 10px; padding: 10px 12px; border-radius: 9px; font-size: 11px; font-family: var(--mono);
+    line-height: 1.8; color: #ffc46b; background: rgba(255,180,80,.06); border: 1px solid rgba(255,180,80,.3); }
+  .risk.ok { color: #7fe6c0; background: rgba(60,220,160,.06); border-color: rgba(60,220,160,.28); }
+  .pm-check { grid-column: 1 / -1; padding: 9px 12px; border-radius: 9px; font-size: 11px;
+    font-family: var(--mono); line-height: 1.8; color: var(--dim);
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09); }
+  .pm-check.err { color: #ff9fb0; background: rgba(255,95,122,.07); border-color: rgba(255,95,122,.4); }
+  .pm-check.warn { color: #ffc46b; background: rgba(255,180,80,.07); border-color: rgba(255,180,80,.38); }
+  .pm-check.ok { color: #7fe6c0; background: rgba(60,220,160,.06); border-color: rgba(60,220,160,.28); }
+  .q-in { width: 62px; padding: 4px 7px; border-radius: 6px; font-family: var(--mono);
+    font-size: 11px; color: var(--text); background: rgba(5,10,20,.7);
+    border: 1px solid rgba(255,255,255,.14); outline: none; }
+  .q-in:focus { border-color: rgba(0,229,255,.5); }
+  .q-num { font-family: var(--mono); color: #9fe8f5; }
+  .q-out { color: #ff9fb0; font-family: var(--mono); }
+  .q-inf { color: #ffd479; font-family: var(--mono); }
+  .q-tip { font-size: 11px; color: var(--dim); font-family: var(--mono); line-height: 1.9; margin-top: 10px; }
+  /* v4.9.1 模型体检 */
+  .pm-health { flex-shrink: 0; padding: 2px 8px; border-radius: 999px; font-size: 10px;
+    font-family: var(--mono); white-space: nowrap; }
+  .pm-health.ok { color: #7fe6c0; border: 1px solid rgba(60,220,160,.35); background: rgba(60,220,160,.07); }
+  .pm-health.warn { color: #ffc46b; border: 1px solid rgba(255,180,80,.4); background: rgba(255,180,80,.08); }
+  .pm-health.err { color: #ff9fb0; border: 1px solid rgba(255,95,122,.45); background: rgba(255,95,122,.09); }
+  .pm-audit { margin: 12px 0 0; padding: 12px 14px; border-radius: 11px; font-family: var(--mono);
+    font-size: 11px; line-height: 1.9; color: var(--dim);
+    background: rgba(5,10,20,.55); border: 1px solid rgba(255,255,255,.1); }
+  .pm-audit[hidden] { display: none; }
+  .pm-audit h4 { margin: 0 0 8px; font-size: 12px; color: #eafcff; letter-spacing: .5px; }
+  .pm-audit .au-row { display: flex; gap: 8px; align-items: flex-start; padding: 7px 0;
+    border-top: 1px dashed rgba(255,255,255,.08); }
+  .pm-audit .au-row:first-of-type { border-top: 0; }
+  .pm-audit .au-tag { flex-shrink: 0; width: 62px; }
+  .pm-audit .au-body { flex: 1; min-width: 0; word-break: break-all; }
+  .pm-audit .au-body b { color: #eafcff; font-weight: 600; }
+  .pm-audit .au-sum { margin-bottom: 10px; padding: 8px 10px; border-radius: 8px;
+    background: rgba(255,180,80,.07); border: 1px solid rgba(255,180,80,.25); color: #ffc46b; }
+  .pm-audit .au-sum.ok { background: rgba(60,220,160,.06); border-color: rgba(60,220,160,.25); color: #7fe6c0; }
+  .pm-audit .au-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .pm-audit code { color: #9fe8f5; }
+  /* 测试失败详情写进校验条，不再用超长 toast 挡住模型列表 */
+  #toast { max-width: min(720px, 92vw); white-space: normal; line-height: 1.6; text-align: center; }
+  .pm-check .au-box { margin: 8px 0; padding: 8px 10px; border-radius: 8px; line-height: 1.9;
+    background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.1); color: #cfe6f0; }
+  .pm-check .au-box code { color: #9fe8f5; }
+  .pm-check ul { margin: 6px 0 0; padding-left: 18px; }
+  .pm-check li { margin: 3px 0; }
+  .cap-kind { display:inline-block; padding:1px 7px; border-radius:999px; font-size:10px;
+    border:1px solid rgba(0,229,255,.3); color:#9fe8f5; background:rgba(0,229,255,.06); }
+  .cap-kind.video { border-color:rgba(255,140,190,.35); color:#ffb3d0; background:rgba(255,140,190,.07); }
+  .cap-kind.tts { border-color:rgba(120,220,160,.35); color:#9fe8c0; background:rgba(120,220,160,.07); }
+  .cap-kind.asr { border-color:rgba(255,190,110,.35); color:#ffd69a; background:rgba(255,190,110,.07); }
+  .curl-row { grid-column: 1 / -1; display: flex; gap: 7px; align-items: stretch; }
+  .curl-row input { flex: 1; min-width: 0; }
+  .curl-row .btn { flex-shrink: 0; white-space: nowrap; }
+  @media (max-width: 600px) { .pm-form { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) {
+    .diag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    header.bar .sp { display: none; }
+    header.bar .bar-actions {
+      width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px;
+    }
+    header.bar .bar-actions .btn { width: 100%; padding: 8px 4px; font-size: 11px; letter-spacing: 0; }
+    .swipe-hint { display: block; }
+  }
+/* v5.0.3 简洁模式：高级字段默认收起，点「⚙ 高级设置」展开 */
+.pm-form.hide-adv .cap-adv { display:none !important; }
+.cap-summary { font-size:11.5px;color:var(--dim);line-height:1.65; }
+.cap-summary b { color:var(--fg,inherit); }
+.cap-verdict { padding:11px 13px;border-radius:9px;border:1px solid rgba(110,231,183,.35);
+  background:rgba(110,231,183,.06);font-size:12px;line-height:1.7;margin-top:9px; }
+.cap-verdict.bad { border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.07); }
+.cap-verdict .big { font-size:13.5px;font-weight:700;display:block;margin-bottom:3px; }
+.pm-detect { margin:0 0 9px;padding:10px 12px;border-radius:9px;font-size:11.5px;line-height:1.75;
+  border:1px solid rgba(110,231,183,.32);background:rgba(110,231,183,.05); }
+.pm-detect.bad { border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.07); }
+.pm-detect .t { font-size:12.5px;font-weight:700;display:block;margin-bottom:4px; }
+.pm-detect .row { display:flex;gap:8px; }
+.pm-detect .k { min-width:58px;color:var(--dim); }
+.pm-detect code { font-family:var(--mono);font-size:11px;color:var(--ok,#6ee7b7); }
+.pm-detect.bad code { color:var(--bad,#f87171); }
+.cap-matrix { border:1px solid rgba(120,140,180,.18);border-radius:9px;overflow:hidden; }
+.cap-matrix .hd,.cap-matrix .r { display:grid;grid-template-columns:1.5fr 1fr 2.2fr auto;
+  gap:8px;padding:7px 10px;font-size:11.5px;align-items:center; }
+.cap-matrix .hd { background:rgba(120,140,180,.09);color:var(--dim);font-weight:600; }
+.cap-matrix .r { border-top:1px solid rgba(120,140,180,.12); }
+.cap-matrix .r.yes { background:rgba(110,231,183,.045); }
+.cap-matrix .r.no  { background:rgba(248,113,113,.045); }
+.cap-matrix .nm2 { font-family:var(--mono);word-break:break-all; }
+.cap-matrix .st2 { font-weight:600; }
+.cap-matrix .rs { color:var(--dim);line-height:1.6; }
+#capConsoleList { background:rgba(8,14,28,.72);color:var(--fg,#dce6f5);
+  border:1px solid rgba(120,140,180,.28);border-radius:8px;padding:9px 11px;line-height:1.7;resize:vertical; }
+#capConsoleList::placeholder { color:rgba(160,180,210,.42); }
+#capConsoleList:focus { outline:none;border-color:rgba(110,231,183,.55);box-shadow:0 0 0 2px rgba(110,231,183,.1); }
+#capConsoleOut textarea { font-family:var(--mono);font-size:11.5px; }
+#loginMsg { white-space:pre-wrap;line-height:1.75; }
+#loginDiagBody .dr { display:flex;gap:8px;padding:2px 0;border-bottom:1px dashed rgba(120,160,190,.14); }
+#loginDiagBody .dr b { min-width:72px;color:var(--accent,#7fb6c8);font-weight:600; }
+#loginDiagBody .dr span { flex:1;word-break:break-all;color:var(--dim); }
+#loginDiagBody .verdict { margin-top:8px;padding:8px 10px;border-radius:8px;white-space:pre-wrap;
+  background:rgba(110,231,183,.07);border:1px solid rgba(110,231,183,.22); }
+#loginDiagBody .verdict.bad { background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.28); }
 </style>
 </head>
 <body>
@@ -136,14 +332,7 @@
     <div class="login-logo">银</div>
     <h1>小银后台管理</h1>
     <div class="sub">X I A O Y I N · A D M I N</div>
-    <div class="field">
-      <label>Supabase 地址（https://xxx.supabase.co）</label>
-      <input id="inUrl" type="text" placeholder="https://xxxx.supabase.co">
-    </div>
-    <div class="field">
-      <label>Supabase anon key</label>
-      <input id="inAnon" type="password" placeholder="eyJhbGciOi...（anon public key）">
-    </div>
+    <div class="built-in">● 后台服务已内置连接（与主站 / SQL 同一项目）<br>　 无需填写地址与 anon key</div>
     <div class="field">
       <label>管理员用户名</label>
       <input id="inUser" type="text" placeholder="注册时填了管理员码的账号" autocomplete="username">
@@ -154,7 +343,15 @@
     </div>
     <button class="btn btn-primary btn-block" id="btnLogin">进 入 后 台</button>
     <div id="loginMsg"></div>
-    <p class="login-tip">只有注册时填写管理员码（owner 码）的账号可进入后台。<br>地址与 anon key 只保存在本浏览器，不会上传到别处。</p>
+    <details id="loginDiag" style="margin-top:9px;">
+      <summary style="cursor:pointer;font-size:11px;color:var(--dim);text-align:center;list-style:none;">🔧 登录诊断 · 连不上时点这里</summary>
+      <div id="loginDiagBody" style="margin-top:8px;font-size:10.5px;line-height:1.7;font-family:var(--mono);"></div>
+      <div style="margin-top:7px;display:flex;gap:7px;justify-content:center;">
+        <button class="btn" id="btnDiagRun" type="button" style="padding:4px 10px;font-size:10.5px;">重新检测</button>
+        <button class="btn" id="btnDiagCopy" type="button" style="padding:4px 10px;font-size:10.5px;">复制诊断</button>
+      </div>
+    </details>
+    <p class="login-tip">只有注册时填写管理员码（owner 码）的账号可进入后台。<br>若曾在本机配置过自有 Supabase 项目，仍会沿用该设置；账号密码只保存在本浏览器。<br>换电脑登不上时，先确认两边是同一份 HTML（内嵌同一 Supabase 项目），再点上方「🔧 登录诊断」。</p>
   </div>
 </div>
 
@@ -163,26 +360,49 @@
   <header class="bar">
     <div class="logo">银</div>
     <div>
-      <h1>小银后台管理 · ADMIN</h1>
+      <h1>小银后台管理 · ADMIN <span class="ver">v5.0.7</span></h1>
       <div class="who" id="whoLine">—</div>
     </div>
     <div class="sp"></div>
-    <button class="btn btn-primary" id="btnRefresh">⟳ 刷新数据</button>
-    <button class="btn btn-danger" id="btnLogout">退出</button>
+    <div class="bar-actions">
+      <button class="btn" id="btnExportJson" title="导出完整报表 JSON">⬇ JSON</button>
+      <button class="btn" id="btnExportUsers" title="导出用户 CSV">⬇ 用户</button>
+      <button class="btn" id="btnExportUsage" title="导出模型/厂商用量 CSV">⬇ 用量</button>
+      <button class="btn btn-primary" id="btnRefresh">⟳ 刷新数据</button>
+      <button class="btn btn-danger" id="btnLogout">退出</button>
+    </div>
   </header>
 
   <div class="cards" id="cards"></div>
 
   <div class="panel">
-    <h2>◈ 近 14 天活跃趋势<small>每日消息数 / 活跃人数</small></h2>
+    <h2>◈ 部署诊断<small>SQL v2 契约自检 · 不改动任何数据</small></h2>
+    <div class="diag-grid" id="diagGrid"></div>
+    <div class="diag-note" id="diagNote"></div>
+    <div class="err-box" id="reportErr" style="display:none;"></div>
+  </div>
+
+  <div class="panel">
+    <h2>◈ 活跃趋势<small id="chartSub">近 14 天 · 每日消息数 / 活跃人数</small></h2>
+    <div class="seg" id="rangeSeg">
+      <button type="button" class="mini-btn" data-range="7">7 天</button>
+      <button type="button" class="mini-btn on" data-range="14">14 天</button>
+      <button type="button" class="mini-btn" data-range="30">30 天</button>
+    </div>
     <svg id="chart" viewBox="0 0 900 150" preserveAspectRatio="none"></svg>
     <div class="empty" id="chartEmpty" style="display:none;">暂无对话数据</div>
+    <p class="note" id="chartNote"></p>
   </div>
 
   <div class="two-col">
     <div class="panel">
-      <h2>◈ 模型调用分布</h2>
+      <h2>◈ 模型调用分布<small>内置池 + 用户接入的多厂商模型</small></h2>
+      <div class="seg">
+        <button type="button" class="mini-btn on" data-mv="model">按模型</button>
+        <button type="button" class="mini-btn" data-mv="provider">按厂商</button>
+      </div>
       <div id="modelBars"></div>
+      <p class="note">· SQL v2 已部署时直接用后端 <code>providers</code> 归类；未部署时自动降级为浏览器端前缀匹配<br>· 历史纯 ID 或 cm_xxx 内部编号归入「✦ 其他 / 自定义」，不会丢数据<br>· 费用口径已与主站 v4.6 对齐：内置 flash 免费、GLM-4-Plus 5、DeepSeek 4，其余多厂商模型按 1 元/百万 token 粗估</p>
     </div>
     <div class="panel">
       <h2>◈ 工具使用排行 TOP10</h2>
@@ -191,7 +411,21 @@
   </div>
 
   <div class="panel">
-    <h2>◈ 用户与权限管理<small>改完勾选后点「保存」生效；封省会同时清空该用户云端对话</small></h2>
+    <h2>◈ 用户与权限管理<small>改完勾选后点「保存」生效；封禁会同时清空该用户云端对话</small></h2>
+    <p class="note hint">· 权限开关只约束「内置共享通道」：例如关闭 DeepSeek，会禁用内置池里由共享 Key 调用的 DeepSeek<br>· 用户在「模型市场」用自己 Key 接入的厂商模型不受这些开关约束（Key 存在各用户本机，后台不下发也不可见）<br>· 关闭「平台共享」会禁止该用户使用本页部署的所有模型，但不影响其自带的 Key</p>
+    <div class="toolbar">
+      <input id="userSearch" type="search" placeholder="🔍 搜索用户名…" autocomplete="off">
+      <select id="roleFilter">
+        <option value="all">全部角色</option><option value="owner">管理员</option>
+        <option value="user">普通用户</option><option value="banned">已封禁</option>
+      </select>
+      <select id="userSort">
+        <option value="created">注册时间</option><option value="msg">消息数 ↓</option>
+        <option value="usage">调用数 ↓</option><option value="name">用户名</option>
+      </select>
+      <span class="cnt" id="userCount"></span>
+    </div>
+    <p class="swipe-hint">← 表格可左右滑动，查看权限与操作列 →</p>
     <div style="overflow-x:auto;">
       <table id="userTable">
         <thead>
@@ -203,6 +437,25 @@
     <div class="empty" id="userEmpty" style="display:none;">暂无用户</div>
   </div>
 
+  <div class="panel" id="quotaPanel">
+    <h2>◈ 每日语句额度<small>默认 10 条/日 · 超限后需在这里授权 · 北京时间 00:00 自动重置</small></h2>
+    <div class="pm-stat" id="quotaStat"></div>
+    <div style="overflow-x:auto;">
+      <table id="quotaTable">
+        <thead>
+          <tr><th>用户名</th><th>今日已用</th><th>每日上限</th><th>额外</th><th>不限量</th><th>剩余</th><th>授权操作</th></tr>
+        </thead>
+        <tbody id="quotaRows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="quotaEmpty" style="display:none;">暂无用户</div>
+    <div class="pm-check" id="quotaHint" style="margin-top:12px;">正在读取额度服务 …</div>
+    <p class="q-tip">· 计数由服务端 <code>xy_quota_daily</code> 记录，浏览器改本地存储绕不过去；该表开启 RLS 且无任何直读策略<br>
+      · 「+10 条」是<b>长期额外额度</b>（叠加在每日上限上，不是仅当天有效）；「重置今日」只清今天的已用计数<br>
+      · 开启「不限量」后仍会计数用于统计，但不再拦截；把每日上限设为 0 可临时停用某个账号<br>
+      · 主站每次发送前调用 <code>xy_quota_consume()</code> 原子扣减，生成彻底失败会自动退还 1 条</p>
+  </div>
+
   <div class="panel">
     <h2>◈ 云端 API Key 管理<small>下发给所有登录用户的智谱共享 Key（优先级：用户本地配置 &gt; 云端 &gt; 网页内置）</small></h2>
     <div class="key-line">
@@ -211,38 +464,209 @@
       <input id="keyNew" type="text" placeholder="粘贴新的智谱 API Key（留空点保存 = 作废云端 Key）">
       <button class="btn btn-primary" id="btnKeySave">保存下发</button>
     </div>
-    <p class="note">· 作废后：已登录用户会自动回退到各自的本地 Key 或网页内置 Key<br>· Key 只以脱敏形式显示（末 6 位），完整值仅保存在你的 Supabase 数据库里<br>· 建议：不要把付费大额 Key 下发给所有人，先用免费额度试运行</p>
+    <p class="note">· 作废后：已登录用户会自动回退到各自的本地 Key 或网页内置 Key<br>· Key 只以脱敏形式显示（末 6 位），完整值仅保存在你的 Supabase 数据库里<br>· 此处只管理「内置智谱通道」的共享 Key；主站 v4.7 模型市场里 13 家厂商的 Key 由各用户自行填写、保存在本机浏览器，后台不下发也不采集<br>· 建议：不要把付费大额 Key 下发给所有人，先用免费额度试运行</p>
   </div>
+
+  <div class="panel">
+    <h2>◈ 平台共享模型池<small>管理员统一部署 API · 用户无需填 Key 即可使用</small></h2>
+    <div class="pm-stat" id="pmStat"></div>
+    <div style="margin:-2px 0 12px;">
+      <button class="btn btn-primary" id="btnPmAudit">🔍 一键体检全部模型</button>
+      <span style="font-size:10.5px;color:var(--dim);font-family:var(--mono);margin-left:10px;">
+        检查端点协议 / 模型 ID / 是否为对话模型 / 厂商错配</span>
+    </div>
+    <div class="pm-audit" id="pmAudit" hidden></div>
+    <div class="mode-row">
+      <span style="font-size:11.5px;color:var(--dim);font-family:var(--mono);">接入模式：</span>
+      <select id="pmMode">
+        <option value="proxy">服务端代理（推荐 · Key 不下发浏览器）</option>
+        <option value="passthrough">直接下发（调试 · Key 会到用户浏览器）</option>
+      </select>
+      <button class="btn btn-primary" id="btnPmMode">应用</button>
+      <span class="md" id="pmDeployHint" style="font-size:10.5px;color:var(--dim);font-family:var(--mono);"></span>
+    </div>
+    <div class="risk ok" id="pmRisk">● 服务端代理：共享 Key 只存在于 Supabase 数据库与 Edge Function 内，前端拿到的列表永远是脱敏的。</div>
+    <div class="risk" id="pmEdgeHint" style="display:none;">⚠ 「服务端代理」模式必须部署 Edge Function <b>xy-platform</b>（不是 xy-ai）。火山方舟 / 百炼等厂商禁止浏览器跨域，切「直接下发」也连不通，只能走服务端转发。</div>
+    <div id="pmList" style="margin-top:13px;"></div>
+
+    <details class="advanced" style="margin-top:12px;">
+      <summary>⌄ 新增 / 编辑平台模型</summary>
+      <div class="pm-form">
+        <div><label>厂商预设（自动带入端点与模型 ID）</label><select id="pmPreset"></select></div>
+        <div><label>展示名称（用户下拉里看到的名字）</label><input id="pmName" type="text" placeholder="如：平台 · 通义千问 Qwen3.8-Max"></div>
+        <div class="curl-row">
+          <input id="pmCurl" type="text" placeholder="📋 粘贴控制台 cURL，自动识别渠道与模型，并填好端点 / 模型 ID / 预设 / 名称 / Key">
+          <button class="btn btn-primary" id="btnPmCurl" type="button">解析填入</button>
+        </div>
+        <div class="full"><label>API 端点（完整 /chat/completions 地址）</label><input id="pmEndpoint" type="text" placeholder="https://…/v1/chat/completions"></div>
+        <div><label>模型 ID</label><input id="pmModel" type="text" placeholder="qwen3.8-max / ep-xxx / hy4"></div>
+        <div><label>API Key（编辑时留空 = 不改动）</label><input id="pmKey" type="password" autocomplete="new-password" data-lpignore="true" placeholder="sk-… / ark-…"></div>
+        <div><label>路由档位</label><select id="pmTier">
+          <option value="cheap">省额度</option><option value="standard" selected>均衡</option><option value="strong">高质量</option>
+        </select></div>
+        <div><label>跨域策略</label><select id="pmCors">
+          <option value="proxy" selected>服务端代理</option><option value="direct">浏览器直连（仅调试模式）</option>
+        </select></div>
+        <div id="pmDetect"></div>
+        <div class="pm-check" id="pmCheck">填写端点与模型 ID 后，这里会自动检查二者是否属于同一家平台。</div>
+        <div class="full" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnPmSave">保存模型</button>
+          <button class="btn" id="btnPmCancel" style="display:none;">取消编辑</button>
+          <button class="btn" id="btnPmTest">⚡ 测试连接</button>
+          <span class="md" id="pmEditHint" style="font-size:10.5px;color:var(--dim);font-family:var(--mono);"></span>
+        </div>
+      </div>
+    </details>
+    <p class="note">· 共享 Key 以明文存于 <code>xy_platform_models</code>，该表开启 RLS 且不建任何策略 → 登录用户一行都读不到，只有 Edge Function 的 service_role 能取<br>· 用户自己填的 Key 保存在各自浏览器 localStorage，后台不采集、不下发，两套 ID（pm_ / cm_）永不冲突<br>· 用量按来源分账：builtin（内置）/ platform（平台共享）/ byok（用户自带）<br>· 模型 ID 会随厂商迭代变化，失效时直接编辑即可，不用删了重加</p>
+  </div>
+
+  <div class="panel">
+    <h2>◈ 智能体能力<small>图像 / 视频 / 语音 · 各有独立端点，不进对话模型池</small></h2>
+    <div class="pm-stat" id="capStat"></div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:0 0 10px;">
+      <span id="capQuickTxt" class="cap-summary">读取中…</span>
+      <button class="btn btn-primary" id="btnCapDiagnose" type="button">🩺 一键诊断</button>
+      <span class="md" style="font-size:10.5px;color:var(--dim);">直接问厂商「这把 Key 能看到哪些模型」，不消耗生图额度</span>
+    </div>
+    <div id="capDiagResult"></div>
+    <details class="advanced" id="capSetupPanel" style="margin:0 0 12px;">
+      <summary>🚦 部署自检清单 · 配置全对却 404 时先点这里</summary>
+      <div id="capSetup" style="padding:10px 4px 4px;"></div>
+      <div class="full" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+        <button class="btn" id="btnCapSetup" type="button">🔄 重新自检</button>
+        <button class="btn" id="btnCapCopyCurl" type="button">📋 复制终端命令</button>
+        <button class="btn" id="btnCapRaw" type="button">⚡ 原样重放 cURL</button>
+      </div>
+      <p class="note" style="margin-top:9px;">自动项由本页读取数据库与 Edge Function 得出；人工项必须在厂商控制台 / Supabase Dashboard 做，代码代劳不了。</p>
+    </details>
+    <details class="advanced" style="margin-bottom:9px;">
+      <summary>⚠ 为什么不能填 /chat/completions（点开看）</summary>
+      <div class="risk" style="margin-top:8px;">
+        图像是 <code>/images/generations</code>、视频是 <code>/contents/generations/tasks</code> 异步任务、语音是独立音频接口，各有独立端点。共享 Key 只存数据库，由 Edge Function <b>xy-platform</b> 读取，不下发浏览器。
+      </div>
+    </details>
+    <div id="capList" style="margin-top:10px;"></div>
+
+    <details class="advanced" style="margin-top:9px;">
+      <summary>🎯 控制台模型对照（把「开通管理」页粘进来，看哪些真能用）</summary>
+      <div style="margin-top:8px;">
+        <p class="note" style="margin:0 0 7px;">控制台显示的是<b>展示名</b>（如 Doubao-Seedream-4.0），后台要填的是接口 <b>model ID</b>（如 doubao-seedream-4-0-250828）。只有「已开通」且没有「服务暂停」的才能调用。</p>
+        <textarea id="capConsoleList" rows="4" style="width:100%;box-sizing:border-box;" placeholder="把开通管理 → 视觉模型页面整段粘进来，例如：&#10;Doubao-Seedream-5.0-flash  已开通  服务暂停&#10;Doubao-Seedream-4.0  已开通  剩200/共200张&#10;Doubao-Seedance-1.0-pro-fast  已开通&#10;Doubao-Seedance-2.5  未开通"></textarea>
+        <div style="margin-top:7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnCapConsole" type="button">对照</button>
+          <span class="md" style="font-size:10.5px;color:var(--dim);">只在本页解析，不上传、不改动数据库</span>
+        </div>
+        <div id="capConsoleOut" style="margin-top:9px;"></div>
+      </div>
+    </details>
+
+    <details class="advanced" style="margin-top:12px;">
+      <summary>⌄ 新增 / 编辑智能体能力</summary>
+      <div class="pm-form hide-adv" id="capForm">
+        <div><label>能力类型</label><select id="capKind">
+          <option value="image">🖼 图像生成</option>
+          <option value="video">🎬 视频生成</option>
+          <option value="tts">🔊 语音合成 TTS</option>
+          <option value="asr">🎤 语音识别 ASR</option>
+        </select></div>
+        <div class="cap-adv"><label>厂商预设（自动带入端点与模型 ID）</label><select id="capPreset"></select></div>
+        <div class="full curl-row">
+          <input id="capCurl" type="text" placeholder="📋 直接粘贴厂商控制台「快捷 API 接入」的 cURL 整段，自动提取端点 / 模型 ID / size，避免手抄错">
+          <button class="btn btn-primary" id="btnCapCurl" type="button">解析填入</button>
+        </div>
+        <div class="cap-adv"><label>展示名称</label><input id="capName" type="text" placeholder="如：平台 · 豆包 Seedream 4.0"></div>
+        <div><label>模型 ID（照抄控制台 cURL 的 "model"，不是展示名）</label><input id="capModel" type="text" placeholder="doubao-seedream-4-0-250828"></div>
+        <div class="full"><label>创建端点（完整地址）</label><input id="capEndpoint" type="text" placeholder="https://…/api/v3/images/generations"></div>
+        <div class="full cap-adv" id="capPollWrap"><label>轮询端点（仅视频必填，GET 查询任务；图像/语音填了会被忽略并自动清空）</label><input id="capPoll" type="text" placeholder="https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks"></div>
+        <div><label>API Key（编辑时留空 = 不改动）</label><input id="capKey" type="password" autocomplete="new-password" data-lpignore="true" placeholder="ark-…"></div>
+        <div class="cap-adv"><label>额外请求参数（JSON，可选）</label><input id="capExtra" type="text" placeholder='{"watermark":false}'></div>
+        <div class="pm-check" id="capCheck">选择能力类型与预设后，这里会自动检查端点是否合法。</div>
+        <div class="full" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnCapSave">保存</button>
+          <button class="btn" id="btnCapCancel" style="display:none;">取消编辑</button>
+          <button class="btn" id="btnCapTest">⚡ 测试连接</button>
+          <button class="btn" id="btnCapAdv" type="button">⚙ 高级设置</button>
+          <span class="md" id="capEditHint" style="font-size:10.5px;color:var(--dim);font-family:var(--mono);"></span>
+        </div>
+      </div>
+    </details>
+    <details class="advanced" style="margin-top:9px;">
+      <summary>说明与注意事项（点开看）</summary>
+      <p class="note" style="margin-top:8px;">· <b>404</b> = 模型 ID 不对 / 未开通 / Key 无权访问；<b>不是</b>端点要改成 /chat/completions。「安心体验」额度耗尽是 <b>429</b> 不是 404<br>
+        · 未配图像 → 主站自动用智谱 CogView；未配语音 → 浏览器原生语音（零 Key）<br>
+        · 视频需重新部署 <b>xy-platform</b> v3（GET 返回 version: 3）；视频为异步任务，链接通常 24 小时内有效<br>
+        · <b>控制台「已开通」≠ 能用</b>：盖了「服务暂停」章的是安心体验免费额度耗尽被自动停服（关掉安心体验或充值）；「未开通」要先点开通；3D 类模型小银暂不支持<br>
+        · 主页里直接说「画一张…」「生成一段…的短视频」「把这段话念出来」即可触发对应能力，不用选模型；智能路由会把这类需求交给工具而不是聊天模型</p>
+    </details>
+  </div>
+
+  <div class="panel">
+    <h2>◈ 安全设置<small>管理员注册码 / 自动刷新</small></h2>
+    <div class="safe-row">
+      <input id="ownerCodeNew" type="text" placeholder="新管理员注册码（8–64 位，留空不改）" autocomplete="off">
+      <button class="btn btn-primary" id="btnOwnerCode">更新注册码</button>
+      <label class="perm" style="margin-left:6px;"><input type="checkbox" id="autoRefresh"> 每 60 秒自动刷新</label>
+    </div>
+    <p class="note">· 注册码只在「首次建档」时判定 owner；SQL v2 起重复注册不能提权，但默认码仍建议立刻改掉<br>· 修改后新用户注册需用新码，已存在的管理员不受影响<br>· 若提示「函数不存在」，说明还没执行 Supabase 部署脚本 v2</p>
+  </div>
+
+  <div class="foot-meta">XIAOYIN ADMIN v5.0.7 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
 </div>
 
 <div id="toast"></div>
 
 <script>
 /* ================================================================
-   小银 XIAOYIN 后台管理页 admin.html（仅 owner 可用）
+   小银 XIAOYIN 后台管理页 admin.html · 适配主站 v4.7 / SQL v3（仅 owner 可用）
    数据全部来自 Supabase RPC：xy_admin_report / xy_admin_set_user
                               / xy_admin_set_key / xy_admin_del_user
    ================================================================ */
-const LS_ADMIN = "xiaoyin_admin_cfg";   // {url, anon}
-const LS_AUTH = "xiaoyin_auth";         // 复用主站的会话存储
+const LS_ADMIN = "xiaoyin_admin_cfg";   // 兼容旧版本：仅读取曾保存的自有项目配置，登录不再写入
+/* v5.0.6：后台改用独立 key，避免登录失败时 removeItem 把主站的登录态一起清掉；
+   首次启动仍会从旧共享 key 兼容读取一次。 */
+const LS_AUTH = "xiaoyin_admin_auth";
+const LS_AUTH_LEGACY = "xiaoyin_auth";
+const __memStore = {};
+function lsGet(k) { try { return localStorage.getItem(k); } catch { return __memStore[k] ?? null; } }
+function lsSet(k, v) { __memStore[k] = v; try { localStorage.setItem(k, v); return true; } catch { return false; } }
+function lsDel(k) { delete __memStore[k]; try { localStorage.removeItem(k); } catch {} }
+function lsWritable() { try { const t="__xy_probe__"; localStorage.setItem(t,"1"); localStorage.removeItem(t); return true; } catch { return false; } }
+let authStorageWarn = "";
+function saveAuthSession(sess) {
+  const ok = lsSet(LS_AUTH, JSON.stringify(sess));
+  authStorageWarn = ok ? "" : "浏览器禁止本地存储（无痕/站点数据被禁用）：本次可用，刷新后需重新登录。";
+  return ok;
+}
 
-/* 内嵌默认凭据（与主站 agent.html 保持一致，登录页自动带出，可覆盖） */
+/* 内嵌默认凭据（与主站 v4.6 保持一致；旧版本若在本机存过自有项目，仍优先沿用） */
 const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";
 const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";
 
-let cfg = (() => { try { return JSON.parse(localStorage.getItem(LS_ADMIN)) || {}; } catch { return {}; } })();
+let cfg = (() => { try { return JSON.parse(lsGet(LS_ADMIN)) || {}; } catch { return {}; } })();
 if (!cfg.url) cfg.url = SUPA_URL;
 if (!cfg.anon) cfg.anon = SUPA_ANON;
 let session = null;   // supabase session
 let report = null;    // xy_admin_report 结果
 
 function $(id) { return document.getElementById(id); }
-function toast(msg) {
+function toast(msg, ms) {
   const t = $("toast");
-  t.textContent = msg; t.classList.add("show");
-  clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove("show"), 2600);
+  /* toast 是纯文本容器：任何 HTML 标签字面量都不能露出来（之前拼了 <code> 显示为原样字符串） */
+  t.textContent = String(msg == null ? "" : msg).replace(/<\/?[a-z][^>]*>/gi, "");
+  t.classList.add("show");
+  clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove("show"), Number(ms) > 0 ? Number(ms) : 2600);
 }
-function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+/* v5.0.6：诊断信息复制（file:// 下 clipboard API 常被禁，保留 textarea 兜底） */
+async function copyText(txt) {
+  try { await navigator.clipboard.writeText(txt); return true; } catch {}
+  try {
+    const t = document.createElement("textarea");
+    t.value = txt; t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select();
+    const ok = document.execCommand("copy"); t.remove(); return ok;
+  } catch { return false; }
+}
 function fmtTime(t) {
   if (!t) return "—";
   try { const d = new Date(t); return (d.getMonth() + 1) + "-" + String(d.getDate()).padStart(2, "0") + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
@@ -269,7 +693,7 @@ async function refresh() {
     });
     if (!resp.ok) return false;
     session = await resp.json();
-    localStorage.setItem(LS_AUTH, JSON.stringify(session));
+    saveAuthSession(session);
     return true;
   } catch { return false; }
 }
@@ -288,7 +712,9 @@ function explainSupa(e) {
   if (e.status === 404 || /schema cache|Could not find the function|PGRST20/i.test(m + e.code))
     tips.push("后端没有这个函数/表（SQL 脚本没在这个项目跑过，或 PostgREST 缓存没刷新）");
   if (/does not exist|undefined_table|42P01/i.test(m + e.code))
-    tips.push("数据表 xy_* 不存在，请重新执行 supabase-setup.sql");
+    tips.push("数据表 xy_* 不存在，请重新执行 小银AI-Supabase部署脚本-v2.sql");
+  if (/Could not find the function.*xy_admin_set_owner_code|PGRST202/i.test(m + e.raw))
+    tips.push("xy_admin_set_owner_code 不存在：执行部署脚本 v2 后可用");
   if (e.status === 401 || e.status === 403 || /JWT|Invalid API key|apikey|permission denied/i.test(m))
     tips.push("API Key / 登录凭证无效（key 与项目不匹配，或 token 已过期）");
   if (e.status === 400 && !tips.length) tips.push("后端函数报错或参数不匹配");
@@ -296,59 +722,146 @@ function explainSupa(e) {
   return tips.length ? tips.join("；") + "｜服务端：" + (m || "无返回内容") : (m || ("HTTP " + e.status));
 }
 
+/* ============ v5.0.6 · Auth 错误完整解析（和主站同一套口径） ============ */
+async function authReadErr(resp) {
+  let txt = ""; try { txt = await resp.text(); } catch {}
+  let j = null; try { j = JSON.parse(txt); } catch {}
+  const msg = (j && (j.message || j.msg || j.error_description || j.error || j.details)) || txt || "";
+  return { status: resp.status, errorCode: String((j && (j.error_code || j.code)) || ""),
+           msg: String(msg).slice(0, 400), raw: txt.slice(0, 600) };
+}
+function explainAuth(e) {
+  const blob = [e && e.status, e && e.errorCode, e && e.msg, e && e.raw].join(" ");
+  if (/email_not_confirmed|Email not confirmed/i.test(blob))
+    return "⛔ 邮箱未验证：项目开着「Confirm email」，而 @xy.local 收不到验证邮件。旧电脑靠缓存登录态续着，换设备重新输密码就会被拒。\n"
+      + "【修复】Supabase → Authentication → Providers → Email → 关闭 Confirm email → Save；再在 Users 里确认该账号。";
+  if (/invalid_credentials|Invalid login credentials|invalid_grant/i.test(blob))
+    return "用户名或密码不对（用户名是注册时的字母/数字/下划线，不是昵称）。若确信没错，点下方「🔧 登录诊断」核对项目与后端设置。";
+  if (/Failed to fetch|NetworkError|Load failed|TypeError|timeout/i.test(blob))
+    return "🌐 连不上 Supabase，不是密码问题：国内网络访问 *.supabase.co 常不稳（旧电脑可能开着代理）、免费项目可能已被暂停、或扩展/企业网络拦了跨域请求。换网络、确认项目 Active 后重试。";
+  if (/Invalid API key|apikey|401|403/i.test(blob)) return "API Key 与项目不匹配或已轮换，请核对 Supabase → Project Settings → API。";
+  if (/schema cache|Could not find the function|PGRST20|404/i.test(blob)) return "后端报表函数不存在：这个项目没跑过最新版全量 SQL。";
+  if (e && e.status >= 500) return "Supabase 服务异常（HTTP " + e.status + "），项目可能被暂停。";
+  return (e && e.msg) || ("HTTP " + (e && e.status || "?"));
+}
+let lastAuthErr = null, diagText = "";
+async function runAuthDiag() {
+  const el = $("loginDiagBody"); if (!el) return;
+  const rows = [["页面协议", location.protocol === "file:" ? "file://（本地文件）" : location.protocol + "//" + location.host],
+    ["本地存储", lsWritable() ? "✓ 可写" : "⚠ 不可写（登录仍可用，刷新后需重登；设置只保留在本次会话）"],
+    ["后台项目", supaBase().replace(/^https?:\/\//, "").slice(0, 56)],
+    ["上次错误", lastAuthErr ? "HTTP " + lastAuthErr.status + " · " + (lastAuthErr.errorCode || "-") + " · " + (lastAuthErr.msg || "").slice(0, 100) : "无"]];
+  let reachable = false, cf = null;
+  try {
+    const r = await fetch(supaBase() + "/auth/v1/settings", { headers: { apikey: anon() } });
+    reachable = r.ok;
+    if (r.ok) { const j = await r.json().catch(() => ({})); if (typeof j.mailer_autoconfirm !== "undefined") cf = j.mailer_autoconfirm === true; }
+    rows.push(["后端可达", r.ok ? "✓ 正常" : "✗ HTTP " + r.status]);
+  } catch (e) { rows.push(["后端可达", "✗ " + String(e.message || e).slice(0, 80)]); }
+  if (cf !== null) rows.push(["邮箱验证", cf ? "✓ 已关闭 Confirm email" : "✗ Confirm email 开启"]);
+  let verdict, bad = false;
+  if (!reachable) { bad = true;
+    verdict = "结论：连不上 Supabase，与账号密码无关。换网络/开代理，并到 Dashboard 确认项目状态为 Active。"; }
+  else if (cf === false) { bad = true;
+    verdict = "★ 主因：Confirm email 开着，虚拟邮箱永远确认不了。关闭它并在 Users 里确认账号即可；旧电脑之所以能用，是因为一直缓存着登录态。"; }
+  else if (lastAuthErr && /email_not_confirmed/i.test([lastAuthErr.errorCode, lastAuthErr.msg].join(" "))) { bad = true;
+    verdict = "★ 服务端明确返回 Email not confirmed：关闭 Confirm email 并确认该用户。"; }
+  else verdict = "✓ 环境与后端正常，可再试一次；若仍失败，点「复制诊断」发给管理员。";
+  const html = rows.map(([k, v]) => `<div class="dr"><b>${esc(k)}</b><span>${esc(v)}</span></div>`).join("")
+    + `<div class="verdict ${bad ? "bad" : ""}">${esc(verdict)}</div>`;
+  el.innerHTML = html;
+  diagText = "小银后台登录诊断\n" + rows.map(([k, v]) => k + "：" + v).join("\n") + "\n\n结论：" + verdict;
+}
+function showDiagOnFail() {
+  const d = $("loginDiag"); if (d) d.open = true;
+  runAuthDiag();
+}
+
 /* ---------- 登录 ---------- */
 function showLogin(msg) {
   $("appView").style.display = "none";
   $("loginView").style.display = "flex";
   if (msg) $("loginMsg").textContent = msg;
-  $("inUrl").value = cfg.url || "";
-  $("inAnon").value = cfg.anon || "";
 }
 $("btnLogin").addEventListener("click", async () => {
-  const url = $("inUrl").value.trim().replace(/\/+$/, "");
-  const a = $("inAnon").value.trim();
   const u = $("inUser").value.trim();
   const p = $("inPass").value;
   const msg = $("loginMsg");
   msg.style.color = "var(--dim)"; msg.textContent = "连接中 …";
-  if (!/^https?:\/\/.+/.test(url) || !a) { msg.style.color = "#ff8fa3"; msg.textContent = "请填写 Supabase 地址与 anon key"; return; }
   if (!u || !p) { msg.style.color = "#ff8fa3"; msg.textContent = "请填写用户名与密码"; return; }
-  cfg = { url, anon: a };
-  localStorage.setItem(LS_ADMIN, JSON.stringify(cfg));
   try {
-    const resp = await fetch(url + "/auth/v1/token?grant_type=password", {
-      method: "POST",
-      headers: { apikey: a, "Content-Type": "application/json" },
-      body: JSON.stringify({ email: unameToEmail(u), password: p })
-    });
-    if (!resp.ok) {
-      const e = await resp.json().catch(() => ({}));
-      throw new Error(e.msg || e.error_description || "用户名或密码错误");
+    let resp;
+    try {
+      resp = await fetch(supaBase() + "/auth/v1/token?grant_type=password", {
+        method: "POST",
+        headers: { apikey: anon(), "Content-Type": "application/json" },
+        body: JSON.stringify({ email: unameToEmail(u), password: p })
+      });
+    } catch (e) {
+      lastAuthErr = { status: 0, errorCode: "", msg: String(e.message || e), raw: "" };
+      throw new Error(explainAuth(lastAuthErr));
     }
-    session = await resp.json();
-    localStorage.setItem(LS_AUTH, JSON.stringify(session));
+    if (!resp.ok) {
+      lastAuthErr = await authReadErr(resp);
+      throw new Error(explainAuth(lastAuthErr));
+    }
+    lastAuthErr = null;
+    const sess = await resp.json();
+    if (!sess || !sess.access_token) {
+      lastAuthErr = { status: 400, errorCode: "email_not_confirmed", msg: "登录未返回访问令牌", raw: "" };
+      throw new Error(explainAuth(lastAuthErr));
+    }
+    session = sess;
+    saveAuthSession(session);        /* 写不进本地存储不再阻断登录 */
     const r = await loadReport();
     if (!r.ok) {
-      session = null; localStorage.removeItem(LS_AUTH);
+      /* 只清本后台自己的会话，绝不 removeItem 共享 key 误伤主站 */
+      session = null; lsDel(LS_AUTH);
       throw new Error(r.error || "该账号不是管理员，无法进入后台");
     }
     msg.textContent = "";
+    report = r;
     enterApp();
+    if (authStorageWarn) toast("⚠ " + authStorageWarn, 6500);
   } catch (e) {
     msg.style.color = "#ff8fa3"; msg.textContent = "⚠ " + (e.message || e);
+    showDiagOnFail();
   }
 });
 $("inPass").addEventListener("keydown", e => { if (e.key === "Enter") $("btnLogin").click(); });
+$("btnDiagRun")?.addEventListener("click", () => runAuthDiag());
+$("btnDiagCopy")?.addEventListener("click", async () => {
+  if (!diagText) await runAuthDiag();
+  const ok = await copyText(diagText);
+  toast(ok ? "✓ 诊断信息已复制" : "⚠ 复制失败，请手动选中", 3000);
+});
 
+function reportError(msg) {
+  const box = $("reportErr");
+  if (!box) return;
+  box.textContent = msg || "";
+  box.style.display = msg ? "" : "none";
+}
+function setLoading(on) {
+  const b = $("btnRefresh");
+  if (!b) return;
+  b.disabled = !!on;
+  b.innerHTML = on ? '<span class="spin">⟳</span> 读取中' : "⟳ 刷新数据";
+}
 async function loadReport() {
-  const resp = await supa("/rest/v1/rpc/xy_admin_report", { method: "POST", body: "{}" });
-  if (!resp.ok) {
-    const e = await readErr(resp);
-    console.error("[小银后台] xy_admin_report 失败 →", resp.status, e.raw || "(空响应体)");
-    return { ok: false, error: "报表加载失败（" + resp.status + "）：" + explainSupa(e) };
-  }
-  const j = await resp.json();
-  return j || { ok: false, error: "空响应" };
+  setLoading(true);
+  try {
+    const resp = await supa("/rest/v1/rpc/xy_admin_report", { method: "POST", body: "{}" });
+    if (!resp.ok) {
+      const e = await readErr(resp);
+      console.error("[小银后台] xy_admin_report 失败 →", resp.status, e.raw || "(空响应体)");
+      return { ok: false, error: "报表加载失败（" + resp.status + "）：" + explainSupa(e) };
+    }
+    const j = await resp.json();
+    return j || { ok: false, error: "空响应" };
+  } catch (e) {
+    return { ok: false, error: "网络请求失败：" + (e.message || e) };
+  } finally { setLoading(false); }
 }
 
 /* ---------- 主界面 ---------- */
@@ -356,19 +869,40 @@ function enterApp() {
   $("loginView").style.display = "none";
   $("appView").style.display = "block";
   render();
+  loadPlatformData();   // 会话自动恢复时也要拉平台池，否则面板一直是空
+  loadQuotaData();      // v4 每日额度，独立 RPC，失败不影响主报表
 }
 $("btnLogout").addEventListener("click", async () => {
   try { await supa("/auth/v1/logout", { method: "POST" }); } catch {}
   session = null; report = null;
-  localStorage.removeItem(LS_AUTH);
+  lsDel(LS_AUTH);
   showLogin();
 });
-$("btnRefresh").addEventListener("click", async () => {
-  toast("⟳ 正在刷新 …");
+async function refreshReport(silent) {
+  if (!silent) toast("⟳ 正在刷新 …");
   const r = await loadReport();
-  if (r.ok === false) { toast("⚠ " + r.error); if (/管理员/.test(r.error || "")) showLogin(r.error); return; }
+  if (r.ok === false) {
+    reportError(r.error);
+    toast("⚠ " + r.error);
+    if (/管理员/.test(r.error || "")) showLogin(r.error);
+    return false;
+  }
+  reportError("");
   report = r; render();
-  toast("✦ 数据已刷新");
+  loadPlatformData();     // 独立 RPC，失败不影响主报表
+  loadCapsData();         // v5 智能体能力，独立 RPC
+  loadQuotaData();        // v4 每日额度
+  if (!silent) toast("✦ 数据已刷新");
+  return true;
+}
+$("btnRefresh").addEventListener("click", () => refreshReport(false));
+let autoTimer = null;
+$("autoRefresh").addEventListener("change", e => {
+  clearInterval(autoTimer);
+  if (e.target.checked) {
+    autoTimer = setInterval(() => { if (document.visibilityState === "visible") refreshReport(true); }, 60000);
+    toast("◈ 已开启自动刷新（60 秒）");
+  } else { autoTimer = null; toast("已关闭自动刷新"); }
 });
 
 function render() {
@@ -376,78 +910,229 @@ function render() {
   const me = (report.users || []).find(u => u.id === (session.user && session.user.id));
   $("whoLine").textContent = "已登录：" + (me ? me.username : "?") + " · owner · " + fmtTime(new Date().toISOString());
 
-  /* 汇总卡片 */
+  /* 汇总卡片（费用为前端按模型名估算，不依赖后端字段） */
   const t = report.totals || {};
   const cards = [
     ["用户总数", t.users ?? 0], ["云端消息", t.msgs ?? 0], ["模型调用", t.calls ?? 0],
-    ["估算 Tokens", t.tokens ?? 0], ["7 天活跃", t.active7 ?? 0]
+    ["估算 Tokens", t.tokens ?? 0], ["7 天活跃", t.active7 ?? 0],
+    ["估算费用", "¥" + estCost(report).toFixed(2)]
   ];
+  if (quotaData && quotaData.ok !== false)
+    cards.push(["今日语句", (quotaData.totals && quotaData.totals.today_msgs) ?? 0]);
   $("cards").innerHTML = cards.map(c =>
     `<div class="card"><div class="num">${esc(c[1])}</div><div class="lbl">${esc(c[0])}</div></div>`).join("");
 
-  renderChart(report.daily || []);
-  renderBars("modelBars", report.models || [], "model", "calls");
+  renderDiag();
+  renderChart();
+  renderModelBars();
   renderBars("toolBars", report.tools || [], "tool", "calls");
-  renderUsers(report.users || []);
+  renderUsers();
   $("keyNow").textContent = report.key || "未配置";
+  $("whoLine").textContent = "已登录：" + (me ? me.username : "?") + " · owner · 更新于 "
+    + fmtTime((report.meta && report.meta.generated_at) || new Date().toISOString());
 }
 
-/* 14 天趋势图（SVG 柱状） */
-function renderChart(daily) {
-  const svg = $("chart");
-  const empty = $("chartEmpty");
-  if (!daily.length) { svg.style.display = "none"; empty.style.display = ""; return; }
+/* ---------- 部署诊断：旧 SQL 也能进后台，只是提示去升级 ---------- */
+function renderDiag() {
+  const m = report.meta || {};
+  const v2 = m.schema_version >= 2;
+  const c = m.table_counts || {};
+  const hasProviders = Array.isArray(report.providers);
+  const hasDaily30 = Array.isArray(report.daily30);
+  const v3 = !!window.__platformDeployed;
+  const items = [
+    ["schema", v2 ? "v2 ✓" : "v1（旧）", v2 ? "SQL 部署脚本 v2 已就绪" : "未检测到 v2 字段", v2 ? "good" : "warn"],
+    ["报表生成", fmtTime(m.generated_at) || "—", "xy_admin_report()", ""],
+    ["档案 / 消息 / 用量", (c.profiles ?? "—") + " / " + (c.msgs ?? c.chats ?? "—") + " / " + (c.usage ?? "—"),
+     "xy_profiles / xy_chats / xy_usage", ""],
+    ["管理员注册码", m.owner_code_is_default === true ? "仍是默认值" : (v2 ? "已修改" : "未知"),
+     m.owner_code_is_default === true ? "建议立刻改掉" : "—", m.owner_code_is_default === true ? "warn" : ""],
+    ["厂商归类数据", hasProviders ? "后端提供" : "前端降级", hasProviders ? "rpc xy_provider()" : "浏览器端前缀匹配", hasProviders ? "good" : ""],
+    ["30 天趋势", hasDaily30 ? "可用" : "仅 14 天", hasDaily30 ? "daily30 补零返回" : "旧报表无此字段", hasDaily30 ? "good" : ""],
+    ["平台模型池", v3 ? "v3 已就绪" : "未部署", v3 ? "xy_platform_* RPC" : "执行增量部署脚本 v3", v3 ? "good" : "warn"],
+    ["每日语句额度", (quotaData && quotaData.ok !== false) ? "v4 已就绪" : "未部署",
+     (quotaData && quotaData.ok !== false) ? "xy_quota_daily + xy_quota_consume()" : "执行 v4 增量脚本", (quotaData && quotaData.ok !== false) ? "good" : "warn"],
+    ["智能体能力", capsDeployed ? "v5 已就绪" : "未部署",
+     capsDeployed ? "xy_platform_caps · 图像/视频/语音" : "执行 v5 增量脚本 + 重新部署 xy-platform", capsDeployed ? "good" : "warn"]
+  ];
+  $("diagGrid").innerHTML = items.map(([k, val, d, cls]) =>
+    `<div class="diag-item ${cls}"><b>${esc(val)}</b><span class="d">${esc(k)} · ${esc(d)}</span></div>`).join("");
+  const rpc = "xy_admin_report / xy_admin_set_user / xy_admin_set_key / xy_admin_del_user / xy_admin_set_owner_code";
+  $("diagNote").innerHTML = v2
+    ? "· 契约：<code>" + esc(rpc) + "</code><br>· 权限收敛、索引、daily 补零、删除级联清理均已生效；重置他人密码仍需 Edge Function <code>xy-admin</code>"
+    : "· 检测到旧版报表契约。执行 <code>小银AI-Supabase部署脚本-v2.sql</code> 后可获得：趋势补零、按厂商归类、删除用户同步清理用量、注册防提权、改注册码。<br>· 当前后台已自动降级，所有功能仍可用，不会报错。";
+  if (!v3) $("diagNote").innerHTML += "<br>· 平台共享模型池需执行 <code>小银AI-平台模型池-增量部署.sql</code>；未部署时下方管理面板会自动隐藏配置表单。";
+  if (!quotaData || quotaData.ok === false)
+    $("diagNote").innerHTML += "<br>· 登录门禁与每日 10 条额度需执行 <code>小银AI-登录门禁与每日额度-v4增量.sql</code>；未部署时主站仍要求登录，但额度只在本机计数（可被绕过）。";
+  if (!capsDeployed)
+    $("diagNote").innerHTML += "<br>· 智能体能力需执行 <code>小银AI-智能体能力-v5增量.sql</code> 并重新部署 <code>xy-platform</code> Edge Function（v3，GET 应返回 version: 3）。未部署时主站图像/语音自动降级到内置能力，视频会给出明确提示。";
+}
+
+/* 活跃趋势：7 / 14 / 30 天切换；SQL v2 的 daily / daily30 已补零，空天也会画出来 */
+let chartRange = 14;
+function renderChart() {
+  const svg = $("chart"), empty = $("chartEmpty");
+  const has30 = Array.isArray(report.daily30) && report.daily30.length > 0;
+  if (chartRange > 14 && !has30) chartRange = 14;   // 旧 SQL 只有 14 天，自动回落
+  const b30 = document.querySelector('[data-range="30"]');
+  if (b30) { b30.disabled = !has30; b30.title = has30 ? "" : "执行 SQL 部署脚本 v2 后可用"; }
+  const src = has30 && chartRange > 14 ? report.daily30 : (report.daily || []);
+  const all = Array.isArray(src) ? src : [];
+  const list = all.slice(-chartRange);
+  $("chartSub").textContent = "近 " + list.length + " 天 · 每日消息数 / 活跃人数";
+  document.querySelectorAll("[data-range]").forEach(b => b.classList.toggle("on", +b.dataset.range === chartRange));
+  if (!list.length) {
+    svg.style.display = "none"; empty.style.display = "";
+    $("chartNote").textContent = "";
+    return;
+  }
   svg.style.display = ""; empty.style.display = "none";
-  const W = 900, H = 150, pad = 26, bw = Math.min(40, (W - pad * 2) / daily.length - 8);
-  const max = Math.max(1, ...daily.map(d => d.msgs));
-  const gap = (W - pad * 2) / daily.length;
+  const W = 900, H = 150, pad = 26;
+  const gap = (W - pad * 2) / list.length;
+  const bw = Math.min(40, Math.max(3, gap - 6));
+  const msgs = list.map(d => Number(d.msgs) || 0);
+  const max = Math.max(1, ...msgs);
+  const labelEvery = Math.ceil(list.length / 10);
   let s = "";
   for (let i = 0; i <= 4; i++) {
     const y = pad + (H - pad * 2) * i / 4;
     s += `<line x1="${pad}" y1="${y}" x2="${W - pad}" y2="${y}" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;
     s += `<text x="${pad - 6}" y="${y + 4}" fill="#7d8ea8" font-size="9" text-anchor="end" font-family="monospace">${Math.round(max * (1 - i / 4))}</text>`;
   }
-  daily.forEach((d, i) => {
-    const h = (H - pad * 2) * d.msgs / max;
-    const x = pad + gap * i + (gap - bw) / 2;
-    const y = H - pad - h;
-    s += `<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(h, d.msgs ? 2 : 0)}" rx="3" fill="url(#gbar)"><title>${esc(d.day)} · ${d.msgs} 条消息 · ${d.actives} 人活跃</title></rect>`;
-    s += `<text x="${pad + gap * i + gap / 2}" y="${H - 8}" fill="#7d8ea8" font-size="9" text-anchor="middle" font-family="monospace">${esc(d.day)}</text>`;
-    if (d.msgs) s += `<text x="${pad + gap * i + gap / 2}" y="${y - 5}" fill="#9fe8f5" font-size="9" text-anchor="middle" font-family="monospace">${d.msgs}</text>`;
+  list.forEach((d, i) => {
+    const v = msgs[i], cx = pad + gap * i + gap / 2;
+    const h = (H - pad * 2) * v / max;
+    const x = cx - bw / 2, y = H - pad - h;
+    s += `<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(h, v ? 2 : 0)}" rx="3" fill="url(#gbar)"><title>${esc(d.day)} · ${v} 条消息 · ${Number(d.actives) || 0} 人活跃</title></rect>`;
+    if (i % labelEvery === 0 || i === list.length - 1)
+      s += `<text x="${cx}" y="${H - 8}" fill="#7d8ea8" font-size="9" text-anchor="middle" font-family="monospace">${esc(d.day)}</text>`;
+    if (v && gap > 18)
+      s += `<text x="${cx}" y="${y - 5}" fill="#9fe8f5" font-size="9" text-anchor="middle" font-family="monospace">${v}</text>`;
   });
   svg.innerHTML = `<defs><linearGradient id="gbar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00e5ff"/><stop offset="1" stop-color="#7c6cff" stop-opacity=".55"/></linearGradient></defs>` + s;
+  const sum = msgs.reduce((a, b) => a + b, 0);
+  const busy = list.reduce((a, d) => (Number(d.msgs) || 0) > (Number(a.msgs) || 0) ? d : a, list[0]);
+  $("chartNote").textContent = "区间共 " + sum + " 条消息 · 峰值 " + (busy ? busy.day + "（" + busy.msgs + " 条）" : "—")
+    + " · 空天已补零显示";
 }
+document.querySelectorAll("[data-range]").forEach(b => b.addEventListener("click", () => {
+  chartRange = +b.dataset.range;
+  renderChart();
+}));
 
 /* 通用横向条形（模型分布 / 工具排行） */
+/* 费用估算：总 tokens 按调用数分摊到各模型，再乘单价（元/百万 token）。
+   口径与主站 v4.6 的 PRICE_CNY_PER_M / cfg.paidAvg 默认值一致：
+   内置 flash 0、GLM-4-Plus 5、DeepSeek 4，其余（含多厂商自定义模型）按 1 粗估。 */
+const COST_MAP = [
+  [/glm-4-flash/i, 0],
+  [/glm-4-plus/i, 5],
+  [/deepseek/i, 4],
+];
+function modelPriceCNY(name) {
+  for (const [re, p] of COST_MAP) if (re.test(String(name || ""))) return p;
+  return 1; // 与主站 cfg.paidAvg 默认值一致
+}
+/* 按模型 ID / 显示名前缀归类厂商（只用于展示，不依赖后端新增字段） */
+const PROVIDER_RULES = [
+  ["◈ 内置共享池", /^(glm-4-flash|glm-4-flashx|glm-4-plus|GLM-4-Flash)/i],
+  /* 本地 Ollama 要排在最前：qwen3:8b / deepseek-r1:8b 会误命中阿里或 DeepSeek */
+  ["🏠 本地 Ollama", /ollama|localhost|llama3|:[0-9]+b(\b|$)/i],
+  ["🟦 腾讯混元 / TokenHub", /混元|TokenHub|Hy4|hunyuan|^hy[0-9]/i],
+  ["🟪 阿里百炼 / 通义千问", /千问|百炼|qwen/i],
+  ["🟧 字节豆包 / 火山方舟", /豆包|方舟|doubao|seed|^ep-/i],
+  ["🟩 智谱 GLM（用户自接）", /智谱|^glm|zhipu/i],
+  ["🔵 DeepSeek", /deepseek/i],
+  ["🌙 Kimi / Moonshot", /kimi|moonshot/i],
+  ["🟣 MiniMax", /minimax|abab/i],
+  ["🔷 百度千帆 / 文心", /ernie|文心|千帆/i],
+  ["✨ Gemini", /gemini/i],
+  ["🌐 OpenRouter / 海外", /claude|gpt-|openrouter|o1|o3/i],
+];
+function providerOf(name) {
+  const n = String(name || "");
+  for (const [label, re] of PROVIDER_RULES) if (re.test(n)) return label;
+  return "✦ 其他 / 自定义";
+}
+let modelView = "model";
+function providerRows() {
+  /* SQL v2 直接给归类结果；旧报表在浏览器端用前缀规则降级，行为一致 */
+  if (Array.isArray(report.providers) && report.providers.length)
+    return report.providers.map(p => ({ model: p.provider, calls: Number(p.calls) || 0 }))
+      .sort((a, b) => b.calls - a.calls);
+  const agg = new Map();
+  for (const r of (report.models || [])) {
+    const k = providerOf(r.model);
+    agg.set(k, (agg.get(k) || 0) + (Number(r.calls) || 0));
+  }
+  return [...agg].map(([model, calls]) => ({ model, calls })).sort((a, b) => b.calls - a.calls);
+}
+function renderModelBars() {
+  renderBars("modelBars", modelView === "provider" ? providerRows() : (report.models || []), "model", "calls");
+}
+document.querySelectorAll("[data-mv]").forEach(b => b.addEventListener("click", () => {
+  modelView = b.dataset.mv;
+  document.querySelectorAll("[data-mv]").forEach(x => x.classList.toggle("on", x === b));
+  renderModelBars();
+}));
+function estCost(rep) {
+  const t = rep.totals || {};
+  const calls = (rep.models || []).reduce((s, m) => s + (m.calls || 0), 0);
+  if (!calls || !t.tokens) return 0;
+  const avgTok = t.tokens / calls;
+  return (rep.models || []).reduce((s, m) => s + (m.calls || 0) * avgTok * modelPriceCNY(m.model) / 1e6, 0);
+}
 function renderBars(elId, rows, nameKey, valKey) {
   const el = $(elId);
-  if (!rows.length) { el.innerHTML = `<div class="empty">暂无数据</div>`; return; }
-  const max = Math.max(...rows.map(r => r[valKey]));
-  el.innerHTML = rows.map(r => {
-    const w = Math.max(2, Math.round(r[valKey] / max * 100));
+  const list = Array.isArray(rows) ? rows : [];
+  if (!list.length) { el.innerHTML = `<div class="empty">暂无数据</div>`; return; }
+  const vals = list.map(r => Number(r[valKey]) || 0);
+  const max = Math.max(1, ...vals);
+  el.innerHTML = list.map((r, i) => {
+    const w = Math.max(2, Math.round(vals[i] / max * 100));
     return `<div class="bar-row"><span class="nm" title="${esc(r[nameKey])}">${esc(r[nameKey])}</span>
-      <span class="tr"><span class="fl" style="width:${w}%"></span></span><span class="vl">${esc(r[valKey])}</span></div>`;
+      <span class="tr"><span class="fl" style="width:${w}%"></span></span><span class="vl">${esc(vals[i])}</span></div>`;
   }).join("");
 }
 
 /* 用户表 */
-function PERMS() { return [["image", "绘图"], ["office", "办公"], ["ppt", "PPT"], ["deepseek", "DeepSeek"]]; }
-function renderUsers(users) {
+const PERM_DEFS = [["image", "绘图"], ["office", "办公"], ["ppt", "PPT"], ["deepseek", "DeepSeek"],
+  ["platform", "平台共享"], ["video", "视频生成"], ["audio", "语音"]];   /* v5.0.2：补齐，否则保存权限会把 video/audio 强制重置为 true */
+function renderUsers() {
   const tb = $("userRows");
+  const all = Array.isArray(report.users) ? report.users : [];
+  const q = String(($("userSearch") && $("userSearch").value) || "").trim().toLowerCase();
+  const role = ($("roleFilter") && $("roleFilter").value) || "all";
+  const sort = ($("userSort") && $("userSort").value) || "created";
+  let users = all.filter(u =>
+    (!q || String(u.username || "").toLowerCase().includes(q)) &&
+    (role === "all" || u.role === role));
+  if (sort === "msg") users = users.slice().sort((a, b) => (b.msg_count || 0) - (a.msg_count || 0));
+  else if (sort === "usage") users = users.slice().sort((a, b) => (b.usage_count || 0) - (a.usage_count || 0));
+  else if (sort === "name") users = users.slice().sort((a, b) => String(a.username).localeCompare(String(b.username)));
+  $("userCount").textContent = users.length === all.length
+    ? "共 " + all.length + " 人" : "显示 " + users.length + " / " + all.length + " 人";
   if (!users.length) { $("userTable").style.display = "none"; $("userEmpty").style.display = ""; return; }
   $("userTable").style.display = ""; $("userEmpty").style.display = "none";
   const myId = session.user && session.user.id;
   tb.innerHTML = users.map(u => {
     const perms = u.perms || {};
-    const permHtml = PERMS().map(([k, label]) =>
+    const permHtml = PERM_DEFS.map(([k, label]) =>
       `<label class="perm${perms[k] === false ? " off" : ""}"><input type="checkbox" data-uid="${esc(u.id)}" data-perm="${k}" ${perms[k] !== false ? "checked" : ""}>${label}</label>`).join("");
     const roleTag = `<span class="tag ${esc(u.role)}">${u.role === "owner" ? "管理员" : (u.role === "banned" ? "已封禁" : "普通用户")}</span>`;
     const isMe = u.id === myId;
+    /* 不再把 uid / 用户名拼进 onclick 字符串：全部走 data-* + 事件委托 */
+    const attrs = `data-uid="${esc(u.id)}" data-uname="${esc(u.username)}"`;
     const roleBtn = u.role === "banned"
-      ? `<button class="mini-btn" onclick="setUser('${esc(u.id)}','user')">解封</button>`
-      : (isMe ? "" : `<button class="mini-btn danger" onclick="setUser('${esc(u.id)}','banned')">封禁</button>`);
-    const delBtn = isMe ? "" : `<button class="mini-btn danger" onclick="delUser('${esc(u.id)}','${esc(u.username)}')">删除</button>`;
-    const saveBtn = `<button class="mini-btn" onclick="savePerms('${esc(u.id)}')">保存</button>`;
+      ? `<button class="mini-btn" data-act="setUser" data-role="user" ${attrs}>解封</button>`
+      : (isMe ? "" : `<button class="mini-btn danger" data-act="setUser" data-role="banned" ${attrs}>封禁</button>`);
+    const delBtn = isMe ? "" : `<button class="mini-btn danger" data-act="delUser" ${attrs}>删除</button>`;
+    const pwdBtn = isMe
+      ? `<button class="mini-btn" data-act="changeMyPwd">改我密码</button>`
+      : `<button class="mini-btn" data-act="resetPwd" ${attrs}>重置密码</button>`;
+    /* SQL v2 会拒绝「改自己角色」，索性不给这个按钮，避免点了报错 */
+    const saveBtn = isMe ? '<span style="color:var(--dim);font-size:10px;font-family:var(--mono)">本人不可改</span>'
+                         : `<button class="mini-btn" data-act="savePerms" ${attrs}>保存</button>`;
     return `<tr>
       <td><b style="color:#eafcff">${esc(u.username)}</b>${isMe ? ' <span style="color:var(--dim);font-size:10px;font-family:var(--mono)">(我)</span>' : ""}</td>
       <td>${roleTag}</td>
@@ -455,20 +1140,39 @@ function renderUsers(users) {
       <td style="font-family:var(--mono)">${esc(u.msg_count ?? 0)}</td>
       <td style="font-family:var(--mono)">${esc(u.usage_count ?? 0)}</td>
       <td style="font-family:var(--mono);color:var(--dim)">${fmtTime(u.created_at)}</td>
-      <td style="white-space:nowrap;">${saveBtn} ${roleBtn} ${delBtn}</td>
+      <td style="white-space:nowrap;">${saveBtn} ${roleBtn} ${pwdBtn} ${delBtn}</td>
     </tr>`;
   }).join("");
 }
 
+/* 用户表操作：统一事件委托，用户名含引号也不会进入 JS 上下文 */
+$("userRows").addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const { act, uid, uname, role } = b.dataset;
+  if (act === "savePerms") savePerms(uid);
+  else if (act === "setUser") setUser(uid, role);
+  else if (act === "delUser") delUser(uid, uname);
+  else if (act === "resetPwd") resetPwd(uid, uname);
+  else if (act === "changeMyPwd") changeMyPwd();
+});
+
+/* 用户表：搜索 / 角色筛选 / 排序 */
+["userSearch", "roleFilter", "userSort"].forEach(id => {
+  const el = $(id);
+  if (el) el.addEventListener(id === "userSearch" ? "input" : "change", renderUsers);
+});
+
 /* 收集某用户当前勾选的权限并保存 */
 async function savePerms(uid) {
-  const boxes = document.querySelectorAll(`input[type="checkbox"][data-uid="${uid}"]`);
+  const boxes = [...document.querySelectorAll('input[type="checkbox"][data-perm]')]
+    .filter(b => b.dataset.uid === uid);
   const perms = {};
   boxes.forEach(b => { perms[b.dataset.perm] = b.checked; });
   const u = (report.users || []).find(x => x.id === uid);
   const r = await rpcSetUser(uid, u ? u.role : "user", perms);
   toast(r.ok ? "✦ 权限已保存（" + (u ? u.username : uid) + "）" : "⚠ " + r.error);
-  if (r.ok) { const nr = await loadReport(); if (nr.ok !== false) { report = nr; render(); } }
+  if (r.ok) refreshReport(true);
 }
 async function setUser(uid, role) {
   const u = (report.users || []).find(x => x.id === uid);
@@ -476,14 +1180,57 @@ async function setUser(uid, role) {
   const perms = u ? (u.perms || {}) : {};
   const r = await rpcSetUser(uid, role, perms);
   toast(r.ok ? "✦ 已" + (role === "banned" ? "封禁" : "解封") + (u ? " " + u.username : "") : "⚠ " + r.error);
-  if (r.ok) { const nr = await loadReport(); if (nr.ok !== false) { report = nr; render(); } }
+  if (r.ok) refreshReport(true);
 }
+/* 重置他人密码：走 Edge Function xy-admin（需已部署且配置 SERVICE_ROLE_KEY）。
+   未部署时函数返回 404/明确错误，前端原样提示，不影响其他管理功能。 */
+async function resetPwd(uid, uname) {
+  const np = prompt("为「" + uname + "」设置新密码（至少 6 位，对方下次登录即用此密码）：");
+  if (np == null) return;
+  if (np.length < 6) { toast("⚠ 新密码至少 6 位"); return; }
+  toast("⟳ 正在重置 …");
+  let j = null;
+  try {
+    const resp = await fetch(supaBase() + "/functions/v1/xy-admin", {
+      method: "POST",
+      headers: { apikey: anon(), "Content-Type": "application/json",
+                 Authorization: "Bearer " + (session && session.access_token || "") },
+      body: JSON.stringify({ action: "reset_password", p_uid: uid, p_password: np }),
+    });
+    if (resp.status === 404 || resp.status === 503) {
+      throw new Error("后端函数「xy-admin」尚未部署（见 xy-admin-edge-function.ts 部署说明）");
+    }
+    j = await resp.json().catch(() => ({}));
+  } catch (e) { j = { ok: false, error: e.message || String(e) }; }
+  toast(j.ok ? "✦ 已重置 " + uname + " 的密码" : "⚠ " + (j.error || "重置失败"));
+}
+/* 修改自己的密码：走 Supabase 用户自助接口，无需 Edge Function */
+async function changeMyPwd() {
+  /* 凭当前登录态直接修改（Supabase /auth/v1/user 不需要旧密码）；
+     旧版本会弹「当前密码」却从不使用，已移除，避免误导。 */
+  const np = prompt("新密码（至少 6 位，凭当前登录态修改）：");
+  if (np == null) return;
+  if (np.length < 6) { toast("⚠ 新密码至少 6 位"); return; }
+  try {
+    const resp = await fetch(supaBase() + "/auth/v1/user", {
+      method: "PUT",
+      headers: { apikey: anon(), "Content-Type": "application/json",
+                 Authorization: "Bearer " + (session && session.access_token || "") },
+      body: JSON.stringify({ password: np }),
+    });
+    if (resp.status === 401 || resp.status === 422) throw new Error("凭证已过期或新密码不合要求（请重新登录后再试）");
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    toast("✦ 自己的密码已修改");
+  } catch (e) { toast("⚠ 修改失败：" + (e.message || e)); }
+}
+
 async function delUser(uid, uname) {
   if (!confirm("确定彻底删除用户 " + uname + " 吗？\n其云端对话与用量记录将一并删除（登录凭证保留，对方可重新注册同名账号）。")) return;
   const resp = await supa("/rest/v1/rpc/xy_admin_del_user", { method: "POST", body: JSON.stringify({ p_uid: uid }) });
   const j = await resp.json().catch(() => ({}));
-  toast(j.ok ? "✦ 已删除 " + uname : "⚠ " + (j.error || "删除失败"));
-  if (j.ok) { const nr = await loadReport(); if (nr.ok !== false) { report = nr; render(); } }
+  toast(j.ok ? "✦ 已删除 " + uname + "（清理 " + (j.deleted_chats ?? 0) + " 条消息 / " + (j.deleted_usage ?? 0) + " 条用量）"
+             : "⚠ " + (j.error || "删除失败"));
+  if (j.ok) refreshReport(true);
 }
 async function rpcSetUser(uid, role, perms) {
   const resp = await supa("/rest/v1/rpc/xy_admin_set_user", {
@@ -505,15 +1252,1508 @@ $("btnKeySave").addEventListener("click", async () => {
   if (j.ok) {
     $("keyNew").value = "";
     toast(key ? "✦ 云端 Key 已更新，登录用户下次会话即生效" : "✦ 云端 Key 已作废");
-    const nr = await loadReport(); if (nr.ok !== false) { report = nr; render(); }
+    refreshReport(true);
   } else toast("⚠ " + (j.error || "保存失败"));
+});
+
+/* ---------- 导出 ---------- */
+function download(name, text, mime) {
+  const blob = new Blob(["\ufeff" + text], { type: (mime || "text/plain") + ";charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+function csvCell(v) {
+  let x = String(v == null ? "" : v);
+  /* CSV 注入：以 = + - @ 开头的单元格会被 Excel/表格软件当公式执行 */
+  if (/^[=+\-@\t\r]/.test(x)) x = "'" + x;
+  x = x.replace(/"/g, '""');
+  return /[",\n\r]/.test(x) ? '"' + x + '"' : x;
+}
+function csv(rows) { return rows.map(r => r.map(csvCell).join(",")).join("\r\n"); }
+function stamp() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0")
+    + "-" + String(d.getDate()).padStart(2, "0");
+}
+$("btnExportJson").addEventListener("click", () => {
+  if (!report) return toast("⚠ 暂无报表");
+  download("xiaoyin-report-" + stamp() + ".json", JSON.stringify(report, null, 2), "application/json");
+  toast("✦ 完整报表已导出");
+});
+$("btnExportUsers").addEventListener("click", () => {
+  const rows = [["用户名", "角色", "消息数", "调用数", "绘图", "办公", "PPT", "DeepSeek", "注册时间"]];
+  (report.users || []).forEach(u => {
+    const p = u.perms || {};
+    rows.push([u.username, u.role, u.msg_count ?? 0, u.usage_count ?? 0,
+      p.image === false ? "关" : "开", p.office === false ? "关" : "开",
+      p.ppt === false ? "关" : "开", p.deepseek === false ? "关" : "开", u.created_at || ""]);
+  });
+  download("xiaoyin-users-" + stamp() + ".csv", csv(rows), "text/csv");
+  toast("✦ 用户清单已导出（" + (rows.length - 1) + " 人）");
+});
+$("btnExportUsage").addEventListener("click", () => {
+  const rows = [["类别", "名称", "调用次数"]];
+  (report.models || []).forEach(m => rows.push(["模型", m.model, m.calls]));
+  providerRows().forEach(p => rows.push(["厂商", p.model, p.calls]));
+  (report.tools || []).forEach(t => rows.push(["工具", t.tool, t.calls]));
+  download("xiaoyin-usage-" + stamp() + ".csv", csv(rows), "text/csv");
+  toast("✦ 用量明细已导出");
+});
+
+/* ---------- 安全设置：改管理员注册码（SQL v2 新增 RPC） ---------- */
+$("btnOwnerCode").addEventListener("click", async () => {
+  const v = $("ownerCodeNew").value.trim();
+  if (!v) { toast("请填写新注册码（8–64 位）"); return; }
+  if (v.length < 8 || v.length > 64) { toast("⚠ 注册码需 8–64 位"); return; }
+  if (!confirm("更新后，新用户注册必须使用新注册码。已存在的管理员不受影响。确定？")) return;
+  const resp = await supa("/rest/v1/rpc/xy_admin_set_owner_code", {
+    method: "POST", body: JSON.stringify({ p_code: v })
+  });
+  if (resp.status === 404) { toast("⚠ 函数不存在：请先执行 Supabase 部署脚本 v2"); return; }
+  const j = await resp.json().catch(() => ({}));
+  if (!j.ok) { toast("⚠ " + (j.error || "更新失败")); return; }
+  $("ownerCodeNew").value = "";
+  toast("✦ 管理员注册码已更新");
+  refreshReport(true);
+});
+
+/* ================================================================
+   v4.8 平台共享模型池管理
+   所有 RPC 独立调用；v3 未部署时 404 → 面板显示部署指引，不抛错、不影响其他功能
+   ================================================================ */
+/* ============================================================
+   v5 · 智能体能力管理（图像 / 视频 / 语音各有独立端点）
+   ============================================================ */
+const CAP_PRESETS = [
+  { id:"ark_seedream", kind:"image", name:"火山方舟 · 豆包 Seedream 4.0（文生图 · 常用）",
+    endpoint:"https://ark.cn-beijing.volces.com/api/v3/images/generations", poll:"",
+    model:"doubao-seedream-4-0-250828", size:"2K",
+    tip:"对应控制台「Doubao-Seedream-4.0 已开通」。模型 ID 仍以你控制台「快捷 API 接入 → cURL」里的 『model』为准（含日期后缀）；端点固定 /api/v3/images/generations" },
+  { id:"ark_seedance10", kind:"video", name:"火山方舟 · 豆包 Seedance 1.0 pro fast（文生视频 · 常用）",
+    endpoint:"https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks",
+    poll:"https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks",
+    model:"doubao-seedance-1-0-pro-fast-251015", size:"",
+    tip:"对应控制台「Doubao-Seedance-1.0-pro-fast 已开通」。视频为异步任务：POST 建任务 → GET 轮询；链接通常 24 小时有效" },
+  { id:"ark_seedance", kind:"video", name:"火山方舟 · 豆包 Seedance 2.0（需在控制台开通）",
+    endpoint:"https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks",
+    poll:"https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks",
+    model:"doubao-seedance-2-0-260128", size:"",
+    tip:"Seedance 2.0 在不少账号里显示「未开通」。未开通时请改用「Seedance 1.0 pro fast」预设，否则厂商返回 404" },
+  { id:"ark_tts", kind:"tts", name:"火山引擎 · 云端语音合成",
+    endpoint:"", poll:"", model:"",
+    tip:"语音端点按厂商文档填写；不配置时主站用浏览器原生 SpeechSynthesis（零 Key）" },
+  { id:"ark_asr", kind:"asr", name:"火山引擎 · 云端语音识别",
+    endpoint:"", poll:"", model:"",
+    tip:"录音文件识别 / 流式识别端点不同；不配置时主站用浏览器原生 SpeechRecognition" },
+  { id:"custom", kind:"image", name:"自定义能力端点", endpoint:"", poll:"", model:"", tip:"按厂商文档填写完整地址" }
+];
+let capRows = [], capEditing = null, capsDeployed = false;
+let capEfVersion = null, capRawBody = null;   /* v5.0.2：EF 版本 + 控制台 cURL 原样请求体 */
+const CAP_LABEL = { image:"🖼 图像", video:"🎬 视频", tts:"🔊 语音合成", asr:"🎤 语音识别" };
+/* 渲染预设下拉（v5 补丁漏了这步，导致下拉是空的、用户选不了方舟预设） */
+$("capPreset").innerHTML = CAP_PRESETS.map(p =>
+  `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+$("capPreset").value = "ark_seedream";
+
+async function capRpc(name, body) {
+  const r = await supa("/rest/v1/rpc/" + name, { method:"POST", body: JSON.stringify(body || {}) });
+  if (r.status === 404) return { ok:false, error:"v5 智能体能力 RPC 不存在，请先执行「小银AI-智能体能力-v5增量.sql」" };
+  return await r.json().catch(() => ({ ok:false, error:"响应解析失败" }));
+}
+async function loadCapsData() {
+  capsDeployed = false; capRows = [];
+  const j = await capRpc("xy_platform_caps_admin_list");
+  if (j && j.ok) { capsDeployed = true; capRows = Array.isArray(j.caps) ? j.caps : []; }
+  renderCapList(); renderDiag();
+  /* GET 探测 Edge Function 版本：version < 3 说明没重新部署 v3 .ts */
+  try {
+    const r = await supa("/functions/v1/xy-platform", { method:"GET" });
+    const v = await r.json().catch(() => ({}));
+    capEfVersion = v && v.ok ? (v.version || 1) : null;
+  } catch { capEfVersion = null; }
+  renderCapSetup();
+}
+/* 浏览器密码管理器常用圆点占位，绝不能把它当成新 Key 写进数据库覆盖真 Key */
+function capCleanKey(v) {
+  const t = String(v || "").trim();
+  if (!t || /^[•·*\u2022\u25cf\u00b7\s]+$/.test(t)) return "";
+  return t;
+}
+/* 轮询端点只对视频有意义；图像能力里残留的 /contents/generations/tasks 直接清掉 */
+function capSyncKindUI() {
+  const isVideo = $("capKind").value === "video";
+  const wrap = $("capPollWrap");
+  if (wrap) wrap.style.display = isVideo ? "" : "none";
+  if (!isVideo && $("capPoll").value.trim()) $("capPoll").value = "";
+}
+function capCheckRender() {
+  const el = $("capCheck"); if (!el) return { level:"", msg:"" };
+  const kind = $("capKind").value, ep = $("capEndpoint").value.trim();
+  const poll = $("capPoll").value.trim(), model = $("capModel").value.trim();
+  let r = { level:"", msg:"选择能力类型与预设后，这里会自动检查端点是否合法。" };
+  if (ep && /\/chat\/completions\/?$/.test(ep))
+    r = { level:"err", msg:"❌ 能力端点不能是 /chat/completions。图像/视频/语音各有独立接口，用对话协议调用必然 404。" };
+  else if (ep && !/^https?:\/\/.+/i.test(ep))
+    r = { level:"err", msg:"❌ 端点需为完整 http(s)://… 地址。" };
+  else if (kind === "video" && !poll)
+    r = { level:"err", msg:"❌ 视频能力必须填「轮询端点」（GET 查询任务状态），否则生成后取不回视频。" };
+  else if (ep && kind === "image" && !/images\/generations/i.test(ep))
+    r = { level:"warn", msg:"⚠ 这个端点不像图像生成接口。方舟应为 /api/v3/images/generations。" };
+  else if (ep && kind === "video" && !/generations\/tasks/i.test(ep))
+    r = { level:"warn", msg:"⚠ 这个端点不像视频任务接口。方舟应为 /api/v3/contents/generations/tasks。" };
+  else if (model && /[\u3400-\u9FFF\s]/.test(model))
+    r = { level: "err", msg: "❌ 模型 ID 里出现了中文或空格，那是展示名不是接口 ID。请照抄控制台 cURL 里的 『model』（如 doubao-seedream-4-0-250828）。" };
+  else if (model && /^(Doubao|Hyper3D|Hitem3D|Seed3D)-/i.test(model) && /[A-Z]/.test(model))
+    r = { level: "err", msg: "❌ 这是控制台的<b>展示名</b>（如 Doubao-Seedream-4.0），不是接口 model ID。请到「快捷 API 接入 → cURL」复制小写带日期后缀的那一串（如 doubao-seedream-4-0-250828）。" };
+  else if (model && /seed3d|hyper3d|hitem3d|3d-gen/i.test(model))
+    r = { level: "err", msg: "❌ 这是 3D 生成模型。小银当前只有图像 / 视频 / 语音三类能力，3D 走厂商独立异步接口，不能填进这里。" };
+  else if (model && kind === "image" && /seedance|video|i2v|t2v/i.test(model))
+    r = { level: "err", msg: "❌ 类型错配：这是<b>视频</b>模型，却填在「🖼 图像生成」里。请把能力类型改成「🎬 视频生成」，或换一个 Seedream 图像模型 ID。" };
+  else if (model && kind === "video" && /seedream|image|flux|cogview/i.test(model))
+    r = { level: "err", msg: "❌ 类型错配：这是<b>图像</b>模型，却填在「🎬 视频生成」里。请把能力类型改成「🖼 图像生成」，或换一个 Seedance 视频模型 ID。" };
+  else if (model && /^doubao-seedream-5-0-lite/i.test(model))
+    r = { level: "warn", msg: "⚠ 这个 ID 在多数账号的开通列表里不存在（常见的是 4.0 / 5.0-flash / 5.0-pro）。请确认你的控制台确实有该版本并已开通，否则厂商返回 404。" };
+  else if (ep) r = { level: "ok", msg: "✓ 端点格式正常。保存后请点「⚡ 测试连接」确认厂商是否放行。" };
+  el.className = "pm-check " + (r.level || ""); el.innerHTML = r.msg;
+  return r;
+}
+function capFormReset() {
+  capEditing = null;
+  ["capName","capModel","capEndpoint","capPoll","capKey","capExtra"].forEach(id => $(id).value = "");
+  $("capKind").value = "image"; $("capPreset").value = "ark_seedream";
+  $("btnCapSave").textContent = "保存能力"; $("btnCapCancel").style.display = "none";
+  $("capEditHint").textContent = "";
+  if ($("capCurl")) $("capCurl").value = "";
+  capRawBody = null;
+  capSyncKindUI(); capCheckRender();
+}
+function capLoadEdit(m) {
+  const d = document.querySelector("#capForm")?.closest("details"); if (d) d.open = true;
+  $("capForm")?.classList.remove("hide-adv");
+  $("btnCapAdv").textContent = "✕ 收起高级设置";
+  capEditing = m.id;
+  $("capKind").value = m.kind; $("capName").value = m.name || "";
+  $("capModel").value = m.model || ""; $("capEndpoint").value = m.endpoint || "";
+  $("capPoll").value = m.poll_endpoint || ""; $("capKey").value = "";
+  $("capExtra").value = m.extra && Object.keys(m.extra).length ? JSON.stringify(m.extra) : "";
+  $("capPreset").value = "custom";
+  $("btnCapSave").textContent = "保存修改"; $("btnCapCancel").style.display = "";
+  $("capEditHint").textContent = "正在编辑 · API Key 留空 = 不改动";
+  if ($("capCurl")) $("capCurl").value = "";
+  document.querySelectorAll("#appView details.advanced").forEach(d => d.open = true);
+  capSyncKindUI(); capCheckRender();
+}
+function renderCapList() {
+  const el = $("capList"), st = $("capStat");
+  if (!el) return;
+  const cnt = k => capRows.filter(c => c.kind === k && c.enabled !== false).length;
+  if (st) st.innerHTML = [
+    ["已配置能力", capRows.length, ""], ["图像", cnt("image"), "good"],
+    ["视频", cnt("video"), "good"], ["语音合成", cnt("tts"), ""], ["语音识别", cnt("asr"), ""]
+  ].map(([k,v,c]) => `<div class="s ${c}"><b>${esc(v)}</b>${esc(k)}</div>`).join("");
+  if (!capsDeployed) {
+    el.innerHTML = `<div class="empty">智能体能力 v5 尚未部署。请在 Supabase SQL Editor 执行「小银AI-智能体能力-v5增量.sql」，并重新部署 xy-platform Edge Function（v3，GET 应返回 version: 3）。<br>其余后台功能不受影响；主站图像/语音会自动降级到内置能力。</div>`;
+    return;
+  }
+  if (!capRows.length) {
+    el.innerHTML = `<div class="empty">暂无能力。展开下方「新增 / 编辑智能体能力」，选一个预设（方舟 Seedream / Seedance），粘贴 ark- Key 即可。</div>`;
+    return;
+  }
+  /* 主站 agentCap(kind) 取「每种类型最新更新的一条」；把这条标出来，
+     避免后台测试的是 A、主站出图用的是 B。 */
+  const defId = {};
+  capRows.filter(c => c.enabled !== false).forEach(c => {
+    const cur = defId[c.kind];
+    if (!cur || String(c.updated_at || "") >= String(cur.updated_at || "")) defId[c.kind] = c;
+  });
+  el.innerHTML = capRows.map(m =>
+    `<div class="pm-row ${m.enabled === false ? "off" : ""}">
+      <span class="cap-kind ${esc(m.kind)}">${esc(CAP_LABEL[m.kind] || m.kind)}</span>
+      <span class="nm">${m.enabled === false ? "○" : "●"} ${esc(m.name)}${defId[m.kind] && defId[m.kind].id === m.id ? ' <b style="color:var(--ok,#6ee7b7);font-size:10px;">主站默认</b>' : ''}</span>
+      <span class="md">${esc(m.model || "—")}</span>
+      <span class="md">Key ····${esc(m.key_tail || "??????")}</span>
+      <span class="md" title="${esc(m.endpoint)}">${esc(String(m.endpoint || "").slice(-42))}</span>
+      <button class="mini-btn" data-capa="edit" data-id="${esc(m.id)}">编辑</button>
+      <button class="mini-btn" data-capa="toggle" data-id="${esc(m.id)}">${m.enabled === false ? "启用" : "停用"}</button>
+      <button class="mini-btn danger" data-capa="del" data-id="${esc(m.id)}">删除</button>
+    </div>`).join("");
+}
+/* ============ v5.0.5 · 控制台「开通管理」模型对照 ============ */
+/* 只把「已确认存在」的展示名映射到接口 ID；其余一律让用户去复制 cURL，绝不猜测编号。 */
+const CAP_KNOWN_IDS = {
+  "doubao-seedream-4.0": { kind:"image", model:"doubao-seedream-4-0-250828",
+    endpoint:"https://ark.cn-beijing.volces.com/api/v3/images/generations", poll:"",
+    name:"平台 · 豆包 Seedream 4.0", extra:{"size":"2K","watermark":false} },
+  "doubao-seedance-1.0-pro-fast": { kind:"video", model:"doubao-seedance-1-0-pro-fast-251015",
+    endpoint:"https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks",
+    poll:"https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks",
+    name:"平台 · 豆包 Seedance 1.0 pro fast", extra:{} }
+};
+function capConsoleParse(text) {
+  const src = String(text || "");
+  /* 按「模型名」切块，状态可能在同一行，也可能在下一行（控制台卡片式排版） */
+  const re = /(Doubao-[A-Za-z0-9.\-]+|Hyper3D-[A-Za-z0-9.\-]+|Hitem3D-[A-Za-z0-9.\-]+|Seed3D-[A-Za-z0-9.\-]+)/gi;
+  const hits = [...src.matchAll(re)];
+  const out = [];
+  for (let i = 0; i < hits.length; i++) {
+    const name = hits[i][1];
+    const line = src.slice(hits[i].index, i + 1 < hits.length ? hits[i + 1].index : src.length);
+    const key = name.toLowerCase();
+    const is3d = /3d|hyper3d|hitem3d/i.test(name);
+    const paused = /服务暂停|暂停服务|已暂停/.test(line);
+    const unopened = /未开通/.test(line);
+    const opened = /已开通/.test(line);
+    let state, cls, advice;
+    if (is3d) { state = "小银暂不支持"; cls = "no"; advice = "3D 生成走厂商独立异步接口，小银目前只有图像 / 视频 / 语音三类能力，不能填进这里。"; }
+    else if (unopened) { state = "未开通"; cls = "no"; advice = "先在控制台点「开通」，否则厂商返回 404。"; }
+    else if (paused) { state = "服务暂停"; cls = "no"; advice = "「安心体验」免费额度已耗尽会自动暂停服务；去关掉安心体验或充值后再用。"; }
+    else if (opened) { state = "✓ 可用"; cls = "yes"; advice = "去「快捷 API 接入 → cURL」复制该模型的 model ID，粘到上方「解析填入」。展示名不是 ID。"; }
+    else { state = "状态未知"; cls = ""; advice = "请对照控制台确认是否已开通、是否服务暂停。"; }
+    const known = CAP_KNOWN_IDS[key] || null;
+    if (known && cls === "yes") advice = "已匹配到接口 ID，点右侧「一键填入」即可，无需手抄。";
+    /* 去重：同一模型可能在页面里出现多次 */
+    if (!out.some(x => x.key === key)) out.push({ key, name, state, cls, advice, known });
+  }
+  return out;
+}
+function capConsoleRender(rows) {
+  const el = $("capConsoleOut"); if (!el) return;
+  if (!rows.length) {
+    el.innerHTML = `<div class="empty" style="padding:10px;">没识别到模型名。请粘贴「开通管理 → 视觉模型」页面里带 Doubao- / Seed3D- 等名称与「已开通 / 未开通 / 服务暂停」状态的整段文字。</div>`;
+    return;
+  }
+  const yes = rows.filter(r => r.cls === "yes").length;
+  const no = rows.filter(r => r.cls === "no").length;
+  el.innerHTML = `<div class="md" style="font-size:11px;margin-bottom:7px;">共识别 <b>${rows.length}</b> 个模型 · 可用 <b style="color:var(--ok,#6ee7b7)">${yes}</b> · 暂不可用 ${no}　（判定只依据你粘贴的文字）</div>`
+    + `<div class="cap-matrix"><div class="hd"><span>控制台展示名</span><span>状态</span><span>说明</span><span></span></div>`
+    + rows.map((r, i) => `<div class="r ${r.cls}"><span class="nm2">${esc(r.name)}</span>`
+      + `<span class="st2">${esc(r.state)}</span><span class="rs">${esc(r.advice)}</span>`
+      + `<span>${r.known && r.cls === "yes" ? `<button class="mini-btn" data-capfill="${i}" type="button">一键填入</button>` : ""}</span></div>`).join("")
+    + `</div><p class="note" style="margin:8px 0 0;">🧊 Seed3D / Hyper3D / Hitem3D 等 3D 模型、Seedream 5.0 系列（若显示「服务暂停」）、Seedance 2.x（若显示「未开通」）当前都不能直接用于小银。</p>`;
+  el._rows = rows;
+}
+$("btnCapConsole").addEventListener("click", () => capConsoleRender(capConsoleParse($("capConsoleList").value)));
+$("capConsoleOut").addEventListener("click", e => {
+  const b = e.target.closest("button[data-capfill]"); if (!b) return;
+  const r = ($("capConsoleOut")._rows || [])[Number(b.dataset.capfill)]; if (!r || !r.known) return;
+  const k = r.known;
+  /* 展开编辑表单并填入，用户仍可再改、再保存 */
+  const d = document.querySelector("#capForm")?.closest("details"); if (d) d.open = true;
+  $("capForm")?.classList.remove("hide-adv");
+  $("btnCapAdv").textContent = "✕ 收起高级设置";
+  $("capKind").value = k.kind; $("capEndpoint").value = k.endpoint;
+  $("capPoll").value = k.poll; $("capModel").value = k.model;
+  $("capName").value = k.name; $("capExtra").value = JSON.stringify(k.extra);
+  $("capPreset").value = k.kind === "video" ? "ark_seedance10" : "ark_seedream";
+  capSyncKindUI(); capCheckRender();
+  toast("✦ 已填入「" + r.name + "」· 模型 ID " + k.model + "。确认 API Key 后点保存，再点测试连接", 6200);
+  $("capModel").scrollIntoView({ behavior:"smooth", block:"center" });
+});
+
+function capPreset() { return CAP_PRESETS.find(p => p.id === $("capPreset").value) || CAP_PRESETS.at(-1); }
+$("capPreset").addEventListener("change", () => {
+  const p = capPreset();
+  $("capKind").value = p.kind;
+  $("capEndpoint").value = p.endpoint;
+  $("capPoll").value = p.poll;
+  $("capModel").value = p.model;
+  if (p.size) $("capExtra").value = JSON.stringify({ size: p.size, watermark: false });
+  if (!$("capName").value.trim()) $("capName").value = p.name;
+  capSyncKindUI(); capCheckRender();
+  if (p.tip) toast("ℹ " + p.tip, 5200);
+});
+["capKind","capEndpoint","capPoll","capModel"].forEach(id => $(id).addEventListener("input", capCheckRender));
+$("capKind").addEventListener("change", () => { capSyncKindUI(); capCheckRender(); });
+
+/* 粘贴控制台 cURL：自动提取端点 / model / size 等；Key 也一并提取（本就是用户自己的控制台内容） */
+$("btnCapCurl").addEventListener("click", () => {
+  const raw = $("capCurl").value.trim();
+  if (!raw) { toast("请先粘贴控制台里的 cURL 整段"); return; }
+  const url = (raw.match(/https?:\/\/[^\s'"\\]+/i) || [])[0] || "";
+  const model = (raw.match(/"model"\s*:\s*"([^"]+)"/) || [])[1] || "";
+  if (!url || !model) { toast("未能从 cURL 里提取端点与 model，请确认粘贴的是完整示例"); return; }
+  $("capEndpoint").value = url.replace(/\/+$/, "");
+  $("capModel").value = model;
+  if (/images\/generations/i.test(url)) $("capKind").value = "image";
+  else if (/generations\/tasks/i.test(url)) $("capKind").value = "video";
+  const extra = {};
+  for (const k of ["size","response_format","sequential_image_generation","stream","watermark","ratio","resolution","duration"]) {
+    const m = raw.match(new RegExp('"' + k + '"\\s*:\\s*("([^"]+)"|true|false|[0-9]+)'));
+    if (m) { let v = m[2] !== undefined ? m[2] : m[1];
+             if (v === "true") v = true; else if (v === "false") v = false;
+             else if (/^\d+$/.test(v)) v = parseInt(v, 10);
+             extra[k] = v; }
+  }
+  if (Object.keys(extra).length) $("capExtra").value = JSON.stringify(extra);
+  const key = pmExtractKey(raw);   /* 复用：过滤 $ARK_API_KEY / <你的Key> / 圆点等占位符 */
+  if (key) $("capKey").value = key;
+  if (!$("capName").value.trim()) $("capName").value = model;
+  /* 把 -d '{…}' 里的 JSON 原样留着，供「⚡ 原样重放 cURL」使用 */
+  capRawBody = null;
+  const dm = raw.match(/-d\s+'(\{[\s\S]*?\})'/i) || raw.match(/-d\s+"(\{[\s\S]*?\})"/i);
+  if (dm) { try { capRawBody = JSON.parse(dm[1]); } catch { capRawBody = null; } }
+  capSyncKindUI(); capCheckRender();
+  toast("✦ 已解析：端点 / 模型 ID" + (Object.keys(extra).length ? " / " + Object.keys(extra).length + " 个参数" : "")
+    + (key ? " / API Key" : "（示例里没找到 Key，请手动粘）"), 5200);
+});
+$("btnCapCancel").addEventListener("click", capFormReset);
+
+async function capSaveCore(quiet) {
+  const kind = $("capKind").value, name = $("capName").value.trim();
+  const endpoint = $("capEndpoint").value.trim();
+  const poll = kind === "video" ? $("capPoll").value.trim() : "";
+  const key = capCleanKey($("capKey").value), model = $("capModel").value.trim();
+  if (!name || !endpoint) { toast("请填写 名称 / 端点"); return; }
+  if (!key && !capEditing) { toast("新增能力必须填写 API Key"); return; }
+  const chk = capCheckRender();
+  if (chk.level === "err") { toast("⛔ 已阻止保存：" + chk.msg.replace(/<[^>]+>/g,""), 5500); return; }
+  let extra = {};
+  const raw = $("capExtra").value.trim();
+  if (raw) { try { extra = JSON.parse(raw); } catch { toast("额外参数不是合法 JSON"); return; } }
+  const j = await capRpc("xy_platform_caps_set", {
+    p_id: capEditing || "", p_kind: kind, p_name: name, p_provider: capPreset().id,
+    p_endpoint: endpoint, p_poll_endpoint: poll, p_api_key: key,
+    p_model: model, p_extra: extra, p_enabled: true
+  });
+  if (!j) return false;
+  if (!j.ok) { if (!quiet) toast("⚠ " + (j.error || "保存失败"), 6000); else toast("⚠ " + (j.error || "保存失败"), 6000); return false; }
+  const savedId = j.id || capEditing;
+  await loadCapsData();
+  capEditing = savedId;                 // 保持编辑态，测试连接直接用刚保存的配置
+  if (!quiet) { toast("✦ 智能体能力已保存" + (key ? "" : "（Key 留空沿用原值）")); capFormReset(); }
+  return true;
+}
+$("btnCapSave").addEventListener("click", () => capSaveCore(false));
+
+/* v5.0.2 · 部署自检清单：把「代码能自动查的」和「必须人工在控制台设置的」分开列 */
+const CAP_MANUAL = [
+  ["厂商 · 开通管理", "「开通管理 → 视觉模型」里目标模型状态为『已开通』，不是『未开通 / 服务暂停』。未开通即使 Key 与端点全对也返回 404。"],
+  ["厂商 · 项目空间", "控制台左上角「账号全部资源」选中的项目、API Key 创建时所属项目、模型所属项目，三者必须完全一致；跨项目 Key 会 404。"],
+  ["厂商 · Key 权限", "API Key 权限范围含『视觉模型调用』；Coding Plan / 套餐类 Key 通常不含图像模型权限，需换按量后付费的通用 Key。"],
+  ["厂商 · 模型 ID", "从「快捷 API 接入 → cURL」里照抄 『model』，含日期后缀；各版本会下架，以当前账号实际在售目录为准。"],
+  ["厂商 · 安心体验", "开着且免费额度耗尽时服务自动暂停，返回 429 SetLimitExceeded（不是 404）；关闭后不可再开。"],
+  ["Supabase · 邮件验证", "Authentication → Providers → Email → 关闭 Confirm email，否则注册后收不到验证邮件无法登录。"],
+  ["Supabase · EF 设置", "xy-platform 保持 Verify JWT 开启；Secrets 含 SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY。"],
+  ["Supabase · 其他", "内置共享对话模型还需单独部署 xy-ai 函数；后台「安全设置」把默认 owner 码 XY-OWNER-2026 改掉。"],
+  ["项目一致性", "主站与后台 HTML 里的 SUPA_URL / SUPA_ANON 常量必须指向同一个 Supabase 项目。"],
+];
+function renderCapSetup() {
+  const el = $("capSetup"); if (!el) return;
+  const img = capRows.filter(c => c.kind === "image" && c.enabled !== false);
+  const kinds = [...new Set(capRows.filter(c => c.enabled !== false).map(c => c.kind))];
+  const dupKinds = kinds.filter(k => capRows.filter(c => c.kind === k && c.enabled !== false).length > 1);
+  const badKey = capRows.filter(c => (c.key_length && c.key_length < 20) || /^[•·*]+$/.test(String(c.key_tail || "")));
+  const badModel = capRows.filter(c => !c.model || /[\u3400-\u9FFF\s]/.test(String(c.model || "")));
+  const badEp = capRows.filter(c => /\/chat\/completions\/?$/.test(String(c.endpoint || "")));
+  const auto = [
+    ["SQL v5 能力表与 RPC", capsDeployed, capsDeployed ? "已就绪" : "未部署 · 执行 v5 全量 SQL"],
+    ["Edge Function xy-platform", capEfVersion !== null && Number(capEfVersion) >= 3,
+      capEfVersion === null ? "GET 探测失败（函数未部署 / 网络 / JWT）" : "version " + capEfVersion + " · 需 ≥ 3"],
+    ["已配置启用能力", capRows.filter(c => c.enabled !== false).length > 0,
+      capRows.filter(c => c.enabled !== false).length + " 条"],
+    ["图像能力存在", img.length > 0, img.length + " 条"],
+    ["API Key 长度正常", badKey.length === 0, badKey.length ? badKey.length + " 条疑似假 Key（圆点占位）" : "全部正常"],
+    ["模型 ID 合法", badModel.length === 0, badModel.length ? badModel.length + " 条为空或含中文/空格" : "全部正常"],
+    ["端点非对话接口", badEp.length === 0, badEp.length ? badEp.length + " 条误填 /chat/completions" : "全部正常"],
+    ["同类型无重复", dupKinds.length === 0, dupKinds.length ? "重复：" + dupKinds.join("/") : "每种类型各一条"],
+  ];
+  const key = "xy_cap_setup_checked";
+  let checked = {};
+  try { checked = JSON.parse(lsGet(key) || "{}"); } catch {}
+  const okN = auto.filter(a => a[1]).length;
+  const autoHtml = auto.map(([n, ok, d]) =>
+    `<div style="display:flex;gap:8px;align-items:baseline;padding:3px 0;font-size:11.5px;">
+       <b style="color:${ok ? "var(--ok,#6ee7b7)" : "var(--bad,#f87171)"};width:14px;">${ok ? "✓" : "⚠"}</b>
+       <span style="min-width:150px;">${esc(n)}</span><span style="color:var(--dim);font-family:var(--mono);">${esc(d)}</span></div>`).join("");
+  const CORE = [1, 2, 3];   /* 已开通 + 有额度时，剩下的只可能是这 3 条 */
+  const manualOne = (i) => {
+    const [n, d] = CAP_MANUAL[i];
+    return `<label style="display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:11.5px;cursor:pointer;">
+      <input type="checkbox" data-capchk="${i}" ${checked[i] ? "checked" : ""} style="margin-top:3px;">
+      <span><b>${esc(n)}</b> — <span style="color:var(--dim);">${esc(d)}</span></span></label>`;
+  };
+  const coreHtml = CORE.map(manualOne).join("");
+  const restHtml = CAP_MANUAL.map((_, i) => i).filter(i => !CORE.includes(i)).map(manualOne).join("");
+  el.innerHTML =
+    `<div class="cap-summary" style="margin-bottom:7px;">自动检测 <b>${okN}/${auto.length} 项通过</b> · 明细点开看</div>`
+    + `<details class="advanced"><summary>A. 自动检测明细</summary><div style="padding:6px 0;">${autoHtml}</div></details>`
+    + `<div class="cap-summary" style="margin:9px 0 5px;">B. 现在最该核对的 3 条（你已开通且有额度，可跳过「开通 / 安心体验」）</div>`
+    + coreHtml
+    + `<details class="advanced" style="margin-top:7px;"><summary>更多设置（开通管理 / 安心体验 / Supabase / 项目一致性）</summary>`
+    + `<div style="padding:6px 0;">${restHtml}</div></details>`;
+  el.querySelectorAll("input[data-capchk]").forEach(cb => cb.addEventListener("change", () => {
+    try { const o = JSON.parse(lsGet(key) || "{}"); o[cb.dataset.capchk] = cb.checked;
+          lsSet(key, JSON.stringify(o)); } catch {}
+  }));
+  const qt = $("capQuickTxt"); if (qt) qt.innerHTML =
+    `自动检测 <b>${okN}/${auto.length}</b> · EF <b>v${capEfVersion ?? "?"}</b> · 启用能力 <b>${capRows.filter(c => c.enabled !== false).length}</b> 条`;
+}
+$("btnCapAdv").addEventListener("click", () => {
+  const f = $("capForm"); const on = f.classList.toggle("hide-adv");
+  $("btnCapAdv").textContent = on ? "⚙ 高级设置" : "✕ 收起高级设置";
+});
+$("btnCapSetup").addEventListener("click", async () => { await loadCapsData(); toast("🔄 自检已刷新"); });
+$("btnCapCopyCurl").addEventListener("click", () => {
+  const raw = $("capCurl").value.trim();
+  const c = capRows.find(x => x.kind === "image" && x.enabled !== false) || capRows[0];
+  const txt = raw || (`curl -X POST '${c ? c.endpoint : "https://ark.cn-beijing.volces.com/api/v3/images/generations"}' \\n`
+    + `  -H "Content-Type: application/json" \\n`
+    + `  -H "Authorization: Bearer <把控制台里的真实 ark- Key 粘到这里>" \\n`
+    + `  -d '${JSON.stringify(capRawBody || { model: c ? c.model : "<模型 ID>", prompt: "一只猫", size: "2K", response_format: "url" })}'`);
+  navigator.clipboard?.writeText(txt).then(() => toast("📋 已复制，粘贴到终端跑一次即可自证", 5000))
+    .catch(() => toast("复制失败，请手动选中 cURL 输入框内容", 5000));
+});
+
+/* 原样重放：把控制台 cURL 的 -d JSON 直接发给厂商，我方不构造任何字段 */
+$("btnCapRaw").addEventListener("click", async () => {
+  if (!capRawBody) { toast("请先在上方框里粘贴控制台 cURL 并点「解析填入」"); return; }
+  let id = capEditing || (capRows.find(m => m.enabled !== false) || {}).id;
+  const chk = capCheckRender();
+  if (chk.level === "err") { toast("⛔ " + chk.msg.replace(/<[^>]+>/g, ""), 5500); return; }
+  if ($("capName").value.trim() || $("capEndpoint").value.trim()) {
+    const okSave = await capSaveCore(true); if (!okSave) return; id = capEditing;
+  }
+  if (!id) { toast("请先保存至少一条启用的能力"); return; }
+  const kind = $("capKind").value;
+  if (!confirm("原样重放会向厂商提交一次真实请求，可能产生费用。确定？")) return;
+  toast("⚡ 正在原样重放控制台 cURL（不经过我方构造 body）…");
+  try {
+    const r = await supa("/functions/v1/xy-platform", { method:"POST",
+      body: JSON.stringify({ mode:"capability", kind, cap_id:id, action:"raw",
+        payload: { raw_body: capRawBody } }) });
+    const j = await r.json().catch(() => ({}));
+    const el = $("capCheck");
+    if (r.ok && j.ok !== false && !j.error) {
+      el.className = "pm-check ok";
+      el.innerHTML = "✦ 原样重放成功<br><span style='color:var(--dim);font-size:11px;'>控制台 cURL 的请求体用数据库里的 Key 能跑通 → 之前的 404 来自我方构造参数或旧配置；现在已定位。</span>";
+      toast("✦ 原样重放成功", 6000);
+    } else {
+      el.className = "pm-check err";
+      el.innerHTML = capDiagHtml(j, r.status)
+        + "<div style='margin-top:7px;padding:6px 8px;border-radius:6px;background:rgba(248,113,113,.10);font-size:11px;'>"
+        + "<b>结论：连控制台原样的请求体都返回同样错误 → 与本项目代码无关</b>，是厂商账号侧："
+        + "① 视觉模型未开通 / 服务暂停；② 项目空间不一致；③ Key 权限范围不含视觉模型；④ 该模型 ID 已不在你账号的在售目录。请展开上方「🚦 部署自检清单」逐项确认。</div>";
+      toast("⚠ 原样重放仍失败 · 已定位到厂商账号侧", 6000);
+    }
+  } catch (e) { toast("⚠ 无法连接 xy-platform：" + (e.message || e), 6500); }
+});
+
+function capDiagHtml(j, httpStatus) {
+  const v = j && j.vendor, e = j && j.echo;
+  const mdl = e?.model || "(未回显模型 ID)";
+  /* 结论卡：一句话说清「不是什么、剩什么」，长排查清单折叠 */
+  let h = e
+    ? `<div style="font-size:13.5px;font-weight:700;margin-bottom:4px;">❌ 这把 Key 访问不到 <code>${esc(mdl)}</code></div>`
+      + `<div class="cap-summary" style="margin-bottom:6px;">端点、Key、模型 ID 都已回显且格式正确。若模型已开通且额度充足，剩下的通常是 `
+      + `<b>Key 与模型不在同一项目</b>、<b>Key 权限没覆盖图像模型</b>，或 <b>模型 ID 已换日期后缀</b>。</div>`
+      + `<button class="btn btn-primary" id="btnCapDiagInline" type="button" style="margin-bottom:7px;">🩺 一键查出到底是哪条</button>`
+    : `<div style="font-size:13.5px;font-weight:700;margin-bottom:4px;">⚠ Edge Function 仍是旧版</div>`
+      + `<div class="cap-summary" style="margin-bottom:6px;">厂商错误没有附带「本次实际调用的配置」回显，说明 <b>xy-platform 还没重新部署</b>。请先粘贴新版 .ts 部署，GET 健康检查应返回 version: 3。</div>`;
+  h += `<details class="advanced"><summary>查看原始错误与完整排查（点开）</summary><div style="padding:8px 0;">`;
+  h += "<b>厂商说明：</b>" + esc(j?.error || "无详细说明") + "<br>";
+  if (v && (v.code || v.message)) {
+    h += "<div style='margin-top:6px;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,.25);font-family:var(--mono);font-size:11px;'>"
+      + "厂商原始错误：" + esc(String(v.code || "—")) + " · " + esc(String(v.message || "").slice(0, 220))
+      + (v.request_id ? "<br>Request ID：" + esc(v.request_id) : "") + "</div>";
+  }
+  if (e) {
+    h += "<div style='margin-top:6px;font-family:var(--mono);font-size:11px;line-height:1.7;'>"
+      + "<b>本次实际调用的配置（来自数据库，不是表单里未保存的值）</b><br>"
+      + "端点：" + esc(e.endpoint) + "<br>"
+      + "模型 ID：" + esc(e.model) + "<br>"
+      + "API Key：····" + esc(e.key_tail) + "（长度 " + esc(e.key_length) + "）<br>"
+      + "请求体：" + esc(JSON.stringify(e.request || {}).slice(0, 260)) + "</div>";
+  }
+  h += "<div style='margin-top:6px;color:var(--dim);font-size:11px;'>"
+    + "若上面没有「本次实际调用的配置」，说明 Edge Function 仍是旧版 → 重新部署 v3 版 .ts；"
+    + "GET /functions/v1/xy-platform 应返回 version: 3。</div></div></details>";
+  return h;
+}
+/* v5.0.3 · 一键诊断：直接问厂商这把 Key 能看到哪些模型，给出确定结论 */
+function capDiagTargetId() {
+  return capEditing || (capRows.find(m => m.enabled !== false) || {}).id || "";
+}
+function capRenderDiagnose(j) {
+  const el = $("capDiagResult"); if (!el) return;
+  if (!j || j.ok === false) {
+    el.innerHTML = `<div class="cap-verdict bad"><span class="big">⚠ 诊断没跑通</span>${esc(j?.error || "无响应")}
+      <div style="margin-top:5px;color:var(--dim);">确认 xy-platform 已重新部署（GET 返回 version: 3），且 Verify JWT 开启。</div></div>`;
+    return;
+  }
+  const v = j.verdict, sid = String(j.suggest_id || "");
+  let title, body, cls = "";
+  if (v === "wrong_model_id") {
+    title = "✦ 找到了：模型 ID 不对";
+    body = `这把 Key 能看到 <b>${esc(String(j.total_models))}</b> 个模型，但里面没有 <code>${esc(j.current_model)}</code>。`
+      + `<div style="margin:7px 0;padding:7px 9px;border-radius:7px;background:rgba(0,0,0,.25);font-family:var(--mono);font-size:11.5px;">`
+      + `建议改成：<b style="color:var(--ok,#6ee7b7);">${esc(sid)}</b></div>`
+      + `<button class="btn btn-primary" id="btnCapApplySuggest" type="button">一键改用这个 ID 并保存</button>`;
+  } else if (v === "no_image_permission") {
+    title = "✦ 找到了：这把 Key 看不到任何图像模型";
+    cls = " bad";
+    body = `问题不在模型 ID，而在 <b>Key 的项目归属 / 权限范围</b>。按顺序核对：<br>`
+      + `① 控制台左下角项目空间 ＝ API Key 创建时所属项目 ＝ 模型所属项目<br>`
+      + `② API Key 权限范围含「视觉模型调用」（自定义权限常只勾了文本模型）<br>`
+      + `③ 不一致就在<b>模型所在项目</b>重新建一把 Key，粘到上面 API Key 框保存`;
+  } else if (v === "model_in_list") {
+    title = "✦ Key 能看到这个模型";
+    body = `项目和权限都没问题。点「⚡ 测试连接」看具体报错，或用「⚡ 原样重放 cURL」验证请求体。`;
+  } else {
+    title = "诊断完成"; cls = " bad";
+    body = esc(j.next || JSON.stringify(j));
+  }
+  const list = Array.isArray(j.visible_image_models) ? j.visible_image_models : [];
+  el.innerHTML = `<div class="cap-verdict${cls}"><span class="big">${title}</span>${body}`
+    + (list.length ? `<details class="advanced" style="margin-top:8px;"><summary>这把 Key 可见的图像模型（${list.length} 个）</summary>`
+        + list.map(x => `<div style="font-family:var(--mono);font-size:11px;padding:2px 0;">${esc(x.id)} <span style="color:var(--dim);">${esc(x.domain)} ${esc(x.status)}</span></div>`).join("")
+        + `</details>` : "")
+    + `</div>`;
+  const ap = $("btnCapApplySuggest");
+  if (ap) ap.addEventListener("click", async () => {
+    const d = document.querySelector("#capForm")?.closest("details"); if (d) d.open = true;
+    $("capForm")?.classList.remove("hide-adv");
+    const m = capRows.find(x => x.id === capDiagTargetId());
+    if (m && !capEditing) capLoadEdit(m);
+    $("capModel").value = sid;
+    const saved = await capSaveCore(true);
+    if (saved) { toast("✦ 已改用 " + sid + "，请再点一次「⚡ 测试连接」", 6500); $("capDiagResult").innerHTML = ""; }
+  });
+}
+async function capRunDiagnose() {
+  const id = capDiagTargetId();
+  if (!id) { toast("请先保存至少一条启用的能力"); return; }
+  /* 表单有改动时先保存，避免诊断的是数据库旧值 */
+  const dirty = !!($("capModel").value.trim() || $("capKey").value.trim() || $("capEndpoint").value.trim());
+  if (dirty) { const okSave = await capSaveCore(true); if (!okSave) return; }
+  const kind = $("capKind").value;
+  /* 先确认 EF 是新版：旧函数会把 diagnose 当成生图请求，白耗额度还给出错结论 */
+  try {
+    const g = await supa("/functions/v1/xy-platform", { method:"GET" });
+    const gj = await g.json().catch(() => ({}));
+    if (!gj || !gj.ok || Number(gj.version || 0) < 3) {
+      capRenderDiagnose({ ok:false, error:"xy-platform 还是旧版（GET 未返回 version: 3）。请先在 Supabase Dashboard 粘贴新版 .ts 并 Deploy，再点诊断。" });
+      return;
+    }
+  } catch (e) {
+    capRenderDiagnose({ ok:false, error:"无法连接 xy-platform（GET 健康检查失败）：" + (e.message || e) });
+    return;
+  }
+  toast("🩺 正在问厂商这把 Key 能看到哪些模型…");
+  try {
+    const r = await supa("/functions/v1/xy-platform", { method:"POST",
+      body: JSON.stringify({ mode:"capability", kind, cap_id:capDiagTargetId(), action:"diagnose", payload:{} }) });
+    const j = await r.json().catch(() => ({}));
+    capRenderDiagnose(j);
+  } catch (e) { capRenderDiagnose({ ok:false, error:(e.message||String(e)) }); }
+}
+$("btnCapDiagnose").addEventListener("click", capRunDiagnose);
+/* 红条里的内联按钮：红条是动态 innerHTML，走事件委托 */
+$("capCheck").addEventListener("click", e => {
+  if (e.target && e.target.id === "btnCapDiagInline") capRunDiagnose();
+});
+
+$("btnCapTest").addEventListener("click", async () => {
+  const dirty = !!($("capName").value.trim() || $("capEndpoint").value.trim()
+    || $("capModel").value.trim() || $("capKey").value.trim() || $("capExtra").value.trim()
+    || $("capPoll").value.trim());
+  let id = capEditing || (capRows.find(m => m.enabled !== false) || {}).id;
+  const chk = capCheckRender();
+  if (chk.level === "err") { toast("⛔ " + chk.msg.replace(/<[^>]+>/g,""), 5500); return; }
+  /* 编辑态且表单有内容：先自动保存，避免「测的是数据库旧值」这个老坑 */
+  if (dirty) {
+    const saved = await capSaveCore(true);
+    if (!saved) return;
+    id = capEditing;
+  }
+  if (!id) { toast("请先保存至少一条启用的能力"); return; }
+  const kind = $("capKind").value;
+  if (kind === "video" && !confirm("视频测试会向厂商提交一个真实生成任务，可能产生费用且需 1-3 分钟。确定？")) return;
+  if (kind === "image" && !confirm("图像测试会向厂商提交一次真实的文生图请求，可能产生少量费用。确定？")) return;
+  toast("⚡ 已保存配置，正在测试（走 xy-platform capability 分支）…");
+  try {
+    const r = await supa("/functions/v1/xy-platform", {
+      method: "POST",
+      body: JSON.stringify({ mode:"capability", kind, cap_id:id, action:"create",
+        payload: kind === "image" ? { prompt:"一只银色小机器人，极简科技风", size:"2K" }
+          : kind === "video" ? { prompt:"一只银色小机器人在霓虹城市里缓缓转头", duration:5, ratio:"16:9", resolution:"720p" }
+          : { text:"你好，我是小银" } })
+    });
+    const j = await r.json().catch(() => ({}));
+    const el = $("capCheck");
+    /* 旧函数只返回 {error:"…"}（没有 ok:false），不能只看 j.ok；带 error 一律算失败 */
+    if (r.ok && j && j.ok !== false && !j.error) {
+      el.className = "pm-check ok";
+      el.innerHTML = "✦ 能力链路正常" + (j.id ? " · 任务 " + esc(String(j.id).slice(0,28)) : "")
+        + "<br><span style='color:var(--dim);font-size:11px;'>图像/视频已真实提交一次请求，请留意厂商计费。</span>";
+      toast("✦ 能力链路正常", 6500);
+    } else {
+      el.className = "pm-check err";
+      el.innerHTML = capDiagHtml(j, r.status);
+      toast("⚠ 测试失败 · 厂商原始错误与实际配置已写在下方红条", 5500);
+    }
+  } catch (e) {
+    toast("⚠ 无法连接 xy-platform：" + (e.message || e) + "（多为函数未部署 / CORS 预检失败）", 6500);
+  }
+});
+
+$("capList").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-capa]"); if (!b) return;
+  const id = b.dataset.id, act = b.dataset.capa, m = capRows.find(x => x.id === id);
+  if (!m) return;
+  if (act === "edit") { capLoadEdit(m); $("capName").scrollIntoView({ behavior:"smooth", block:"center" }); return; }
+  if (act === "toggle") {
+    const j = await capRpc("xy_platform_caps_set", {
+      p_id:id, p_kind:m.kind, p_name:m.name, p_provider:m.provider || "custom",
+      p_endpoint:m.endpoint, p_poll_endpoint:m.poll_endpoint || "", p_api_key:"",
+      p_model:m.model || "", p_extra:m.extra || {}, p_enabled: m.enabled === false
+    });
+    if (j && j.ok) { toast(m.enabled === false ? "已启用" : "已停用"); await loadCapsData(); }
+    return;
+  }
+  if (act === "del") {
+    if (!confirm("删除能力「" + m.name + "」？主站会立即降级到内置能力。")) return;
+    const j = await capRpc("xy_platform_caps_del", { p_id:id });
+    if (j && j.ok) { toast("✦ 已删除"); if (capEditing === id) capFormReset(); await loadCapsData(); }
+  }
+});
+
+const PM_PRESETS = [
+  { id: "hunyuan", brand: "腾讯混元", name: "混元 / TokenHub", endpoint: "https://api.hunyuan.cloud.tencent.com/v1/chat/completions", model: "hy4", tier: "strong" },
+  { id: "qwen", brand: "阿里百炼", name: "通义千问 / 百炼", endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", model: "qwen-plus", tier: "standard" },
+  { id: "doubao", brand: "字节豆包", name: "豆包 / 火山方舟", endpoint: "https://ark.cn-beijing.volces.com/api/v3/chat/completions", model: "doubao-seed-1-6-250615", tier: "standard" },
+  { id: "deepseek", brand: "DeepSeek", name: "DeepSeek 官方", endpoint: "https://api.deepseek.com/chat/completions", model: "deepseek-chat", tier: "strong" },
+  { id: "ark_kimi", brand: "火山方舟", name: "Kimi K3.1 Pro（方舟托管）", endpoint: "https://ark.cn-beijing.volces.com/api/v3/chat/completions", model: "kimi-k3-1-pro-261024", tier: "strong" },
+  { id: "ark_deepseek", brand: "火山方舟", name: "DeepSeek-V4.1-Flash 经济版（方舟托管）", endpoint: "https://ark.cn-beijing.volces.com/api/v3/chat/completions", model: "deepseek-v4-1-flash-economy-261017", tier: "cheap" },
+  { id: "moonshot", brand: "月之暗面", name: "Kimi 官方 API（platform.moonshot.cn）", endpoint: "https://api.moonshot.cn/v1/chat/completions", model: "kimi-k3.1-pro", tier: "standard" },
+  { id: "zhipu", brand: "智谱", name: "智谱 GLM 新版", endpoint: "https://open.bigmodel.cn/api/paas/v4/chat/completions", model: "glm-4.6", tier: "standard" },
+  { id: "siliconflow", brand: "硅基流动", name: "SiliconFlow", endpoint: "https://api.siliconflow.cn/v1/chat/completions", model: "Qwen/Qwen3-8B", tier: "cheap" },
+  { id: "openrouter", brand: "OpenRouter", name: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini", tier: "standard" },
+  { id: "qianfan", brand: "百度千帆", name: "文心 / 千帆", endpoint: "https://qianfan.baidubce.com/v2/chat/completions", model: "ernie-4.5-8k", tier: "standard" },
+  { id: "gemini", brand: "Google", name: "Gemini（OpenAI 兼容）", endpoint: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", model: "gemini-2.0-flash", tier: "cheap" },
+  { id: "ollama", brand: "本地", name: "Ollama 本地", endpoint: "http://localhost:11434/v1/chat/completions", model: "qwen3:8b", tier: "cheap" },
+  { id: "custom", brand: "自定义", name: "自定义 OpenAI 兼容接口", endpoint: "", model: "", tier: "standard" }
+];
+let pmRows = [], pmEditing = null, pmReport = null;
+let quotaData = null;   // v4：xy_admin_quota_list() 结果；null/ok:false = 未部署
+
+async function quotaRpc(name, body) {
+  const resp = await supa("/rest/v1/rpc/" + name, { method: "POST", body: JSON.stringify(body || {}) });
+  if (resp.status === 404) return { ok: false, error: "v4 额度 RPC 不存在，请执行「小银AI-登录门禁与每日额度-v4增量.sql」" };
+  if (!resp.ok) return { ok: false, error: "额度服务 HTTP " + resp.status };
+  return await resp.json().catch(() => ({ ok: false, error: "响应解析失败" }));
+}
+async function loadQuotaData() {
+  quotaData = await quotaRpc("xy_admin_quota_list");
+  await loadCapsData();
+  /* 统计卡片里的「今日语句」依赖本 RPC，晚于 render()，需补一次重绘 */
+  if (report && report.ok !== false) render();
+  renderQuota(); renderDiag();
+}
+function renderQuota() {
+  const hint = $("quotaHint"), stat = $("quotaStat"), tb = $("quotaRows"), empty = $("quotaEmpty");
+  if (!hint || !stat || !tb) return;
+  if (!quotaData || quotaData.ok === false) {
+    stat.innerHTML = `<div class="s warn"><b>—</b><span>额度服务未就绪</span></div>`;
+    tb.innerHTML = ""; empty.style.display = "none";
+    hint.className = "pm-check warn";
+    hint.innerHTML = "⚠ 未检测到 v4 额度服务：" + esc((quotaData && quotaData.error) || "无响应")
+      + "<br>请在 SQL Editor 执行 <code>小银AI-登录门禁与每日额度-v4增量.sql</code>（或 v4 全量版）。"
+      + "未部署时主站会降级为本地计数并显式警示，不属于服务端强制额度。";
+    return;
+  }
+  const t = quotaData.totals || {};
+  stat.innerHTML = [
+    ["默认额度", "10 条/日", ""],
+    ["今日已发语句", t.today_msgs ?? 0, ""],
+    ["已用尽账号", t.exhausted ?? 0, (t.exhausted ?? 0) > 0 ? "warn" : "good"],
+    ["不限量账号", t.unlimited ?? 0, ""]
+  ].map(x => `<div class="s ${x[2]}"><b>${esc(x[1])}</b><span>${esc(x[0])}</span></div>`).join("");
+  hint.className = "pm-check ok";
+  hint.innerHTML = "✓ 额度服务 v4 已就绪 · 统计日 <b>" + esc(quotaData.day || "") + "</b>（北京时间）"
+    + " · 计数以服务端为准，用户改浏览器本地存储无效";
+  const rows = Array.isArray(quotaData.users) ? quotaData.users : [];
+  if (!rows.length) { tb.innerHTML = ""; empty.style.display = ""; return; }
+  empty.style.display = "none";
+  tb.innerHTML = rows.map(u => {
+    const lim = Number(u.quota_limit ?? 10), ext = Number(u.quota_extra ?? 0);
+    const used = Number(u.used_today ?? 0), inf = u.quota_unlimited === true;
+    const rem = Number(u.remaining ?? (inf ? -1 : Math.max(0, lim + ext - used)));
+    const remHtml = inf ? '<span class="q-inf">∞ 不限量</span>'
+      : `<span class="${rem <= 0 ? "q-out" : "q-num"}">${rem}</span>`;
+    const attrs = `data-qa="${esc(u.id)}" data-uname="${esc(u.username)}"`;
+    return `<tr>
+      <td><b style="color:#eafcff">${esc(u.username)}</b></td>
+      <td class="q-num">${used}</td>
+      <td><input class="q-in" type="number" min="0" max="100000" value="${lim}" aria-label="每日上限"></td>
+      <td class="q-num">${ext ? "+" + ext : "—"}</td>
+      <td>${inf ? '<span class="q-inf">已开启</span>' : '<span style="color:var(--dim)">否</span>'}</td>
+      <td>${remHtml}</td>
+      <td style="white-space:nowrap;">
+        <button class="mini-btn" data-act="qSave" ${attrs}>保存上限</button>
+        <button class="mini-btn" data-act="qAdd10" ${attrs}>+10 条</button>
+        <button class="mini-btn" data-act="qAdd50" ${attrs}>+50 条</button>
+        <button class="mini-btn" data-act="qToggle" data-inf="${inf ? "1" : "0"}" ${attrs}>${inf ? "取消不限量" : "设不限量"}</button>
+        <button class="mini-btn" data-act="qReset" ${attrs}>重置今日</button>
+      </td>
+    </tr>`;
+  }).join("");
+}
+$("quotaRows").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const { act, qa: uid, uname, inf } = b.dataset;
+  const tr = b.closest("tr");
+  const payload = { p_uid: uid, p_limit: null, p_unlimited: null, p_extra_delta: 0, p_reset_today: false };
+  if (act === "qSave") {
+    const v = Number(tr.querySelector(".q-in").value);
+    if (!Number.isFinite(v) || v < 0 || v > 100000) { toast("每日上限需在 0–100000 之间"); return; }
+    payload.p_limit = Math.floor(v);
+  } else if (act === "qAdd10" || act === "qAdd50") {
+    payload.p_extra_delta = act === "qAdd10" ? 10 : 50;
+  } else if (act === "qToggle") {
+    payload.p_unlimited = inf !== "1";
+    if (inf === "1" && !confirm("取消「" + uname + "」的不限量后，若今日已超额度会被立即拦住。确定？")) return;
+  } else if (act === "qReset") {
+    if (!confirm("把「" + uname + "」今天的已用语句清零？")) return;
+    payload.p_reset_today = true;
+  }
+  const label = { qSave: "调整每日上限", qAdd10: "加 10 条", qAdd50: "加 50 条",
+                  qToggle: "切换不限量", qReset: "重置今日" }[act];
+  const j = await quotaRpc("xy_admin_set_quota", payload);
+  if (!j || j.ok === false) { toast("⚠ " + ((j && j.error) || "授权失败")); return; }
+  toast("✦ 已为 " + uname + " " + label);
+  await loadQuotaData();
+});
+
+/* ================================================================
+   端点 / 模型 ID / Key 三家对齐检查
+   最常见事故：在火山方舟控制台复制了 kimi-k3-1-pro-261024，
+   却把端点留在 api.moonshot.cn、Key 用的是 sk-（Moonshot 官方），
+   三者属于不同平台 → 必然 401 / 404 / 模型不存在。
+   ================================================================ */
+/* 这些是「非对话」能力，有各自的独立接口或异步任务，
+   绝不能录进 chat/completions 模型池（录了必然 404 / 协议错） */
+const PM_NON_CHAT = [
+  [/seedream|seededit|image-?gen|flux|stable-?diffusion/i, "图像生成模型", "文生图 / 图片编辑，走方舟图片生成接口，不是对话"],
+  [/seedance|video-?gen|wan-?i2v|kling/i, "视频生成模型", "文生视频 / 图生视频，走异步视频任务接口"],
+  [/embedding|bge-|m3e|rerank/i, "向量化 / 重排模型", "返回向量或相关性分数，没有文本回复"],
+  [/hiten3d|3d-?gen|triposr|text-?to-?3d/i, "3D 生成模型", "文本/图片生成 3D，走异步任务接口"],
+  [/-tts|text-?to-?speech|speech-?gen|cosyvoice/i, "语音合成模型", "返回音频，不是文本"],
+  [/-asr|speech-?to-?text|transcriptions|seed-?asr/i, "语音识别模型", "入参是音频，不是 messages"],
+  [/realtime-?voice|realtime-?api/i, "实时语音模型", "走 Realtime / WebSocket"]
+];
+function pmNonChat(model) {
+  const s = String(model || "");
+  for (const [re, name, why] of PM_NON_CHAT) if (re.test(s)) return { name, why };
+  return null;
+}
+/* 端点是否真的是 OpenAI Chat Completions 协议 */
+function pmEndpointProto(endpoint) {
+  const ep = String(endpoint || "").trim();
+  const clean = ep.toLowerCase().replace(/[?#].*$/, "").replace(/\/+$/, "");
+  if (/\/chat\/completions$/i.test(clean)) return { chat: true };
+  if (/\/responses$/i.test(clean)) return { chat: false, kind: "responses",
+    fix: clean.replace(/\/responses$/i, "/chat/completions") };
+  if (/\/messages$/i.test(clean)) return { chat: false, kind: "messages",
+    fix: clean.replace(/\/messages$/i, "/chat/completions") };
+  if (/\/embeddings$/i.test(clean)) return { chat: false, kind: "embeddings", fix: "" };
+  return { chat: false, kind: "other", fix: "" };
+}
+function pmConfigCheck(endpoint, model, key) {
+  const ep = String(endpoint || "").toLowerCase();
+  const md = String(model || "").trim();
+  let k = String(key || "").trim();
+  /* 浏览器密码管理器可能把 type=password 填成一串圆点，那不是真 Key */
+  if (/^[•●＊*]+$/.test(k)) k = "";
+  const isArkEp = /ark\.[a-z-]*volces\.com|ark\.cn-beijing/i.test(ep);
+  const isMoonEp = /api\.moonshot\.(cn|ai)/i.test(ep);
+  /* 方舟系 ID：带 -YYMMDD 日期后缀，或推理接入点 ep- */
+  const arkStyleId = /-\d{6}$/.test(md) || /^ep-/i.test(md);
+  const moonStyleId = /^(kimi-k3(\.1-pro(-highspeed)?)?|kimi-k2(\.\d+)?(-code(-highspeed)?)?|moonshot-v1-(8|32|128)k(-vision-preview)?)$/i.test(md);
+
+  /* ---- ⓪ 先判「这根本不是对话模型」，比端点问题更本质，避免列表徽标误导 ---- */
+  const nc0 = pmNonChat(md);
+  if (nc0) return { level: "err", code: "non-chat", msg: "⛔ <b>" + esc(nc0.name) + "</b>不能放进对话模型池。<br>"
+    + "「" + esc(md) + "」用于" + esc(nc0.why) + "，有独立接口或异步任务，"
+    + "用 <code>/chat/completions</code> 调用必然失败。<br>"
+    + "请从平台模型池里删除或停用；只保留<b>文本生成 / 深度思考</b>类模型。" };
+
+  /* ---- ① 端点协议：方舟 /responses 与 /chat/completions 是两套协议 ---- */
+  const proto = pmEndpointProto(endpoint);
+  if (ep && !proto.chat) {
+    if (proto.kind === "responses") return { level: "err", code: "responses", msg: "❌ 端点走错协议。<br>"
+      + "<code>" + esc(String(endpoint)) + "</code> 是火山方舟的 <b>Responses API</b>（入参 <code>input</code>、返回 response 对象），"
+      + "与小银的代理发的 <b>Chat Completions</b>（入参 <code>messages</code>、返回 <code>choices[0].message</code>）<b>不能混用</b>，必然 404。<br>"
+      + "请在方舟「快捷 API 接入」里切到 <b>Chat</b> 标签复制地址，或直接改成：<br><code>" + esc(proto.fix) + "</code>" };
+    if (proto.kind === "messages") return { level: "err", code: "messages", msg: "❌ 这是 Anthropic Messages 协议端点，"
+      + "小银只支持 OpenAI Chat Completions。请改为 <code>" + esc(proto.fix || "…/chat/completions") + "</code>。" };
+    if (proto.kind === "embeddings") return { level: "err", code: "embeddings", msg: "❌ 这是向量化接口，返回向量不是文本，不能用于聊天。" };
+    return { level: "err", code: "protocol", msg: "❌ 端点必须以 <code>/chat/completions</code> 结尾。<br>"
+      + "当前：<code>" + esc(String(endpoint)) + "</code><br>"
+      + (isArkEp ? "火山方舟正确写法：<code>https://ark.cn-beijing.volces.com/api/v3/chat/completions</code>" : "请核对厂商文档里的 Chat Completions 完整地址。") };
+  }
+
+  /* ---- ② 模型 ID 是不是把「展示名称」当成了 ID ---- */
+  if (md && /[\u3400-\u9FFF]/.test(md)) {
+    return { level: "err", code: "cjk-id", msg: "❌ 模型 ID 填成了中文展示名。<br>"
+      + "「" + esc(md) + "」是给人看的名字，<b>不是</b>厂商接口里的 <code>model</code> 值，服务端会直接报模型不存在。<br>"
+      + "去方舟控制台「快捷 API 接入」→ 切到 <b>Chat</b> 标签 → 复制 cURL 示例里 <code>\"model\": \"…\"</code> 的那一串；"
+      + "或直接填推理接入点 <code>ep-xxxxxx</code>。<br>"
+      + (/deepseek.*经济|flash.*经济/i.test(md)
+          ? "参考：DeepSeek-V4.1-Flash 经济版的官方 ID 是 <code>deepseek-v4-1-flash-economy-261017</code>（标准版 <code>deepseek-v4-1-flash-261017</code>）。<br>" : "")
+      + "中文名请放在左侧「展示名称」栏。" };
+  }
+  if (md && /\s/.test(md)) {
+    return { level: "err", code: "space-id", msg: "❌ 模型 ID 不能含空格：「" + esc(md) + "」。请照抄控制台里的原始 ID。" };
+  }
+
+  if (isMoonEp && arkStyleId) {
+    return { level: "err", msg: "❌ 端点与模型 ID 不是同一家平台。<br>"
+      + "「" + esc(md) + "」是<b>火山方舟</b>的模型 ID（带 -日期后缀 / ep-），只能配 "
+      + "<code>https://ark.cn-beijing.volces.com/api/v3/chat/completions</code> + 方舟 <code>ark-</code> Key。<br>"
+      + "请改选预设「火山方舟 · Kimi K3.1 Pro（方舟托管）」；或若你用的是 Kimi 官方 Key，模型 ID 改成 <code>kimi-k3.1-pro</code>（点号，无日期后缀）。" };
+  }
+  if (isArkEp && moonStyleId && !arkStyleId) {
+    return { level: "warn", msg: "⚠ 端点是火山方舟，但模型 ID 看起来是 Kimi 官方写法。"
+      + "方舟控制台「快捷 API 接入」里的 ID 一般形如 <code>kimi-k3-1-pro-261024</code> 或 <code>ep-xxx</code>，请照抄控制台示例中的 model 值。" };
+  }
+  if (isArkEp && !/\/api\/v3\/chat\/completions$/i.test(ep.replace(/[?#].*$/, "").replace(/\/+$/, ""))) {
+    return { level: "err", code: "ark-path", msg: "❌ 火山方舟的 Chat API 路径必须是 "
+      + "<code>https://ark.cn-beijing.volces.com/api/v3/chat/completions</code>（v1/v2 已下线，/responses 是另一套协议）。" };
+  }
+  if (isArkEp && k && !/^ark-/i.test(k)) {
+    return { level: "warn", msg: "⚠ 端点指向火山方舟，但 Key 不是 <code>ark-</code> 开头。"
+      + "若这是 Kimi 官方的 <code>sk-</code> Key，端点应改成 <code>https://api.moonshot.cn/v1/chat/completions</code>，模型 ID 用 <code>kimi-k3.1-pro</code>。" };
+  }
+  if (isMoonEp && k && /^ark-/i.test(k)) {
+    return { level: "err", msg: "❌ 这是火山方舟的 <code>ark-</code> Key，不能打到 api.moonshot.cn。"
+      + "请改选预设「火山方舟 · Kimi K3.1 Pro（方舟托管）」，端点换为 <code>https://ark.cn-beijing.volces.com/api/v3/chat/completions</code>。" };
+  }
+  if (/dashscope/i.test(ep) && !/compatible-mode/i.test(ep)) {
+    return { level: "warn", msg: "⚠ 阿里百炼的 OpenAI 兼容端点必须带 <code>/compatible-mode/v1/</code>。" };
+  }
+  if (/open\.bigmodel\.cn/i.test(ep) && !/\/v4\//i.test(ep)) {
+    return { level: "warn", msg: "⚠ 智谱端点是 <code>/api/paas/v4/</code>，不是 v1。" };
+  }
+  if (isArkEp && arkStyleId) {
+    return { level: "ok", msg: "✓ 火山方舟端点 + 方舟模型 ID 匹配。注意：方舟禁止浏览器跨域，"
+      + "「服务端代理」模式下必须部署 Edge Function <b>xy-platform</b>。" };
+  }
+  if (isMoonEp && moonStyleId) {
+    return { level: "ok", msg: "✓ Kimi 官方端点 + 官方模型 ID 匹配（Key 应为 platform.moonshot.cn 生成的 <code>sk-</code>）。" };
+  }
+  return { level: "", msg: "填写端点与模型 ID 后，这里会自动检查二者是否属于同一家平台。" };
+}
+/* 单条模型体检：列表徽标与报告共用同一套判定 */
+function pmAuditRow(m) {
+  const ep = String(m.endpoint || "");
+  const md = String(m.model || "");
+  const proto = pmEndpointProto(ep);
+  const nc = pmNonChat(md);
+  if (nc) return { level: "err", code: "non-chat", text: nc.name + " · 不是对话模型" };
+  if (!proto.chat) return { level: "err", code: proto.kind, text: "端点不是 Chat Completions 协议（" + proto.kind + "）" };
+  if (/[\u3400-\u9FFF]/.test(md)) return { level: "err", code: "cjk-id", text: "模型 ID 是中文展示名，不是接口 ID" };
+  if (/\s/.test(md)) return { level: "err", code: "space-id", text: "模型 ID 含空格" };
+  const c = pmConfigCheck(ep, md, "");
+  if (c.level === "err") return { level: "err", code: c.code || "mismatch", text: "端点 / 模型 ID / 厂商错配" };
+  if (c.level === "warn") return { level: "warn", code: c.code || "warn", text: "建议核对：" + c.msg.replace(/<[^>]+>/g, "").slice(0, 46) };
+  return { level: "ok", code: "ok", text: "配置看起来正常" };
+}
+function pmAuditAll() {
+  const box = $("pmAudit");
+  box.hidden = false;
+  if (!window.__platformDeployed) {
+    box.innerHTML = "<h4>体检结果</h4>平台模型池尚未部署（v3 脚本未执行），无法读取模型清单。";
+    return;
+  }
+  if (!pmRows.length) { box.innerHTML = "<h4>体检结果</h4>暂无平台模型，无需体检。"; return; }
+  const rows = pmRows.map(m => ({ m, a: pmAuditRow(m) }));
+  const bad = rows.filter(x => x.a.level === "err");
+  const warn = rows.filter(x => x.a.level === "warn");
+  const good = rows.filter(x => x.a.level === "ok");
+  const nonChat = bad.filter(x => x.a.code === "non-chat");
+  box.innerHTML =
+    `<h4>🔍 模型体检结果 · 共 ${rows.length} 条</h4>` +
+    `<div class="au-sum ${bad.length ? "" : "ok"}">` +
+      `可正常用于对话：<b>${good.length}</b> 条　·　有问题：<b>${bad.length}</b> 条　·　待确认：<b>${warn.length}</b> 条` +
+      (nonChat.length ? `　·　其中非对话模型：<b>${nonChat.length}</b> 条` : "") +
+    `</div>` +
+    (bad.length ? `<div style="margin-bottom:10px;color:#ffc46b;">`
+      + `这些配置不会让小银「变坏」，而是厂商接口本来就返回 404/协议错误。`
+      + `最常见两种：把控制台 <b>Responses</b> 标签的地址复制成了端点、把中文展示名当成了模型 ID。</div>` : "") +
+    rows.map(({ m, a }) =>
+      `<div class="au-row">
+         <span class="au-tag pm-health ${a.level}">${a.level === "ok" ? "✓ 正常" : a.level === "warn" ? "⚠ 待确认" : "⛔ 无效"}</span>
+         <span class="au-body"><b>${esc(m.name)}</b> <span style="color:var(--dim)">${esc(m.model || "")}</span><br>
+           <span style="color:${a.level === "ok" ? "var(--dim)" : a.level === "warn" ? "#ffc46b" : "#ff9fb0"}">${esc(a.text)}</span>
+           ${a.level !== "ok" ? `<br><span style="color:var(--dim)">端点：${esc(m.endpoint || "—")}</span>` : ""}
+         </span>
+         ${a.level !== "ok" ? `<button class="mini-btn" data-audit="edit" data-id="${esc(m.id)}">✎ 去修正</button>` : ""}
+       </div>`).join("") +
+    (bad.length ? `<div class="au-actions">
+        <button class="btn btn-primary" id="btnPmFixOff">⏸ 一键停用所有无效项（${bad.length} 条，可恢复）</button>
+        <span style="font-size:10px;color:var(--dim);align-self:center;">停用后主站下拉里立刻消失，Key 不会丢</span>
+      </div>` : "") +
+    `<div style="margin-top:10px;color:var(--dim);">· 只保留<b>文本生成 / 深度思考</b>类模型；图像、视频、3D、向量化、语音类都有独立接口，不能用于聊天`
+      + `<br>· 模型 ID 以厂商控制台「快捷 API 接入 → <b>Chat</b>」示例里的 <code>"model"</code> 值为准，会随版本迭代变化` +
+    `</div>`;
+  const off = $("btnPmFixOff");
+  if (off) off.addEventListener("click", async () => {
+    if (!confirm("将停用 " + bad.length + " 条无效模型（不会删除、Key 保留，随时可重新启用）。确定？")) return;
+    let n = 0;
+    for (const { m } of bad) {
+      const j = await pmRpc("xy_platform_set", {
+        p_id: m.id, p_provider: m.provider, p_brand: m.brand, p_name: m.name,
+        p_endpoint: m.endpoint, p_api_key: "", p_model: m.model,
+        p_tier: m.tier || "standard", p_enabled: false, p_cors: m.cors || "proxy"
+      });
+      if (j && j.ok) n++;
+    }
+    toast("✦ 已停用 " + n + " / " + bad.length + " 条无效模型");
+    await loadPlatformData();
+    pmAuditAll();
+  });
+}
+/* ============ v5.0.4 · 渠道 / 模型自动识别 ============ */
+/* 按域名判断「渠道」，按模型 ID 判断「模型族」；两者组合才能说清
+   「方舟托管的 DeepSeek」这类情况：渠道是火山方舟，模型出自 DeepSeek。 */
+const PM_CHANNELS = [
+  { id:"ark",         re:/ark\.[a-z0-9-]*volces\.com|ark\.cn-beijing/i, name:"火山方舟",           keyPrefix:"ark-",  cors:"proxy",  preset:"doubao",      chatPath:"/api/v3/chat/completions" },
+  { id:"hunyuan",     re:/api\.hunyuan\.cloud\.tencent\.com|tokenhub\.tencentmaas\.com/i, name:"腾讯混元 / TokenHub", keyPrefix:"", cors:"proxy", preset:"hunyuan" },
+  { id:"qwen",        re:/dashscope\.aliyuncs\.com/i,               name:"阿里百炼（通义千问）",   keyPrefix:"sk-",   cors:"proxy",  preset:"qwen" },
+  { id:"deepseek",    re:/api\.deepseek\.com/i,                       name:"DeepSeek 官方",          keyPrefix:"sk-",   cors:"direct", preset:"deepseek" },
+  { id:"moonshot",    re:/api\.moonshot\.(cn|ai)/i,                   name:"月之暗面 Kimi 官方",     keyPrefix:"sk-",   cors:"direct", preset:"moonshot" },
+  { id:"zhipu",       re:/open\.bigmodel\.cn/i,                       name:"智谱 GLM",               keyPrefix:"",      cors:"proxy",  preset:"zhipu" },
+  { id:"siliconflow", re:/api\.siliconflow\.cn/i,                     name:"硅基流动",               keyPrefix:"sk-",   cors:"direct", preset:"siliconflow" },
+  { id:"openrouter",  re:/openrouter\.ai/i,                            name:"OpenRouter",             keyPrefix:"sk-or-",cors:"direct", preset:"openrouter" },
+  { id:"qianfan",     re:/qianfan\.baidubce\.com/i,                   name:"百度千帆",               keyPrefix:"",      cors:"proxy",  preset:"qianfan" },
+  { id:"gemini",      re:/generativelanguage\.googleapis\.com/i,      name:"Google Gemini",          keyPrefix:"AIza",  cors:"direct", preset:"gemini" },
+  { id:"minimax",     re:/api\.minimax\.(chat|io)/i,                   name:"MiniMax",                keyPrefix:"",      cors:"proxy",  preset:"custom" },
+  { id:"ollama",      re:/localhost|127\.0\.0\.1|0\.0\.0\.0/i,        name:"Ollama 本地",            keyPrefix:"",      cors:"direct", preset:"ollama" },
+];
+const PM_FAMILIES = [
+  /* 非对话模型优先级最高：必须排在 ^doubao- 等通用规则前面，
+     否则 doubao-seedream-… 会被误判成「豆包 Seed」文本模型 */
+  { re:/seedream|seedance|seededit|embedding|bge-|text-embedding|tts|asr|whisper|3d-|image-|video-|flux|stable-diffusion/i,
+    label:"", maker:"", tier:"standard", preset:"custom", nonChat:true },
+  { re:/deepseek-v4-1-flash-economy/i,   label:"DeepSeek-V4.1-Flash 经济版", maker:"DeepSeek", tier:"cheap",    preset:"ark_deepseek" },
+  { re:/deepseek-v4-1-flash/i,           label:"DeepSeek-V4.1-Flash",        maker:"DeepSeek", tier:"standard", preset:"ark_deepseek" },
+  { re:/^deepseek-(chat|reasoner|coder)/i,label:"DeepSeek 官方",              maker:"DeepSeek", tier:"strong",   preset:"deepseek" },
+  { re:/^kimi-k3-1-pro-\d{6}$|^kimi-k3.*-\d{6}$/i, label:"Kimi K3.1 Pro（方舟托管）", maker:"月之暗面", tier:"strong", preset:"ark_kimi" },
+  { re:/^kimi-|moonshot-v1/i,            label:"Kimi 官方",                  maker:"月之暗面", tier:"standard", preset:"moonshot" },
+  { re:/^qwen/i,                         label:"通义千问",                    maker:"阿里",     tier:"standard", preset:"qwen" },
+  { re:/^doubao-|^ep-/i,                 label:"豆包 Seed",                   maker:"字节豆包", tier:"standard", preset:"doubao" },
+  { re:/^glm-/i,                         label:"智谱 GLM",                    maker:"智谱",     tier:"standard", preset:"zhipu" },
+  { re:/^hy4|^hunyuan/i,                 label:"腾讯混元",                    maker:"腾讯",     tier:"standard", preset:"hunyuan" },
+  { re:/^ernie/i,                        label:"文心千帆",                    maker:"百度",     tier:"standard", preset:"qianfan" },
+  { re:/^gemini/i,                       label:"Gemini",                      maker:"Google",   tier:"cheap",    preset:"gemini" },
+  { re:/^gpt-|^openai\/|^anthropic\/|^claude/i, label:"OpenRouter 聚合",   maker:"OpenRouter",tier:"standard",preset:"openrouter" },
+  { re:/^Qwen\/|^deepseek-ai\//i,       label:"硅基流动托管",                maker:"开源模型", tier:"cheap",    preset:"siliconflow" },
+];
+function pmDetectChannel(url) {
+  for (const c of PM_CHANNELS) if (c.re.test(String(url || ""))) return c;
+  return null;
+}
+function pmDetectFamily(model) {
+  for (const f of PM_FAMILIES) if (f.re.test(String(model || ""))) return f;
+  return null;
+}
+/* Key 只接受像真凭证的值；控制台示例里的 $ARK_API_KEY / <你的Key> / 圆点一律忽略，
+   否则会把数据库里正确的 Key 覆盖成一个占位符。 */
+function pmExtractKey(src) {
+  const m = String(src || "").match(/Authorization:\s*Bearer\s+([^\s"'\\]+)/i);
+  if (!m) return "";
+  const k = m[1].trim();
+  if (!k || k.length < 16) return "";
+  if (/^[$<{]|^YOUR|^REPLACE|^xxx|^placeholder/i.test(k)) return "";
+  if (/^[•●＊*]+$/.test(k)) return "";
+  return k;
+}
+function pmKeyTail(k) { return k ? k.slice(0, 8) + "…" + k.slice(-6) : ""; }
+
+/* 粘贴控制台 cURL → 提取端点 / 模型 ID / Key，并识别渠道与模型 */
+function pmParseCurl(text) {
+  const src = String(text || "");
+  if (!/https?:\/\//i.test(src) && !/model/i.test(src))
+    return { ok: false, msg: "没识别到 URL 或 model 字段，请复制完整的 cURL 示例" };
+  const urls = src.match(/https?:\/\/[^\s"'\\]+/gi) || [];
+  let url = urls.find(u => /\/(chat\/completions|responses|messages|embeddings)(\?|$)/i.test(u)) || urls[0] || "";
+  const mm = src.match(/["']model["']\s*[:=]\s*["']([^"']+)["']/)
+    || src.match(/\bmodel\s*=\s*["']([^"']+)["']/);
+  const model = mm ? mm[1].trim() : "";
+  if (!url && !model) return { ok: false, msg: "没解析出内容，请复制完整 cURL（含 curl 那一行和 -d 请求体）" };
+  let fixed = [], warnings = [], protocol = "chat";
+  if (url) {
+    url = url.replace(/[?#].*$/, "").replace(/\/+$/, "");
+    if (/\/responses$/i.test(url)) {
+      url = url.replace(/\/responses$/i, "/chat/completions");
+      protocol = "responses";
+      fixed.push("已把 /responses 自动改成 /chat/completions（小银只支持 Chat 协议）");
+      warnings.push("这段 cURL 来自方舟「Responses API」标签。Chat 标签里的 model 值可能不同，建议切到 Chat 标签重新复制一次，比自动转换更稳。");
+    }
+    else if (/\/messages$/i.test(url)) {
+      url = url.replace(/\/messages$/i, "/chat/completions");
+      protocol = "messages";
+      fixed.push("已把 Anthropic /messages 改成 /chat/completions");
+      warnings.push("Anthropic Messages 与 OpenAI Chat 是两套协议，模型 ID 也常不同，请核对 Chat 标签的示例。");
+    }
+    else if (/\/api\/v3$/i.test(url)) { url = url + "/chat/completions"; fixed.push("已补全 /chat/completions 路径"); }
+    else if (!/\/chat\/completions$/i.test(url) && !/\/embeddings$/i.test(url)) {
+      fixed.push("注意：这个 URL 不以 /chat/completions 结尾，请确认复制的是 Chat 标签的示例");
+    }
+  }
+  const key = pmExtractKey(src);
+  const channel = pmDetectChannel(url) || null;
+  const family = pmDetectFamily(model) || null;
+  /* 端点本身就是图像 / 视频 / 向量化接口时，即便模型 ID 没匹配上也要拦 */
+  const nonChatEp = /\/images\/generations|\/contents\/generations\/tasks|\/embeddings|\/audio\//i.test(url);
+  if (nonChatEp) warnings.push("这个端点是图像 / 视频 / 语音 / 向量化的独立接口，不属于对话模型池，请到「✦ 智能体能力」面板配置。");
+  if (!model) warnings.push("这段 cURL 里没找到 model 字段，请在下方「模型 ID」手动补上。");
+
+  /* 预设：模型族优先，其次渠道；方舟托管第三方模型用专门预设 */
+  const nonChat = !!(family && family.nonChat) || nonChatEp;
+  let presetId = (family && family.preset) || (channel && channel.preset) || "custom";
+  if (!PM_PRESETS.some(p => p.id === presetId) || nonChat) presetId = "custom";
+  /* 展示名：渠道与模型出自不同厂商时，明确写出「谁托管」 */
+  let label;
+  if (!model) label = "未识别模型";
+  else label = (family && family.label) || (channel && channel.name) || model || "自定义模型";
+  let hosted = "";
+  if (channel && family && family.maker && channel.id === "ark" && !/豆包|字节/.test(family.maker)) {
+    hosted = "（方舟托管）";
+  } else if (channel && family && family.maker && !/豆包|字节/.test(family.maker)
+             && channel.id !== "openrouter" && channel.id !== "ark"
+             && !new RegExp(family.maker.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(channel.name)) {
+    hosted = "（" + channel.name + "）";
+  }
+  const displayName = "平台 · " + label + hosted;
+  const tier = (family && family.tier) || (PM_PRESETS.find(p => p.id === presetId) || {}).tier || "standard";
+  const cors = (channel && channel.cors) || "proxy";
+  return { ok: true, url, model, key, channel, family, presetId, displayName, tier, cors,
+           fixed, warnings, protocol, nonChat };
+}
+
+/* 识别结果卡片：把「认出了什么、自动改了什么、要注意什么」一次说清 */
+function pmRenderDetect(r, changed) {
+  const el = $("pmDetect"); if (!el) return;
+  if (!r || !r.ok) { el.innerHTML = ""; return; }
+  const ch = r.channel ? r.channel.name : "未识别（按自定义 OpenAI 兼容处理）";
+  const fam = r.family && r.family.label
+    ? r.family.label + (r.family.maker ? " · " + r.family.maker : "")
+    : (r.model || "未识别");
+  const rows = [
+    ["渠道", esc(ch) + (r.channel && r.channel.keyPrefix ? "　Key 前缀 <code>" + esc(r.channel.keyPrefix) + "</code>" : "")],
+    ["模型", esc(fam) + (r.model ? "　<code>" + esc(r.model) + "</code>" : "")],
+    ["协议", r.protocol === "chat" ? "Chat Completions ✓"
+      : "原为 " + esc(r.protocol) + " → 已转 Chat Completions ⚠"],
+    ["Key", r.key ? "<code>" + esc(pmKeyTail(r.key)) + "</code> 已从 cURL 提取" : "示例里没有真实 Key（占位符已忽略）"],
+    ["已设置", esc(changed.length ? changed.join(" / ") : "无改动")],
+  ];
+  let h = `<div class="pm-detect${r.nonChat ? " bad" : ""}"><span class="t">${r.nonChat ? "⛔ 识别到非对话模型" : "✦ 自动识别结果"}</span>`
+    + rows.map(([k, v]) => `<div class="row"><span class="k">${k}</span><span>${v}</span></div>`).join("");
+  if (r.nonChat) h += `<div style="margin-top:6px;color:var(--bad,#f87171);">这是图像 / 视频 / 向量化 / 语音模型，有独立接口，不能放进对话模型池。请改到「✦ 智能体能力」面板配置。</div>`;
+  if (r.warnings && r.warnings.length)
+    h += `<div style="margin-top:6px;color:var(--dim);">⚠ ` + r.warnings.map(esc).join("<br>⚠ ") + `</div>`;
+  h += `</div>`;
+  el.innerHTML = h;
+}
+$("btnPmCurl").addEventListener("click", () => {
+  const r = pmParseCurl($("pmCurl").value);
+  if (!r.ok) { toast("⚠ " + r.msg, 5000); pmRenderDetect(null, []); return; }
+  const changed = [];
+  /* ① 端点与模型 ID */
+  if (r.url) { $("pmEndpoint").value = r.url; changed.push("端点"); }
+  if (r.model) { $("pmModel").value = r.model; changed.push("模型 ID"); }
+  /* ② 厂商预设：按识别结果自动切换，避免「端点方舟、预设还停在混元」 */
+  if (PM_PRESETS.some(p => p.id === r.presetId)) {
+    const oldId = $("pmPreset").value;
+    const oldLabel = (PM_PRESETS.find(p => p.id === oldId) || {}).name || oldId;
+    const newLabel = (PM_PRESETS.find(p => p.id === r.presetId) || {}).name || r.presetId;
+    $("pmPreset").value = r.presetId;
+    changed.push(oldId !== r.presetId ? "厂商预设（" + oldLabel + " → " + newLabel + "）" : "厂商预设");
+  }
+  /* ③ 展示名称：自动生成的（以「平台 · 」开头）或空值 → 覆盖；
+        用户自己起的名字保留，不擅自抹掉 */
+  const curName = $("pmName").value.trim();
+  if (r.nonChat) {
+    r.warnings.push("已识别为非对话模型：不会自动改展示名称或填入 Key，也不建议保存。请改到「✦ 智能体能力」面板。");
+  } else if (!curName || /^平台\s*·/.test(curName)) {
+    $("pmName").value = r.displayName; changed.push("展示名称");
+  } else {
+    r.warnings.push("展示名称「" + curName + "」看起来是你自定义的，已保留；如需按识别结果命名可手动清空再解析一次。");
+  }
+  /* ④ 路由档位 / 跨域策略 */
+  if (["cheap", "standard", "strong"].includes(r.tier)) { $("pmTier").value = r.tier; changed.push("路由档位"); }
+  if (["proxy", "direct"].includes(r.cors)) { $("pmCors").value = r.cors; changed.push("跨域策略"); }
+  /* ⑤ Key：仅当表单里是空或圆点占位时才填，绝不覆盖已填的真 Key */
+  const curKey = String($("pmKey").value || "").trim();
+  if (!r.nonChat && r.key && (!curKey || /^[•●＊*]+$/.test(curKey))) { $("pmKey").value = r.key; changed.push("API Key"); }
+  else if (!r.nonChat && r.key && curKey) r.warnings.push("表单里已有 Key，未覆盖；若想改用 cURL 里这把，先清空 API Key 框再解析。");
+
+  const chk = pmCheckRender();
+  pmRenderDetect(r, changed);
+  /* 校验条里补一行协议转换说明（识别卡里已有完整版，这里只留精简） */
+  if (r.fixed.length && chk.level !== "err") {
+    const el = $("pmCheck");
+    el.className = "pm-check warn";
+    el.innerHTML = "ℹ " + r.fixed.map(esc).join("<br>ℹ ") + "<br>" + el.innerHTML;
+  }
+  const chName = r.channel ? r.channel.name : "自定义渠道";
+  const famName = r.family && r.family.label ? r.family.label : (r.model || "未知模型");
+  toast("✦ 已识别：" + chName + " · " + famName + "；自动设置 " + changed.length + " 项"
+    + (r.fixed.length ? "｜" + r.fixed.join("；") : ""), 6500);
+});
+$("pmCurl").addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); $("btnPmCurl").click(); }
+});
+
+$("btnPmAudit").addEventListener("click", pmAuditAll);
+$("pmAudit").addEventListener("click", e => {
+  const b = e.target.closest("button[data-audit='edit']");
+  if (!b) return;
+  const m = pmRows.find(x => x.id === b.dataset.id);
+  if (m) pmLoadEdit(m);
+  $("pmName").scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
+/* 浏览器自动填充的 password 圆点不是真 Key，必须过滤，否则会把 Key 覆盖成乱码 */
+function pmRealKey() {
+  const v = String($("pmKey").value || "").trim();
+  return /^[•●＊*]+$/.test(v) ? "" : v;
+}
+/* 表单里显示的值 ≠ 数据库里已保存的值。Edge Function 只读数据库，
+   所以「改完没保存就点测试」测的一定是旧配置 —— 这是 404 的头号来源。 */
+function pmFormDirty() {
+  if (!pmEditing) return true;   // 新增态：还没这条记录
+  const m = pmRows.find(x => x.id === pmEditing);
+  if (!m) return true;
+  return $("pmName").value.trim() !== String(m.name || "").trim()
+    || $("pmEndpoint").value.trim() !== String(m.endpoint || "").trim()
+    || $("pmModel").value.trim() !== String(m.model || "").trim()
+    || $("pmTier").value !== (m.tier || "standard")
+    || $("pmCors").value !== (m.cors || "proxy")
+    || pmRealKey() !== "";
+}
+function pmDiagHtml(testId, status, errText) {
+  const m = pmRows.find(x => x.id === testId) || {};
+  const rows = [
+    ["记录 ID", m.id || testId || "—"],
+    ["启用状态", m.enabled === false ? "⛔ 已停用（Edge Function 会直接拒绝）" : "● 启用中"],
+    ["API 端点", m.endpoint || "—"],
+    ["模型 ID", m.model || "—"],
+    ["API Key 末 6 位", m.key_tail ? "····" + m.key_tail : "⚠ 未保存过 Key"],
+  ];
+  const detail = rows.map(([k, v]) => `<div><span style="color:var(--dim);display:inline-block;min-width:98px">${esc(k)}：</span><code>${esc(v)}</code></div>`).join("");
+  return `<b>⚠ 厂商返回 HTTP ${esc(status)}</b><br>${esc(errText || "无详细说明")}
+    <div class="au-box"><b>本次实际调用的是下面这份「数据库里已保存」的配置</b>，
+      不是你眼前表单里刚填的值（Edge Function 出于安全会忽略前端传来的端点/模型/Key）：<br>${detail}</div>
+    <b>对照检查（按命中概率排序）：</b>
+    <ul>
+      <li>上面「API 端点 / 模型 ID」若还是旧值 → 表单改动没写进数据库。本版已改为<b>点测试时自动先保存</b>；
+        若这里仍是旧值，说明保存被上方红条拦截了，请先按红条修正。</li>
+      <li>方舟「<b>安心体验</b>」已开启时，免费额度耗尽会<b>自动暂停模型服务</b>，调用会失败。
+        到控制台关闭安心体验，或确认该模型免费额度未用完。</li>
+      <li>控制台「快捷 API 接入」要切到 <b>Chat</b> 标签复制；<code>/responses</code> 是另一套协议，
+        小银只支持 <code>/api/v3/chat/completions</code>。</li>
+      <li>模型需在方舟<b>开通</b>且地域为 <b>cn-beijing</b>；Key 必须与开通模型的<b>同一个火山引擎账号</b>一致
+        （对照上面 Key 末 6 位与控制台 Key 末 6 位）。</li>
+      <li>也可以改填控制台里已创建的<b>推理接入点 <code>ep-xxxxxx</code></b>；
+        模型 ID 必须原样照抄，中文展示名、带空格都会 404。</li>
+      <li>最干净的定位法：把控制台那段 cURL 里的 <code>$ARK_API_KEY</code> 换成真实 Key，
+        在终端直接跑一次。终端也失败 = 厂商侧配置/额度问题；终端成功而这里失败 = 代理或数据库配置问题。</li>
+    </ul>
+    <div style="margin-top:9px;"><button class="mini-btn" id="btnPmCopyDiag">📋 复制诊断信息</button></div>`;
+}
+async function pmCopyDiag(text) {
+  try { await navigator.clipboard.writeText(text); toast("✦ 诊断信息已复制"); return; } catch {}
+  try {
+    const t = document.createElement("textarea");
+    t.value = text; t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select();
+    document.execCommand("copy"); t.remove(); toast("✦ 诊断信息已复制");
+  } catch { toast("⚠ 复制失败，请手动选中红条文字"); }
+}
+
+function pmCheckRender() {
+  const r = pmConfigCheck($("pmEndpoint").value, $("pmModel").value, pmRealKey());
+  const el = $("pmCheck");
+  el.className = "pm-check " + (r.level || "");
+  el.innerHTML = r.msg;
+  return r;
+}
+["pmEndpoint", "pmModel", "pmKey", "pmPreset"].forEach(id =>
+  $(id).addEventListener("input", pmCheckRender));
+$("pmPreset").addEventListener("change", pmCheckRender);
+
+function pmPreset() { return PM_PRESETS.find(p => p.id === $("pmPreset").value) || PM_PRESETS.at(-1); }
+function pmFillFromPreset() {
+  const p = pmPreset();
+  if (p.endpoint) $("pmEndpoint").value = p.endpoint;
+  if (p.model) $("pmModel").value = p.model;
+  if (p.tier) $("pmTier").value = p.tier;
+  if (!$("pmName").value.trim()) $("pmName").value = "平台 · " + p.name;
+  $("pmCors").value = p.id === "ollama" ? "direct" : "proxy";
+  pmCheckRender();
+}
+$("pmPreset").innerHTML = PM_PRESETS.map(p =>
+  `<option value="${esc(p.id)}">${esc(p.brand)} · ${esc(p.name)}</option>`).join("");
+$("pmPreset").addEventListener("change", pmFillFromPreset);
+pmFillFromPreset();
+
+function pmFormReset() {
+  pmEditing = null;
+  ["pmName", "pmEndpoint", "pmKey", "pmModel", "pmCurl"].forEach(id => $(id).value = "");
+  $("pmTier").value = "standard"; $("pmCors").value = "proxy";
+  pmRenderDetect(null, []);
+  $("pmEditHint").textContent = "";
+  $("btnPmCancel").style.display = "none";
+  $("btnPmTest").textContent = "⚡ 测试连接";
+  $("btnPmSave").textContent = "保存模型";
+  pmCheckRender();
+}
+$("btnPmCancel").addEventListener("click", pmFormReset);
+
+function pmModeView() {
+  const m = (pmReport && pmReport.mode) || "proxy";
+  $("pmMode").value = m;
+  const risk = $("pmRisk");
+  if (m === "passthrough") {
+    risk.className = "risk";
+    risk.textContent = "⚠ 直接下发（调试）：平台 Key 会随 xy_platform_list 返回给每个登录用户，只存浏览器内存但仍可被 DevTools 读取。仅建议内网试用，正式使用务必切回「服务端代理」。";
+  } else {
+    risk.className = "risk ok";
+    risk.textContent = "● 服务端代理：共享 Key 只存在于 Supabase 数据库与 Edge Function 内，前端拿到的列表永远是脱敏的。";
+  }
+  $("pmDeployHint").textContent = m === "proxy" ? "需部署 Edge Function xy-platform" : "无需 Edge Function（有安全风险）";
+  $("pmEdgeHint").style.display = m === "proxy" ? "" : "none";
+}
+
+function renderPmList() {
+  const el = $("pmList");
+  if (!window.__platformDeployed) {
+    el.innerHTML = `<div class="empty">平台模型池尚未部署。请在 Supabase SQL Editor 执行「小银AI-平台模型池-增量部署.sql」，然后点右上角「⟳ 刷新数据」。<br>其余后台功能不受影响。</div>`;
+    $("pmStat").innerHTML = "";
+    return;
+  }
+  const src = (pmReport && pmReport.calls_by_source) || [];
+  const get = k => (src.find(x => x.source === k) || {}).calls || 0;
+  $("pmStat").innerHTML = [
+    ["平台模型", pmRows.length, ""],
+    ["已启用", pmRows.filter(m => m.enabled).length, "good"],
+    ["平台调用", get("platform"), "good"],
+    ["用户自带调用", get("byok"), ""],
+    ["内置调用", get("builtin"), ""]
+  ].map(([k, v, c]) => `<div class="s ${c}"><b>${esc(v)}</b>${esc(k)}</div>`).join("");
+
+  if (!pmRows.length) {
+    el.innerHTML = `<div class="empty">暂无平台模型。展开下方「新增 / 编辑平台模型」，选厂商、粘贴 Key 即可下发给用户。</div>`;
+    return;
+  }
+  el.innerHTML = pmRows.map(m => {
+    const a = pmAuditRow(m);
+    return `<div class="pm-row ${m.enabled ? "" : "off"}">
+      <span class="nm">${m.enabled ? "●" : "○"} ${esc(m.name)}</span>
+      <span class="pm-health ${a.level}" title="${esc(a.text)}">${a.level === "ok" ? "✓ 可用" : a.level === "warn" ? "⚠ 待确认" : "⛔ " + esc(a.text.split(" · ")[0])}</span>
+      <span class="md">${esc(m.brand)} · ${esc(m.model)}</span>
+      <span class="md">Key ····${esc(m.key_tail || "??????")}</span>
+      <span class="md">${esc(m.tier)}</span>
+      <button class="mini-btn" data-pma="edit" data-id="${esc(m.id)}">编辑</button>
+      <button class="mini-btn" data-pma="toggle" data-id="${esc(m.id)}">${m.enabled ? "停用" : "启用"}</button>
+      <button class="mini-btn danger" data-pma="del" data-id="${esc(m.id)}">删除</button>
+    </div>`;
+  }).join("");
+}
+
+/* 载单行到编辑表单（列表「编辑」与体检「去修正」共用） */
+function pmLoadEdit(m) {
+  pmEditing = m.id;
+  $("pmName").value = m.name || "";
+  $("pmEndpoint").value = m.endpoint || "";
+  $("pmModel").value = m.model || "";
+  $("pmTier").value = m.tier || "standard";
+  $("pmCors").value = m.cors || "proxy";
+  $("pmPreset").value = PM_PRESETS.some(p => p.id === m.provider) ? m.provider : "custom";
+  $("pmKey").value = "";
+  /* Chrome 会在 DOM 渲染后把记住的密码填回 type=password，再清一次 */
+  setTimeout(() => { if (!pmRealKey()) $("pmKey").value = ""; }, 60);
+  $("pmCurl").value = "";
+  $("btnPmSave").textContent = "保存修改";
+  $("btnPmCancel").style.display = "";
+  $("btnPmTest").textContent = "⚡ 保存并测试";
+  $("pmEditHint").textContent = "正在编辑 · API Key 留空 = 不改动 · 点测试会先自动保存";
+  document.querySelectorAll("#appView details.advanced").forEach(d => d.open = true);
+  pmCheckRender();
+}
+
+async function pmRpc(name, body) {
+  const resp = await supa("/rest/v1/rpc/" + name, { method: "POST", body: JSON.stringify(body || {}) });
+  if (resp.status === 404) { toast("⚠ 函数不存在：请先执行平台模型池增量部署脚本 v3"); return null; }
+  return await resp.json().catch(() => ({ ok: false, error: "响应解析失败" }));
+}
+async function loadPlatformData() {
+  const [list, stat] = await Promise.all([
+    pmRpc("xy_platform_admin_list"),
+    pmRpc("xy_admin_platform_report")
+  ]);
+  window.__platformDeployed = !!(list && list.ok);
+  if (window.__platformDeployed) pmRows = Array.isArray(list.models) ? list.models : [];
+  if (stat && stat.ok) pmReport = stat;
+  pmModeView(); renderPmList(); renderDiag();
+}
+$("btnPmMode").addEventListener("click", async () => {
+  const m = $("pmMode").value;
+  if (m === "passthrough" && !confirm("「直接下发」会把平台共享 Key 返回给每个登录用户，可被浏览器 DevTools 读取。\n仅建议内网调试。确定切换？")) { pmModeView(); return; }
+  const j = await pmRpc("xy_platform_mode", { p_mode: m });
+  if (!j) return;
+  if (!j.ok) { toast("⚠ " + (j.error || "切换失败")); return; }
+  toast(m === "proxy" ? "✦ 已切回服务端代理" : "⚠ 已切为直接下发（调试）");
+  loadPlatformData();
+});
+
+/* keepEditing=true 时用于「保存并测试」：保留编辑态，不重置表单 */
+async function pmSaveForm(keepEditing, quiet, forceEnable) {
+  const p = pmPreset();
+  const name = $("pmName").value.trim();
+  const endpoint = $("pmEndpoint").value.trim();
+  const key = pmRealKey();
+  const model = $("pmModel").value.trim();
+  if (!name || !endpoint || !model) { toast("请填写 名称 / 端点 / 模型 ID"); return null; }
+  if (!key && !pmEditing) { toast("新增模型必须填写 API Key"); return null; }
+  const chk = pmConfigCheck(endpoint, model, key);
+  if (chk.level === "err") {
+    pmCheckRender();
+    toast("⛔ 已阻止保存：" + chk.msg.replace(/<br>/g, " ").replace(/<[^>]+>/g, "").slice(0, 90) + "…（详见上方红条）", 6500);
+    return null;
+  }
+  if (chk.level === "warn" && !confirm("有需要留意的地方：\n\n"
+    + chk.msg.replace(/<br>/g, "\n").replace(/<[^>]+>/g, "") + "\n\n仍要保存吗？")) {
+    toast("已取消保存"); return null; }
+  const cur = pmEditing ? pmRows.find(x => x.id === pmEditing) : null;
+  const j = await pmRpc("xy_platform_set", {
+    p_id: pmEditing || "", p_provider: p.id, p_brand: p.brand, p_name: name,
+    p_endpoint: endpoint, p_api_key: key, p_model: model,
+    p_tier: $("pmTier").value,
+    /* 普通保存保留原启停状态；「保存并测试」临时启用，否则 EF 会拒绝一条停用的记录 */
+    p_enabled: forceEnable ? true : (cur ? cur.enabled !== false : true),
+    p_cors: $("pmCors").value
+  });
+  if (!j) return null;
+  if (!j.ok) { toast("⚠ " + (j.error || "保存失败")); return null; }
+  const savedId = j.id || pmEditing || "";
+  if (!pmEditing && savedId) {
+    pmEditing = savedId;
+    if (keepEditing) {
+      $("btnPmSave").textContent = "保存修改";
+      $("btnPmCancel").style.display = "";
+      $("btnPmTest").textContent = "⚡ 保存并测试";
+      $("pmEditHint").textContent = "已自动保存 · API Key 留空 = 不改动";
+    }
+  }
+  if (!quiet) toast("✦ 配置已写入数据库" + (key ? "" : "（Key 留空 = 沿用原值）"));
+  if (!keepEditing) pmFormReset();
+  await loadPlatformData();
+  return { ok: true, id: savedId };
+}
+$("btnPmSave").addEventListener("click", () => pmSaveForm(false));
+
+$("btnPmTest").addEventListener("click", async () => {
+  let testId = pmEditing || (pmRows.find(m => m.enabled) || {}).id;
+
+  /* ① 关键修复：Edge Function 只读数据库，表单里改了却没保存 = 测的还是旧配置 → 必然 404。
+        编辑态或新增态只要有未写入的改动，点测试就先自动保存，再刷新模型池。 */
+  if (pmFormDirty()) {
+    toast("⟳ 表单有未保存的改动，正在先写入数据库 …");
+    const saved = await pmSaveForm(true, true, true);
+    if (!saved) return;                 // 校验没过 / 保存失败，红条已给出原因
+    testId = saved.id;
+    toast("✦ 已保存，正在用数据库里的新配置发起测试 …");
+  }
+  if (!testId) { toast("请先保存至少一个启用中的平台模型"); return; }
+
+  /* ② 表单配置自检，避免把「配置错」误报成「代理没部署」 */
+  const cfgChk = pmConfigCheck($("pmEndpoint").value, $("pmModel").value, pmRealKey());
+  if (cfgChk.level === "err") {
+    pmCheckRender();
+    toast("⚠ 配置错配：" + cfgChk.msg.replace(/<br>/g, " ").replace(/<[^>]+>/g, "").slice(0, 80), 6500);
+    return;
+  }
+  if ((pmReport && pmReport.mode) === "passthrough") {
+    toast("⚠ 当前是「直接下发」调试模式，测试请求仍会走 xy-platform，请切回服务端代理再测", 5200); return;
+  }
+
+  /* ③ GET 健康检查：区分「函数没部署 / CORS 预检失败」与「厂商调用失败」 */
+  toast("⚡ 正在探测平台代理 xy-platform …");
+  try {
+    const probe = await supa("/functions/v1/xy-platform");
+    if (!probe.ok) {
+      toast("⚠ 平台代理返回 HTTP " + probe.status + "。请确认函数名为 xy-platform 且已 Deploy", 6000);
+      return;
+    }
+  } catch (e) {
+    toast("⚠ 平台代理 xy-platform 未部署或不可达（" + (e.message || e) + "）。请到 Supabase → Edge Functions 部署 xy-platform。", 7000);
+    return;
+  }
+
+  /* ④ 真实最小请求 */
+  toast("⚡ 代理已就绪，正在向厂商发起最小请求 …");
+  try {
+    const resp = await supa("/functions/v1/xy-platform", {
+      method: "POST",
+      body: JSON.stringify({ platform_id: testId,
+        messages: [{ role: "user", content: "回复 OK 两个字母即可" }], stream: false })
+    });
+    if (resp.ok) {
+      pmCheckRender();
+      toast("✦ 连接成功：平台代理 → 厂商链路正常"); return;
+    }
+    const j = await resp.json().catch(() => ({}));
+    const el = $("pmCheck");
+    el.className = "pm-check err";
+    el.innerHTML = pmDiagHtml(testId, resp.status, j.error || "无详细说明");
+    const cp = $("btnPmCopyDiag");
+    if (cp) cp.addEventListener("click", () => pmCopyDiag(el.innerText));
+    toast("⚠ 测试失败（HTTP " + resp.status + "）· 实际调用的配置与排查清单已写在下方红条", 5000);
+  } catch (e) {
+    toast("⚠ 请求平台代理失败：" + (e.message || e) + "（多为网络/CORS）", 5000);
+  }
+});
+
+$("pmList").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-pma]");
+  if (!b) return;
+  const id = b.dataset.id, act = b.dataset.pma;
+  const m = pmRows.find(x => x.id === id);
+  if (!m) return;
+  if (act === "edit") {
+    pmLoadEdit(m);
+    $("pmName").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  if (act === "toggle") {
+    const j = await pmRpc("xy_platform_set", {
+      p_id: id, p_provider: m.provider, p_brand: m.brand, p_name: m.name,
+      p_endpoint: m.endpoint, p_api_key: "", p_model: m.model,
+      p_tier: m.tier, p_enabled: !m.enabled, p_cors: m.cors
+    });
+    if (j && j.ok) { toast(m.enabled ? "已停用" : "已启用"); loadPlatformData(); }
+    else if (j) toast("⚠ " + (j.error || "操作失败"));
+    return;
+  }
+  if (act === "del") {
+    if (!confirm("删除平台模型「" + m.name + "」？\n已选中的用户刷新后会自动回落到智能路由，不会影响他们自己的 Key。")) return;
+    const j = await pmRpc("xy_platform_del", { p_id: id });
+    if (j && j.ok) { toast("✦ 已删除"); if (pmEditing === id) pmFormReset(); loadPlatformData(); }
+    else if (j) toast("⚠ " + (j.error || "删除失败"));
+  }
 });
 
 /* ---------- 启动：尝试恢复会话 ---------- */
 (async function boot() {
   try {
-    const saved = JSON.parse(localStorage.getItem(LS_AUTH) || "null");
-    if (saved && saved.access_token && cfg.url && cfg.anon) {
+    const saved = JSON.parse(lsGet(LS_AUTH) || lsGet(LS_AUTH_LEGACY) || "null");
+    if (saved && saved.access_token) {
       session = saved;
       const r = await loadReport();
       if (r.ok) { report = r; enterApp(); return; }
