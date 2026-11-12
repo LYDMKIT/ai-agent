@@ -641,9 +641,10 @@ function saveAuthSession(sess) {
 /* 内嵌默认凭据（与主站 v4.6 保持一致；旧版本若在本机存过自有项目，仍优先沿用） */
 const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";
 const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";
+const SUPA_RELAY = "";   // 中转层地址（与主站保持一致）；非空则参与自动线路切换
 
 let cfg = (() => { try { return JSON.parse(lsGet(LS_ADMIN)) || {}; } catch { return {}; } })();
-if (!cfg.url) cfg.url = SUPA_URL;
+if (!cfg.url) cfg.url = SUPA_RELAY || SUPA_URL;
 if (!cfg.anon) cfg.anon = SUPA_ANON;
 let session = null;   // supabase session
 let report = null;    // xy_admin_report 结果
@@ -674,11 +675,29 @@ function fmtTime(t) {
 }
 function supaBase() { return String(cfg.url || "").trim().replace(/\/+$/, ""); }
 function anon() { return String(cfg.anon || "").trim(); }
+/* 线路优先级：本机自定义 > 中转 > 直连；某条线路网络层失败自动换下一条 */
+function supaBases() {
+  const list = [cfg.url, SUPA_RELAY, SUPA_URL]
+    .map(v => String(v || "").trim().replace(/\/+$/, "")).filter(Boolean);
+  return list.filter((v, i) => list.indexOf(v) === i);
+}
+async function supaFetch(path, opts, headers) {
+  const bases = supaBases();
+  let lastErr = null;
+  for (let i = 0; i < bases.length; i++) {
+    try {
+      const resp = await fetch(bases[i] + path, Object.assign({}, opts, { headers }));
+      if ((resp.status === 502 || resp.status === 503 || resp.status === 504) && i < bases.length - 1) continue;
+      return resp;
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error("所有线路均不可用");
+}
 
 async function supa(path, opts = {}, retry = true) {
   const headers = Object.assign({ apikey: anon(), "Content-Type": "application/json" }, opts.headers || {});
   if (session && session.access_token) headers.Authorization = "Bearer " + session.access_token;
-  const resp = await fetch(supaBase() + path, Object.assign({}, opts, { headers }));
+  const resp = await supaFetch(path, opts, headers);
   if (resp.status === 401 && retry && session && session.refresh_token) {
     if (await refresh()) return supa(path, opts, false);
   }
@@ -686,11 +705,10 @@ async function supa(path, opts = {}, retry = true) {
 }
 async function refresh() {
   try {
-    const resp = await fetch(supaBase() + "/auth/v1/token?grant_type=refresh_token", {
+    const resp = await supaFetch("/auth/v1/token?grant_type=refresh_token", {
       method: "POST",
-      headers: { apikey: anon(), "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: session.refresh_token })
-    });
+    }, { apikey: anon(), "Content-Type": "application/json" });
     if (!resp.ok) return false;
     session = await resp.json();
     saveAuthSession(session);
@@ -753,7 +771,7 @@ async function runAuthDiag() {
     ["上次错误", lastAuthErr ? "HTTP " + lastAuthErr.status + " · " + (lastAuthErr.errorCode || "-") + " · " + (lastAuthErr.msg || "").slice(0, 100) : "无"]];
   let reachable = false, cf = null;
   try {
-    const r = await fetch(supaBase() + "/auth/v1/settings", { headers: { apikey: anon() } });
+    const r = await supaFetch("/auth/v1/settings", {}, { apikey: anon() });
     reachable = r.ok;
     if (r.ok) { const j = await r.json().catch(() => ({})); if (typeof j.mailer_autoconfirm !== "undefined") cf = j.mailer_autoconfirm === true; }
     rows.push(["后端可达", r.ok ? "✓ 正常" : "✗ HTTP " + r.status]);
@@ -792,11 +810,10 @@ $("btnLogin").addEventListener("click", async () => {
   try {
     let resp;
     try {
-      resp = await fetch(supaBase() + "/auth/v1/token?grant_type=password", {
+      resp = await supaFetch("/auth/v1/token?grant_type=password", {
         method: "POST",
-        headers: { apikey: anon(), "Content-Type": "application/json" },
         body: JSON.stringify({ email: unameToEmail(u), password: p })
-      });
+      }, { apikey: anon(), "Content-Type": "application/json" });
     } catch (e) {
       lastAuthErr = { status: 0, errorCode: "", msg: String(e.message || e), raw: "" };
       throw new Error(explainAuth(lastAuthErr));
@@ -1191,12 +1208,11 @@ async function resetPwd(uid, uname) {
   toast("⟳ 正在重置 …");
   let j = null;
   try {
-    const resp = await fetch(supaBase() + "/functions/v1/xy-admin", {
+    const resp = await supaFetch("/functions/v1/xy-admin", {
       method: "POST",
-      headers: { apikey: anon(), "Content-Type": "application/json",
-                 Authorization: "Bearer " + (session && session.access_token || "") },
       body: JSON.stringify({ action: "reset_password", p_uid: uid, p_password: np }),
-    });
+    }, { apikey: anon(), "Content-Type": "application/json",
+         Authorization: "Bearer " + (session && session.access_token || "") });
     if (resp.status === 404 || resp.status === 503) {
       throw new Error("后端函数「xy-admin」尚未部署（见 xy-admin-edge-function.ts 部署说明）");
     }
@@ -1212,12 +1228,11 @@ async function changeMyPwd() {
   if (np == null) return;
   if (np.length < 6) { toast("⚠ 新密码至少 6 位"); return; }
   try {
-    const resp = await fetch(supaBase() + "/auth/v1/user", {
+    const resp = await supaFetch("/auth/v1/user", {
       method: "PUT",
-      headers: { apikey: anon(), "Content-Type": "application/json",
-                 Authorization: "Bearer " + (session && session.access_token || "") },
       body: JSON.stringify({ password: np }),
-    });
+    }, { apikey: anon(), "Content-Type": "application/json",
+         Authorization: "Bearer " + (session && session.access_token || "") });
     if (resp.status === 401 || resp.status === 422) throw new Error("凭证已过期或新密码不合要求（请重新登录后再试）");
     if (!resp.ok) throw new Error("HTTP " + resp.status);
     toast("✦ 自己的密码已修改");
