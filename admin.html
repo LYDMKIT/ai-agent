@@ -641,7 +641,7 @@ function saveAuthSession(sess) {
 /* 内嵌默认凭据（与主站 v4.6 保持一致；旧版本若在本机存过自有项目，仍优先沿用） */
 const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";
 const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";
-const SUPA_RELAY = "";   // 中转层地址（与主站保持一致）；非空则参与自动线路切换
+const SUPA_RELAY = "https://xiaoyin-relay.3459468498.workers.dev";   // 中转层地址（与主站保持一致）；非空则参与自动线路切换
 
 let cfg = (() => { try { return JSON.parse(lsGet(LS_ADMIN)) || {}; } catch { return {}; } })();
 if (!cfg.url) cfg.url = SUPA_RELAY || SUPA_URL;
