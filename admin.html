@@ -683,13 +683,20 @@ function supaBases() {
 }
 async function supaFetch(path, opts, headers) {
   const bases = supaBases();
+  opts = opts || {};
   let lastErr = null;
   for (let i = 0; i < bases.length; i++) {
+    const timed = !opts.signal;              // 短请求加 12 秒超时，防止被墙网络下无限挂起「连接中」
+    const ctrl = timed ? new AbortController() : null;
+    const timer = timed ? setTimeout(() => ctrl.abort(), 12000) : null;
     try {
-      const resp = await fetch(bases[i] + path, Object.assign({}, opts, { headers }));
+      const o = Object.assign({}, opts, { headers });
+      if (timed) o.signal = ctrl.signal;
+      const resp = await fetch(bases[i] + path, o);
       if ((resp.status === 502 || resp.status === 503 || resp.status === 504) && i < bases.length - 1) continue;
       return resp;
     } catch (e) { lastErr = e; }
+    finally { if (timer) clearTimeout(timer); }
   }
   throw lastErr || new Error("所有线路均不可用");
 }
