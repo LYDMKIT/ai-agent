@@ -1932,16 +1932,24 @@ function supaBases() {
 }
 async function supaFetch(path, opts, headers) {
   const bases = supaBases();
+  opts = opts || {};
   let lastErr = null;
   for (let i = 0; i < bases.length; i++) {
+    const timed = !opts.signal;              // 短请求加 12 秒超时，防止被墙网络下无限挂起「连接中」；流式请求不加
+    const ctrl = timed ? new AbortController() : null;
+    const timer = timed ? setTimeout(() => ctrl.abort(), 12000) : null;
     try {
-      const resp = await fetch(bases[i] + path, Object.assign({}, opts, { headers }));
+      const o = Object.assign({}, opts, { headers });
+      if (timed) o.signal = ctrl.signal;
+      const resp = await fetch(bases[i] + path, o);
       // 网关级故障（502/503/504）也换线路重试，业务错误（4xx）不换
       if ((resp.status === 502 || resp.status === 503 || resp.status === 504) && i < bases.length - 1) continue;
       return resp;
     } catch (e) {
-      if (e && e.name === "AbortError") throw e;   // 用户主动中断，不要换线路重发
-      lastErr = e;   // 网络不通 / 跨域被拦 → 试下一条线路
+      if (opts.signal && e && e.name === "AbortError") throw e;   // 用户主动中断，不要换线路重发
+      lastErr = e;   // 网络不通 / 跨域被拦 / 超时 → 试下一条线路
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
   throw lastErr || new Error("所有线路均不可用");
