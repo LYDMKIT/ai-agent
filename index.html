@@ -1917,12 +1917,35 @@ function proxyHint() {
 /* ================= 后台服务（Supabase 账号 / 云同步 / 权限） ================= */
 const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";  // 内嵌 Supabase 项目地址
 const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";  // 内嵌 anon key
+const SUPA_RELAY = "";  // 中转层地址（Cloudflare Worker / 腾讯云函数）；填了就优先走它，留空=直连
 const LS_AUTH = "xiaoyin_auth";
 const account = {
   session: (() => { try { return JSON.parse(lsGet(LS_AUTH)) || null; } catch { return null; } })(),
   user: null, profile: null, cloudKey: null
 };
-function supaUrl() { return String(cfg.supaUrl || SUPA_URL || "").trim().replace(/\/+$/, ""); }
+function supaUrl() { return String(cfg.supaUrl || SUPA_RELAY || SUPA_URL || "").trim().replace(/\/+$/, ""); }
+/* 线路优先级：自定义 > 中转 > 直连；某条线路网络层失败自动换下一条 */
+function supaBases() {
+  const list = [cfg.supaUrl, SUPA_RELAY, SUPA_URL]
+    .map(v => String(v || "").trim().replace(/\/+$/, "")).filter(Boolean);
+  return list.filter((v, i) => list.indexOf(v) === i);
+}
+async function supaFetch(path, opts, headers) {
+  const bases = supaBases();
+  let lastErr = null;
+  for (let i = 0; i < bases.length; i++) {
+    try {
+      const resp = await fetch(bases[i] + path, Object.assign({}, opts, { headers }));
+      // 网关级故障（502/503/504）也换线路重试，业务错误（4xx）不换
+      if ((resp.status === 502 || resp.status === 503 || resp.status === 504) && i < bases.length - 1) continue;
+      return resp;
+    } catch (e) {
+      if (e && e.name === "AbortError") throw e;   // 用户主动中断，不要换线路重发
+      lastErr = e;   // 网络不通 / 跨域被拦 → 试下一条线路
+    }
+  }
+  throw lastErr || new Error("所有线路均不可用");
+}
 function supaAnon() { return String(cfg.supaKey || SUPA_ANON || "").trim(); }
 function supaReady() { return !!(supaUrl() && supaAnon()); }
 
@@ -2086,7 +2109,7 @@ async function supa(path, opts = {}, retry = true) {
   if (!supaReady()) throw new Error("内置后台服务未就绪，请刷新页面重试");
   const headers = Object.assign({ apikey: supaAnon(), "Content-Type": "application/json" }, opts.headers || {});
   if (account.session?.access_token) headers.Authorization = "Bearer " + account.session.access_token;
-  const resp = await fetch(supaUrl() + path, Object.assign({}, opts, { headers }));
+  const resp = await supaFetch(path, opts, headers);
   if (resp.status === 401 && retry && account.session?.refresh_token) {
     const ok = await supaRefresh();
     if (ok) return supa(path, opts, false);
@@ -2095,11 +2118,10 @@ async function supa(path, opts = {}, retry = true) {
 }
 async function supaRefresh() {
   try {
-    const resp = await fetch(supaUrl() + "/auth/v1/token?grant_type=refresh_token", {
+    const resp = await supaFetch("/auth/v1/token?grant_type=refresh_token", {
       method: "POST",
-      headers: { apikey: supaAnon(), "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: account.session.refresh_token })
-    });
+    }, { apikey: supaAnon(), "Content-Type": "application/json" });
     if (!resp.ok) return false;
     account.session = await resp.json();
     saveAuthSession(account.session);
@@ -2190,11 +2212,10 @@ async function authRegister(username, password, ownerCode) {
   if (!supaReady()) throw new Error("内置后台服务未就绪，请刷新页面重试");
   let resp;
   try {
-    resp = await fetch(supaUrl() + "/auth/v1/signup", {
+    resp = await supaFetch("/auth/v1/signup", {
       method: "POST",
-      headers: { apikey: supaAnon(), "Content-Type": "application/json" },
       body: JSON.stringify({ email: unameToEmail(username), password })
-    });
+    }, { apikey: supaAnon(), "Content-Type": "application/json" });
   } catch (e) { throw authFetchErr(e); }
   if (!resp.ok) {
     const e = await authReadErr(resp);
@@ -2224,11 +2245,10 @@ async function authLogin(username, password) {
   if (!supaReady()) throw new Error("内置后台服务未就绪，请刷新页面重试");
   let resp;
   try {
-    resp = await fetch(supaUrl() + "/auth/v1/token?grant_type=password", {
+    resp = await supaFetch("/auth/v1/token?grant_type=password", {
       method: "POST",
-      headers: { apikey: supaAnon(), "Content-Type": "application/json" },
       body: JSON.stringify({ email: unameToEmail(username), password })
-    });
+    }, { apikey: supaAnon(), "Content-Type": "application/json" });
   } catch (e) { throw authFetchErr(e); }
   if (!resp.ok) {
     const e = await authReadErr(resp);
@@ -2545,7 +2565,7 @@ function buildRoundMessages(modelId, decision, lastStep) {
     let reachable = false, settings = null, rpcExists = null;
     try {
       const t0 = Date.now();
-      const r = await fetch(supaUrl() + "/auth/v1/settings", { headers: { apikey: supaAnon() } });
+      const r = await supaFetch("/auth/v1/settings", {}, { apikey: supaAnon() });
       reachable = r.ok;
       if (r.ok) { try { settings = await r.json(); } catch {} }
       rows.push(["后端可达", r.ok ? "✓ " + (Date.now() - t0) + "ms（Auth 设置可读取）" : "✗ HTTP " + r.status]);
@@ -2559,9 +2579,9 @@ function buildRoundMessages(modelId, decision, lastStep) {
     } else if (reachable) rows.push(["邮箱验证", "未读到设置项（旧版 GoTrue / 自定义网关），以服务端报错为准"]);
     /* RPC 是否存在：404 / PGRST202 说明 SQL 没跑在这个项目 */
     try {
-      const r2 = await fetch(supaUrl() + "/rest/v1/rpc/xy_session", {
-        method: "POST", headers: { apikey: supaAnon(), "Content-Type": "application/json" }, body: "{}"
-      });
+      const r2 = await supaFetch("/rest/v1/rpc/xy_session", {
+        method: "POST", body: "{}"
+      }, { apikey: supaAnon(), "Content-Type": "application/json" });
       rpcExists = !(r2.status === 404 || r2.status === 501);
       rows.push(["xy_session", rpcExists ? "✓ 函数存在（HTTP " + r2.status + "，未登录时报错属正常）" : "✗ 函数不存在 → 该项目没跑过部署 SQL"]);
     } catch (e) { rows.push(["xy_session", "✗ 探测失败：" + String(e.message || e).slice(0, 70)]); }
@@ -3659,14 +3679,14 @@ async function platformCall(pm, body, signal) {
                     Authorization: "Bearer " + account.session.access_token };
   let resp;
   try {
-    resp = await fetch(supaUrl() + "/functions/v1/xy-platform", {
-      method: "POST", headers, signal,
+    resp = await supaFetch("/functions/v1/xy-platform", {
+      method: "POST", signal,
       body: JSON.stringify({ platform_id: pm.id, messages: body.messages,
                              stream: !!body.stream, tools: body.tools || [],
                              params: SAFE_GEN_PARAMS.reduce((o, k) => {
                                if (body[k] !== undefined) o[k] = body[k]; return o;
                              }, {}) })
-    });
+    }, headers);
   } catch (e) {
     if (e && e.name === "AbortError") throw e;
     if (/Failed to fetch|NetworkError|Load failed/i.test(String(e.message || e)))
@@ -3714,9 +3734,9 @@ async function aiFetch(endpoint, key, payload, signal) {
     try {
       const headers = { apikey: supaAnon(), "Content-Type": "application/json" };
       if (account.session?.access_token) headers.Authorization = "Bearer " + account.session.access_token;
-      const resp = await fetch(supaUrl() + "/functions/v1/xy-ai", {
-        method: "POST", headers, signal, body: wrap
-      });
+      const resp = await supaFetch("/functions/v1/xy-ai", {
+        method: "POST", signal, body: wrap
+      }, headers);
       if (resp.status !== 404 && resp.status !== 501) return resp;
     } catch (e) {
       if (e && e.name === "AbortError") throw e;
