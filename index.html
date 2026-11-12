@@ -1917,7 +1917,7 @@ function proxyHint() {
 /* ================= 后台服务（Supabase 账号 / 云同步 / 权限） ================= */
 const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";  // 内嵌 Supabase 项目地址
 const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";  // 内嵌 anon key
-const SUPA_RELAY = "";  // 中转层地址（Cloudflare Worker / 腾讯云函数）；填了就优先走它，留空=直连
+const SUPA_RELAY = "https://xiaoyin-relay.3459468498.workers.dev";  // 中转层地址（Cloudflare Worker）；填了就优先走它，留空=直连
 const LS_AUTH = "xiaoyin_auth";
 const account = {
   session: (() => { try { return JSON.parse(lsGet(LS_AUTH)) || null; } catch { return null; } })(),
