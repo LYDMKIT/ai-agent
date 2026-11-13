@@ -360,7 +360,7 @@
   <header class="bar">
     <div class="logo">银</div>
     <div>
-      <h1>小银后台管理 · ADMIN <span class="ver">v5.0.7</span></h1>
+      <h1>小银后台管理 · ADMIN <span class="ver">v5.1.2</span></h1>
       <div class="who" id="whoLine">—</div>
     </div>
     <div class="sp"></div>
@@ -610,7 +610,7 @@
     <p class="note">· 注册码只在「首次建档」时判定 owner；SQL v2 起重复注册不能提权，但默认码仍建议立刻改掉<br>· 修改后新用户注册需用新码，已存在的管理员不受影响<br>· 若提示「函数不存在」，说明还没执行 Supabase 部署脚本 v2</p>
   </div>
 
-  <div class="foot-meta">XIAOYIN ADMIN v5.0.7 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
+  <div class="foot-meta">XIAOYIN ADMIN v5.1.2 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
 </div>
 
 <div id="toast"></div>
@@ -641,10 +641,9 @@ function saveAuthSession(sess) {
 /* 内嵌默认凭据（与主站 v4.6 保持一致；旧版本若在本机存过自有项目，仍优先沿用） */
 const SUPA_URL = "https://nkpvikqpenpuojnalmbr.supabase.co";
 const SUPA_ANON = "sb_publishable_yW-Ou-t7d9M4oveD7-ke4A_ehGDSd-m";
-const SUPA_RELAY = "https://xiaoyin-relay.3459468498.workers.dev";   // 中转层地址（与主站保持一致）；非空则参与自动线路切换
 
 let cfg = (() => { try { return JSON.parse(lsGet(LS_ADMIN)) || {}; } catch { return {}; } })();
-if (!cfg.url) cfg.url = SUPA_RELAY || SUPA_URL;
+if (!cfg.url) cfg.url = SUPA_URL;
 if (!cfg.anon) cfg.anon = SUPA_ANON;
 let session = null;   // supabase session
 let report = null;    // xy_admin_report 结果
@@ -673,38 +672,139 @@ function fmtTime(t) {
   try { const d = new Date(t); return (d.getMonth() + 1) + "-" + String(d.getDate()).padStart(2, "0") + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
   catch { return t; }
 }
-function supaBase() { return String(cfg.url || "").trim().replace(/\/+$/, ""); }
-function anon() { return String(cfg.anon || "").trim(); }
-/* 线路优先级：本机自定义 > 中转 > 直连；某条线路网络层失败自动换下一条 */
-function supaBases() {
-  const list = [cfg.url, SUPA_RELAY, SUPA_URL]
-    .map(v => String(v || "").trim().replace(/\/+$/, "")).filter(Boolean);
-  return list.filter((v, i) => list.indexOf(v) === i);
+/* ============================================================
+   v5.0.9 · 后端线路（与主站 v5.4 同一套机制，已内置反代）
+   在 XY_BACKENDS 里加一行自定义域名 / 反代地址，后台全员立即生效。
+   ============================================================ */
+const XY_BACKENDS = [
+  "https://xiaoyin-relay.3459468498.workers.dev",   /* 已部署的 Cloudflare 反代：优先走这条 */
+  SUPA_URL/* 原域名兜底 */
+];
+const LS_ENDPOINTS = "xiaoyin_admin_endpoints";
+let __xyActive = "", __xyProbe = [], __xyReachable = "";
+const __xyDown = new Set();
+function normUrl(u) { return String(u || "").trim().replace(/\/+$/, ""); }
+function backendList() {
+  let extra = [];
+  try { const v = JSON.parse(lsGet(LS_ENDPOINTS) || "[]"); if (Array.isArray(v)) extra = v; } catch {}
+  const all = [...(Array.isArray(XY_BACKENDS) ? XY_BACKENDS : []), cfg.url, ...extra, SUPA_URL]
+    .map(normUrl).filter(u => /^https:\/\/[a-z0-9.-]+/i.test(u));
+  return [...new Set(all)];
 }
-async function supaFetch(path, opts, headers) {
-  const bases = supaBases();
-  opts = opts || {};
-  let lastErr = null;
-  for (let i = 0; i < bases.length; i++) {
-    const timed = !opts.signal;              // 短请求加 12 秒超时，防止被墙网络下无限挂起「连接中」
-    const ctrl = timed ? new AbortController() : null;
-    const timer = timed ? setTimeout(() => ctrl.abort(), 12000) : null;
-    try {
-      const o = Object.assign({}, opts, { headers });
-      if (timed) o.signal = ctrl.signal;
-      const resp = await fetch(bases[i] + path, o);
-      if ((resp.status === 502 || resp.status === 503 || resp.status === 504) && i < bases.length - 1) continue;
-      return resp;
-    } catch (e) { lastErr = e; }
-    finally { if (timer) clearTimeout(timer); }
+const LS_BACKEND_FAST = "xiaoyin_admin_backend_fast";
+function cachedBackend() {
+  try {
+    const c = JSON.parse(lsGet(LS_BACKEND_FAST) || "null");
+    if (c && c.url && Date.now() - (c.ts || 0) < 7 * 864e5 && backendList().includes(normUrl(c.url)))
+      return normUrl(c.url);
+  } catch {}
+  return "";
+}
+function applyBackend(u) {
+  __xyActive = u; __xyReachable = u; __xyDown.delete(u);
+  lsSet(LS_BACKEND_FAST, JSON.stringify({ url: u, ts: Date.now() }));
+}
+function activeBackend() {
+  if (__xyActive && !__xyDown.has(__xyActive)) return __xyActive;
+  /* v5.5：上次成功线路优先，二次打开无需等探测 */
+  const fast = cachedBackend();
+  if (fast && !__xyDown.has(fast)) return fast;
+  if (__xyReachable && !__xyDown.has(__xyReachable)) return __xyReachable;
+  const list = backendList();
+  return list.find(u => !__xyDown.has(u)) || list[0] || normUrl(SUPA_URL);
+}
+function markBackendDown(u) {
+  __xyDown.add(u);
+  const next = backendList().find(x => !__xyDown.has(x));
+  if (next) { __xyActive = next; return true; }
+  __xyDown.clear(); return false;
+}
+function isNetErr(e) {
+  return e instanceof TypeError || /failed to fetch|network|load failed/i.test(String(e && e.message || e));
+}
+function supaBase() { return activeBackend(); }
+let XY_RPC_TIMEOUT = 9000;   /* 弱网可调；自动化验证会临时改小 */
+let XY_AUTH_TIMEOUT = 12000;  /* Auth 握手单独给宽一点 */
+function withFetchTimeout(opts, ms) {
+  const ctrl = new AbortController();
+  const outer = opts && opts.signal;
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, ms);
+  if (outer) {
+    if (outer.aborted) ctrl.abort();
+    else outer.addEventListener("abort", () => ctrl.abort(), { once: true });
   }
-  throw lastErr || new Error("所有线路均不可用");
+  return { opts: Object.assign({}, opts, { signal: ctrl.signal }),
+    done: () => clearTimeout(timer), timedOut: () => timedOut,
+    outerAborted: () => !!(outer && outer.aborted) };
 }
+async function backendFetch(path, opts = {}) {
+  const n = backendList().length;
+  const ms = /\/auth\/v1\/token/.test(path) ? XY_AUTH_TIMEOUT : XY_RPC_TIMEOUT;
+  let lastErr;
+  for (let i = 0; i < Math.max(1, n); i++) {
+    const base = activeBackend();
+    const w = withFetchTimeout(opts, ms);
+    try { const resp = await fetch(base + path, w.opts); w.done(); return resp; }
+    catch (e) {
+      w.done();
+      if (w.timedOut() && !w.outerAborted()) {
+        const err = new Error("连接超时（" + Math.round(ms / 1000) + " 秒无响应），已尝试切换线路");
+        err.name = "XYTimeout"; lastErr = err;
+        if (n >= 2 && markBackendDown(base)) continue;
+        throw err;
+      }
+      lastErr = e;
+      if (!isNetErr(e) || n < 2 || !markBackendDown(base)) throw e;
+    }
+  }
+  throw lastErr;
+}
+async function probeBackends() {
+  const list = backendList();
+  let first2xxApplied = false;
+  /* v5.5：竞速 —— 一拿到 2xx 立刻生效，不等慢线路；超时 2800→1400ms */
+  __xyProbe = await Promise.all(list.map(async u => {
+    const t = performance.now();
+    try {
+      const c = new AbortController();
+      const to = setTimeout(() => c.abort(), 1400);
+      const r = await fetch(u + "/auth/v1/settings", { headers: { apikey: anon() }, signal: c.signal });
+      clearTimeout(to);
+      const reachable = r.status > 0 && r.status < 500;
+      const res = { url: u, ok: reachable, status: r.status, ms: Math.round(performance.now() - t) };
+      if (reachable && r.status >= 200 && r.status < 300 && !first2xxApplied) {
+        first2xxApplied = true; applyBackend(u);
+      }
+      return res;
+    } catch { return { url: u, ok: false, status: 0, ms: -1 }; }
+  }));
+  /* v5.4.1：同为「链路通」时，2xx 优先于 401/403，再比延迟 */
+  const score = x => (x.status >= 200 && x.status < 300 ? 0 : 1);
+  const best = __xyProbe.filter(x => x.ok).sort((a, b) => score(a) - score(b) || a.ms - b.ms)[0];
+  if (best && !first2xxApplied) applyBackend(best.url);
+  else if (!best) {
+    const resp = __xyProbe.filter(x => x.status > 0).sort((a, b) => a.ms - b.ms)[0];
+    if (resp) __xyReachable = resp.url;
+  }
+  window.__xyProbe = __xyProbe;
+  return __xyProbe;
+}
+setTimeout(() => {
+  if (backendList().length < 2) return;
+  /* 有缓存时把探测让到空闲，不与登录请求抢连接 */
+  if (cachedBackend()) {
+    const idle = window.requestIdleCallback || (cb => setTimeout(cb, 1200));
+    idle(() => { probeBackends(); }, { timeout: 3000 });
+  } else probeBackends();
+}, 350);
+
+function anon() { return String(cfg.anon || "").trim(); }
 
 async function supa(path, opts = {}, retry = true) {
   const headers = Object.assign({ apikey: anon(), "Content-Type": "application/json" }, opts.headers || {});
   if (session && session.access_token) headers.Authorization = "Bearer " + session.access_token;
-  const resp = await supaFetch(path, opts, headers);
+  const resp = await backendFetch(path, Object.assign({}, opts, { headers }));
   if (resp.status === 401 && retry && session && session.refresh_token) {
     if (await refresh()) return supa(path, opts, false);
   }
@@ -712,10 +812,11 @@ async function supa(path, opts = {}, retry = true) {
 }
 async function refresh() {
   try {
-    const resp = await supaFetch("/auth/v1/token?grant_type=refresh_token", {
+    const resp = await backendFetch("/auth/v1/token?grant_type=refresh_token", {
       method: "POST",
+      headers: { apikey: anon(), "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: session.refresh_token })
-    }, { apikey: anon(), "Content-Type": "application/json" });
+    });
     if (!resp.ok) return false;
     session = await resp.json();
     saveAuthSession(session);
@@ -775,10 +876,13 @@ async function runAuthDiag() {
   const rows = [["页面协议", location.protocol === "file:" ? "file://（本地文件）" : location.protocol + "//" + location.host],
     ["本地存储", lsWritable() ? "✓ 可写" : "⚠ 不可写（登录仍可用，刷新后需重登；设置只保留在本次会话）"],
     ["后台项目", supaBase().replace(/^https?:\/\//, "").slice(0, 56)],
+    ["页面版本", "v5.0.9（已内置反代）"],
+    ["后端线路", backendList().length + " 条 · 当前 " + activeBackend().replace(/^https:\/\//, "").slice(0, 50)
+      + ((window.__xyProbe || []).length ? " · " + window.__xyProbe.filter(r => r.ok).length + "/" + window.__xyProbe.length + " 条可达" : "")],
     ["上次错误", lastAuthErr ? "HTTP " + lastAuthErr.status + " · " + (lastAuthErr.errorCode || "-") + " · " + (lastAuthErr.msg || "").slice(0, 100) : "无"]];
   let reachable = false, cf = null;
   try {
-    const r = await supaFetch("/auth/v1/settings", {}, { apikey: anon() });
+    const r = await fetch(supaBase() + "/auth/v1/settings", { headers: { apikey: anon() } });
     reachable = r.ok;
     if (r.ok) { const j = await r.json().catch(() => ({})); if (typeof j.mailer_autoconfirm !== "undefined") cf = j.mailer_autoconfirm === true; }
     rows.push(["后端可达", r.ok ? "✓ 正常" : "✗ HTTP " + r.status]);
@@ -817,10 +921,11 @@ $("btnLogin").addEventListener("click", async () => {
   try {
     let resp;
     try {
-      resp = await supaFetch("/auth/v1/token?grant_type=password", {
+      resp = await backendFetch("/auth/v1/token?grant_type=password", {
         method: "POST",
+        headers: { apikey: anon(), "Content-Type": "application/json" },
         body: JSON.stringify({ email: unameToEmail(u), password: p })
-      }, { apikey: anon(), "Content-Type": "application/json" });
+      });
     } catch (e) {
       lastAuthErr = { status: 0, errorCode: "", msg: String(e.message || e), raw: "" };
       throw new Error(explainAuth(lastAuthErr));
@@ -845,6 +950,7 @@ $("btnLogin").addEventListener("click", async () => {
     }
     msg.textContent = "";
     report = r;
+    cacheReport(r);
     enterApp();
     if (authStorageWarn) toast("⚠ " + authStorageWarn, 6500);
   } catch (e) {
@@ -912,7 +1018,7 @@ async function refreshReport(silent) {
     return false;
   }
   reportError("");
-  report = r; render();
+  report = r; cacheReport(r); render();
   loadPlatformData();     // 独立 RPC，失败不影响主报表
   loadCapsData();         // v5 智能体能力，独立 RPC
   loadQuotaData();        // v4 每日额度
@@ -1215,11 +1321,12 @@ async function resetPwd(uid, uname) {
   toast("⟳ 正在重置 …");
   let j = null;
   try {
-    const resp = await supaFetch("/functions/v1/xy-admin", {
+    const resp = await backendFetch("/functions/v1/xy-admin", {
       method: "POST",
+      headers: { apikey: anon(), "Content-Type": "application/json",
+                 Authorization: "Bearer " + (session && session.access_token || "") },
       body: JSON.stringify({ action: "reset_password", p_uid: uid, p_password: np }),
-    }, { apikey: anon(), "Content-Type": "application/json",
-         Authorization: "Bearer " + (session && session.access_token || "") });
+    });
     if (resp.status === 404 || resp.status === 503) {
       throw new Error("后端函数「xy-admin」尚未部署（见 xy-admin-edge-function.ts 部署说明）");
     }
@@ -1235,11 +1342,12 @@ async function changeMyPwd() {
   if (np == null) return;
   if (np.length < 6) { toast("⚠ 新密码至少 6 位"); return; }
   try {
-    const resp = await supaFetch("/auth/v1/user", {
+    const resp = await backendFetch("/auth/v1/user", {
       method: "PUT",
+      headers: { apikey: anon(), "Content-Type": "application/json",
+                 Authorization: "Bearer " + (session && session.access_token || "") },
       body: JSON.stringify({ password: np }),
-    }, { apikey: anon(), "Content-Type": "application/json",
-         Authorization: "Bearer " + (session && session.access_token || "") });
+    });
     if (resp.status === 401 || resp.status === 422) throw new Error("凭证已过期或新密码不合要求（请重新登录后再试）");
     if (!resp.ok) throw new Error("HTTP " + resp.status);
     toast("✦ 自己的密码已修改");
@@ -2772,13 +2880,37 @@ $("pmList").addEventListener("click", async e => {
 });
 
 /* ---------- 启动：尝试恢复会话 ---------- */
+/* v5.7：报表 stale-while-revalidate。
+   xy_admin_report 是多表聚合重 RPC，手机弱网下 1~3 秒很常见。
+   10 分钟内的缓存先渲染进后台，再静默刷新 —— 体感「秒进」，数据仍会校准。 */
+const LS_REPORT_CACHE = "xiaoyin_admin_report_cache";
+function cachedReport() {
+  try {
+    const c = JSON.parse(lsGet(LS_REPORT_CACHE) || "null");
+    if (c && c.at && Date.now() - c.at < 600000 && c.data && c.data.ok) return c.data;
+  } catch {}
+  return null;
+}
+function cacheReport(r) {
+  try { lsSet(LS_REPORT_CACHE, JSON.stringify({ at: Date.now(), data: r })); } catch {}
+}
 (async function boot() {
   try {
     const saved = JSON.parse(lsGet(LS_AUTH) || lsGet(LS_AUTH_LEGACY) || "null");
     if (saved && saved.access_token) {
       session = saved;
+      const cached = cachedReport();
+      if (cached) {
+        report = cached; enterApp();
+        /* 后台静默校准，不阻塞界面 */
+        loadReport().then(r => {
+          try { setLoading(false); } catch {}
+          if (r && r.ok) { report = r; cacheReport(r); try { render(); } catch {} }
+        }).catch(() => { try { setLoading(false); } catch {} });
+        return;
+      }
       const r = await loadReport();
-      if (r.ok) { report = r; enterApp(); return; }
+      if (r.ok) { report = r; cacheReport(r); enterApp(); return; }
     }
   } catch {}
   showLogin();
