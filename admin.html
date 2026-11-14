@@ -714,7 +714,7 @@
     <p class="note">· 注册码只在「首次建档」时判定 owner；SQL v2 起重复注册不能提权，但默认码仍建议立刻改掉<br>· 修改后新用户注册需用新码，已存在的管理员不受影响<br>· 若提示「函数不存在」，说明还没执行 Supabase 部署脚本 v2</p>
   </div>
 
-  <div class="foot-meta">XIAOYIN ADMIN v5.4 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
+  <div class="foot-meta">XIAOYIN ADMIN v5.5 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
 </div>
 
 <div id="toast"></div>
@@ -1225,7 +1225,8 @@ async function loadGlobalPolicyAdmin() {
     if (!j || j.ok === false) throw new Error((j && j.error) || "RPC 返回失败");
     gsReady = true; gsData = j;
     gsFill(j.settings || {});
-    gsSetStatus("● 全局策略 v6 已就绪 · 上次更新 " + (j.updated_at ? fmtTime(j.updated_at) : "从未修改")
+    gsSetStatus("● 全局策略 " + (Number(j.schema) >= 7 ? "v7" : "v6") + " 已就绪 · 上次更新 "
+      + (j.updated_at ? fmtTime(j.updated_at) : "从未修改")
       + " · 修改后用户刷新主站即生效", true);
   } catch (e) {
     gsReady = false; gsData = null;
@@ -1289,7 +1290,15 @@ function render() {
 /* ---------- 部署诊断：旧 SQL 也能进后台，只是提示去升级 ---------- */
 function renderDiag() {
   const m = report.meta || {};
-  const ss = Number(m.settings_schema) || 0;            /* v7 起报表携带 settings_schema */
+  /* v5.5：v7 判定要三处取最大，否则会误报。
+     ① 报表 meta.settings_schema —— 只有「全量 v7 SQL」才会写
+     ② xy_settings_get 返回的 schema —— 同样只有全量 v7 才写
+     ③ 只跑了「增量 v7（策略键扩展）」时 ①② 都还是 6，
+        但 xy_admin_set_settings 白名单已放开 4 个新键，
+        此时不应报「未部署 v7」，只提示「报表标记未升级」即可。 */
+  const ssReport = Number(m.settings_schema) || 0;
+  const ssGet = Number(gsData && gsData.schema) || 0;
+  const ss = Math.max(ssReport, ssGet);
   const loaded = !!(m.schema_version || ss || m.generated_at);
   const v2 = loaded && (m.schema_version >= 2 || ss >= 2);
   const c = m.table_counts || {};
@@ -1300,10 +1309,12 @@ function renderDiag() {
   /* 全局策略：报表带 settings_schema=7 才认 v7；只有 xy_settings_get 通按 v6 显示 */
   const gsVer = ss >= 7 ? 7 : (gsReady ? 6 : 0);
   const items = [
-    ["SQL 契约", !loaded ? "检测中…" : ss >= 7 ? "v7 ✓" : (v2 ? "v2–v6" : "v1（旧）"),
-     !loaded ? "等待报表返回" : ss >= 7 ? "报表含 settings_schema · 全量就绪"
-       : v2 ? "缺 v7 策略键校验 · 建议升级" : "未检测到 v2 字段",
-     !loaded ? "" : ss >= 7 ? "good" : "warn"],
+    ["SQL 契约", !loaded ? "检测中…" : ss >= 7 ? "v7 ✓" : (v2 ? "v6" : "v1（旧）"),
+     !loaded ? "等待报表返回"
+       : ss >= 7 ? "报表与设置函数均标 v7 · 全量就绪"
+       : v2 ? "报表标记仍为 v6；已跑增量脚本则策略键已放行"
+       : "未检测到 v2 字段 · 建议跑全量 SQL",
+     !loaded ? "" : ss >= 7 ? "good" : (v2 ? "" : "warn")],
     ["报表生成", fmtTime(m.generated_at) || "—", "xy_admin_report()", ""],
     ["档案 / 消息 / 用量", (c.profiles ?? "—") + " / " + (c.msgs ?? c.chats ?? "—") + " / " + (c.usage ?? "—"),
      "xy_profiles / xy_chats / xy_usage", ""],
@@ -1317,7 +1328,7 @@ function renderDiag() {
     ["智能体能力", capsDeployed ? "v5 已就绪" : "未部署", capsDeployed ? "xy_platform_caps · 图像/视频/语音" : "执行 v5 增量脚本 + 重新部署 xy-platform", capsDeployed ? "good" : "warn"],
     ["全局策略", gsVer ? "v" + gsVer + " 已就绪" : "未部署",
      gsVer === 7 ? "xy_settings_get · 含线路与稳定性 4 键"
-       : gsVer === 6 ? "xy_settings_get / xy_admin_set_settings · 缺 v7 策略键"
+       : gsVer === 6 ? "xy_settings_get / xy_admin_set_settings · 报表标记 v6"
        : "执行 v6 增量脚本（含统一动效/人设/路由）",
      gsVer === 7 ? "good" : "warn"]
   ];
@@ -1329,7 +1340,7 @@ function renderDiag() {
   const rpc = "xy_admin_report / xy_admin_set_user / xy_admin_set_key / xy_admin_del_user / xy_admin_set_owner_code";
   const todo = [];
   if (loaded && !v2) todo.push("执行 <code>小银AI-Supabase部署脚本-v2.sql</code> 后可获得：趋势补零、按厂商归类、删除用户同步清理用量、注册防提权、改注册码。当前后台已自动降级，功能仍可用。");
-  if (loaded && ss && ss < 7) todo.push("后台「线路与稳定性」4 个新键（<code>ttftFloor / maxFailover / backendFirst / notice</code>）需要 <code>xy_admin_set_settings</code> 白名单放行 → 执行 <code>小银AI-数据库完整SQL-v7.sql</code> 或 <code>小银AI-增量SQL-v7-策略键扩展.sql</code>。");
+  if (loaded && ss && ss < 7) todo.push("4 个 v7 策略键（<code>ttftFloor / maxFailover / backendFirst / notice</code>）由 <code>xy_admin_set_settings</code> 白名单控制：保存时若提示「未知配置键」，跑一次 <code>小银AI-增量SQL-v7-策略键扩展.sql</code> 即可（只替换该函数，不动数据）。报表标记要变成 v7 才需跑全量 <code>小银AI-数据库完整SQL-v7.sql</code>。");
   if (!v3) todo.push("平台共享模型池：执行 <code>小银AI-平台模型池-增量部署.sql</code>；未部署时下方管理面板会自动隐藏配置表单。");
   if (!quotaOk) todo.push("登录门禁与每日额度：执行 <code>小银AI-登录门禁与每日额度-v4增量.sql</code>；未部署时主站仍要求登录，但额度只在本机计数（可被绕过）。");
   if (!capsDeployed) todo.push("智能体能力：执行 <code>小银AI-智能体能力-v5增量.sql</code> 并重新部署 <code>xy-platform</code>（GET 应返回 version: 3）；未部署时主站图像/语音自动降级到内置能力，视频会给出明确提示。");
