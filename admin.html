@@ -158,18 +158,32 @@
   .toolbar input:focus, .toolbar select:focus { border-color: var(--cyan); }
   .toolbar select option { background: #0a1222; }
   .toolbar .cnt { font-size: 11px; color: var(--dim); font-family: var(--mono); margin-left: auto; }
-  .diag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+  .diag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 10px; }
   .diag-item {
-    padding: 10px 12px; border-radius: 10px; font-family: var(--mono); font-size: 11px;
-    background: rgba(5,10,20,.55); border: 1px solid rgba(255,255,255,.08); line-height: 1.7;
+    padding: 11px 13px; border-radius: 11px; font-family: var(--mono); font-size: 11px;
+    background: rgba(5,10,20,.55); border: 1px solid rgba(255,255,255,.08); line-height: 1.6;
+    transition: border-color .2s ease, transform .2s ease;
   }
-  .diag-item b { display: block; font-size: 15px; color: #eafcff; font-weight: 700; margin-bottom: 2px; }
-  .diag-item .d { color: var(--dim); }
+  .diag-item:hover { border-color: rgba(0,229,255,.35); transform: translateY(-1px); }
+  .diag-item .lbl { display: flex; align-items: center; gap: 6px; color: var(--dim); font-size: 10.5px; letter-spacing: .05em; margin-bottom: 6px; }
+  .diag-item .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; background: #4a5a75; }
+  .diag-item.good .dot { background: #3cdc9d; box-shadow: 0 0 7px rgba(60,220,157,.75); }
+  .diag-item.warn .dot { background: #ffb454; box-shadow: 0 0 7px rgba(255,180,84,.75); }
+  .diag-item b { display: block; font-size: 16px; color: #eafcff; font-weight: 700; letter-spacing: .02em; }
+  .diag-item .d { display: block; color: var(--dim); font-size: 10.5px; margin-top: 4px; }
   .diag-item.good { border-color: rgba(60,220,160,.3); }
   .diag-item.warn { border-color: rgba(255,180,80,.4); background: rgba(255,180,80,.06); }
   .diag-item.warn b { color: #ffc46b; }
-  .diag-note { margin-top: 11px; font-size: 11px; color: var(--dim); font-family: var(--mono); line-height: 1.85; }
+  .diag-h2 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+  .diag-sum { margin-left: auto; font-family: var(--mono); font-size: 11px; letter-spacing: .5px; white-space: nowrap; }
+  .diag-sum .ok { color: #3cdc9d; }
+  .diag-sum .w  { color: #ffc46b; margin-left: 10px; }
+  .diag-note { margin-top: 12px; font-size: 11px; color: var(--dim); font-family: var(--mono); line-height: 1.85; }
   .diag-note code { color: #9fe8f5; }
+  .diag-note .allok { color: #3cdc9d; }
+  .diag-note ul { margin: 4px 0 0; padding-left: 4px; list-style: none; }
+  .diag-note li { margin: 4px 0; padding-left: 16px; position: relative; }
+  .diag-note li::before { content: "▸"; position: absolute; left: 0; color: #ffb454; }
   .err-box {
     margin-top: 12px; padding: 12px 14px; border-radius: 10px; font-size: 11.5px;
     font-family: var(--mono); line-height: 1.8; color: #ff8fa3;
@@ -216,6 +230,21 @@
   }
   .pm-form input:focus, .pm-form select:focus { border-color: var(--cyan); }
   .pm-form select option { background: #0a1222; }
+  /* v5.2 全局策略表单 */
+  .gs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+  .gs-grid .field select, .gs-grid .field textarea {
+    width: 100%; padding: 8px 10px; border-radius: 8px; font-size: 12px;
+    font-family: var(--mono); color: var(--text);
+    background: rgba(4,10,24,.8); border: 1px solid var(--line); box-sizing: border-box;
+  }
+  .gs-grid .field textarea { min-height: 66px; resize: vertical; line-height: 1.5; }
+  .gs-grid .field.wide { grid-column: 1 / -1; }
+  .gs-status { font-size: 11.5px; font-family: var(--mono); padding: 9px 12px;
+    border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--line); }
+  .gs-status.ok { color: #7fe6c0; background: rgba(70,220,170,.07); }
+  .gs-status.warn { color: #ffc46b; background: rgba(255,196,107,.07); }
+  .gs-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
+  @media (max-width: 720px) { .gs-grid { grid-template-columns: 1fr; } }
   .mode-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .mode-row select { padding: 8px 10px; border-radius: 8px; font-size: 12px; font-family: var(--mono);
     color: var(--text); background: rgba(5,10,20,.7); border: 1px solid rgba(255,255,255,.12); outline: none; }
@@ -344,14 +373,14 @@
     <button class="btn btn-primary btn-block" id="btnLogin">进 入 后 台</button>
     <div id="loginMsg"></div>
     <details id="loginDiag" style="margin-top:9px;">
-      <summary style="cursor:pointer;font-size:11px;color:var(--dim);text-align:center;list-style:none;">🔧 登录诊断 · 连不上时点这里</summary>
+      <summary style="cursor:pointer;font-size:11px;color:var(--dim);text-align:center;list-style:none;">🔧 登录自检</summary>
       <div id="loginDiagBody" style="margin-top:8px;font-size:10.5px;line-height:1.7;font-family:var(--mono);"></div>
       <div style="margin-top:7px;display:flex;gap:7px;justify-content:center;">
         <button class="btn" id="btnDiagRun" type="button" style="padding:4px 10px;font-size:10.5px;">重新检测</button>
         <button class="btn" id="btnDiagCopy" type="button" style="padding:4px 10px;font-size:10.5px;">复制诊断</button>
       </div>
     </details>
-    <p class="login-tip">只有注册时填写管理员码（owner 码）的账号可进入后台。<br>若曾在本机配置过自有 Supabase 项目，仍会沿用该设置；账号密码只保存在本浏览器。<br>换电脑登不上时，先确认两边是同一份 HTML（内嵌同一 Supabase 项目），再点上方「🔧 登录诊断」。</p>
+    <p class="login-tip">仅 owner 账号可进入后台 · 登录状态只保存在本浏览器</p>
   </div>
 </div>
 
@@ -360,7 +389,7 @@
   <header class="bar">
     <div class="logo">银</div>
     <div>
-      <h1>小银后台管理 · ADMIN <span class="ver">v5.1.2</span></h1>
+      <h1>小银后台管理 · ADMIN <span class="ver">v5.1.5</span></h1>
       <div class="who" id="whoLine">—</div>
     </div>
     <div class="sp"></div>
@@ -376,10 +405,85 @@
   <div class="cards" id="cards"></div>
 
   <div class="panel">
-    <h2>◈ 部署诊断<small>SQL v2 契约自检 · 不改动任何数据</small></h2>
+    <h2 class="diag-h2">◈ 部署诊断<small>SQL 契约自检 · 目标 v7 · 只读不改动任何数据</small><span class="diag-sum" id="diagSum"></span></h2>
     <div class="diag-grid" id="diagGrid"></div>
     <div class="diag-note" id="diagNote"></div>
     <div class="err-box" id="reportErr" style="display:none;"></div>
+  </div>
+
+  <div class="panel" id="globalPolicyPanel">
+    <h2>◈ 全局策略设置<small>一次修改，所有设备登录时自动生效</small></h2>
+    <div class="gs-status warn" id="gsStatus">正在读取统一策略 …</div>
+    <div class="gs-grid" id="gsGrid">
+      <div class="field wide"><label>系统人设 / 提示词（留空 = 用前端内置人设）</label>
+        <textarea id="gs_system" placeholder="例如：你是小银，一位简洁、专业、友好的中文 AI 助手…"></textarea></div>
+      <div class="field"><label>路由档位偏好</label><select id="gs_routeMode">
+        <option value="">未设置（均衡）</option><option value="eco">省额度优先</option>
+        <option value="balanced">均衡</option><option value="quality">高质量优先</option></select></div>
+      <div class="field"><label>深度思考</label><select id="gs_thinking">
+        <option value="">未设置（自动）</option><option value="auto">自动 · 简单题关闭（推荐最快）</option>
+        <option value="on">始终开启</option><option value="off">始终关闭 · 极速</option></select></div>
+      <div class="field"><label>回复语言</label><select id="gs_replyLang">
+        <option value="">未设置（跟随提问）</option><option value="follow">跟随提问语言</option>
+        <option value="auto">自动判断</option><option value="zh">始终中文</option>
+        <option value="en">始终英文</option><option value="ja">始终日文</option></select></div>
+      <div class="field"><label>动效档位（GPU / 省电）</label><select id="gs_fxLevel">
+        <option value="">未设置（按设备自动）</option><option value="auto">按设备自动（推荐）</option>
+        <option value="full">完整炫酷 · 桌面 30fps</option><option value="lite">轻量省电 · 手机 20fps</option>
+        <option value="still">静态星空 · 极省电</option><option value="off">完全关闭动效</option></select></div>
+      <div class="field"><label>首字超时（秒，0=关闭；留空=8）</label>
+        <input id="gs_ttftTimeout" type="number" min="0" max="180" step="1" placeholder="8"></div>
+      <div class="field"><label>上下文预算（字符 4000–48000）</label>
+        <input id="gs_contextBudget" type="number" min="4000" max="48000" step="1000" placeholder="14000"></div>
+      <div class="field"><label>历史消息条数（4–60）</label>
+        <input id="gs_historyDepth" type="number" min="4" max="60" step="1" placeholder="18"></div>
+      <div class="field"><label>日预算（元，0=不限）</label>
+        <input id="gs_budgetCny" type="number" min="0" step="0.5" placeholder="0"></div>
+      <div class="field"><label>付费模型估算均价（元/百万 token）</label>
+        <input id="gs_paidAvg" type="number" min="0" step="0.1" placeholder="1"></div>
+      <div class="field"><label>路由参考历史延迟</label><select id="gs_latencyAware">
+        <option value="">未设置（开启）</option><option value="true">开启</option><option value="false">关闭</option></select></div>
+      <div class="field"><label>本地答案缓存</label><select id="gs_cacheOn">
+        <option value="">未设置（开启）</option><option value="true">开启</option><option value="false">关闭</option></select></div>
+      <div class="field"><label>接入方式</label><select id="gs_proxyMode">
+        <option value="">未设置（自动分流）</option><option value="auto">自动分流</option>
+        <option value="custom">只用自定义代理</option><option value="direct">强制浏览器直连</option></select></div>
+      <div class="field"><label>自定义代理地址（http/https，留空=删除）</label>
+        <input id="gs_proxyUrl" type="text" placeholder="https://your-worker.workers.dev"></div>
+      <div class="field"><label>正文字号</label><select id="gs_fs">
+        <option value="">未设置（标准）</option><option value="small">偏小</option>
+        <option value="normal">标准</option><option value="large">偏大</option></select></div>
+      <div class="field"><label>消息密度</label><select id="gs_density">
+        <option value="">未设置（标准）</option><option value="compact">紧凑</option>
+        <option value="normal">标准</option><option value="relaxed">宽松</option></select></div>
+
+      <div class="field wide" style="grid-column:1/-1;margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);">
+        <label style="font-weight:600;">▼ 线路与稳定性（v5.12 新增 · 手机端体验直接相关）</label>
+        <div style="font-size:11px;color:var(--dim);line-height:1.7;margin-top:4px;">
+          这几项决定「换设备能不能连上」和「手机上会不会一直换模型」，建议先按默认值跑通再调。
+        </div>
+      </div>
+      <div class="field"><label>首选后端线路</label><select id="gs_backendFirst">
+        <option value="">未设置（官方直连优先 · 推荐）</option>
+        <option value="supa">官方直连优先 · *.supabase.co</option>
+        <option value="relay">反代优先 · 自定义域名 / Worker</option></select></div>
+      <div class="field"><label>首字等待下限（秒，手机端保底）</label>
+        <input id="gs_ttftFloor" type="number" min="0" max="60" step="1" placeholder="15"></div>
+      <div class="field"><label>单轮最多换几个模型（1–5）</label>
+        <input id="gs_maxFailover" type="number" min="1" max="5" step="1" placeholder="3"></div>
+      <div class="field wide"><label>登录页公告（留空 = 不显示）</label>
+        <textarea id="gs_notice" placeholder="例如：本周额度上调至每日 30 条；系统维护请留意群通知。"></textarea></div>
+    </div>
+    <div class="gs-actions">
+      <button class="btn btn-primary" id="btnGsSave">保存并下发</button>
+      <button class="btn" id="btnGsReset">恢复内置默认（清空全部策略）</button>
+      <button class="btn" id="btnGsReload">⟳ 重新读取</button>
+      <span id="gsCount" style="font-size:11px;color:var(--dim);font-family:var(--mono);"></span>
+    </div>
+    <p class="note" style="margin-top:12px;">· 这里只下发「策略」，不含任何 API Key；各厂商 Key 仍在服务端 Edge Function 或用户本机<br>
+      · 用户<b>下次登录或刷新</b>主站即自动生效；离线时沿用上次成功下发的副本，不阻断登录<br>
+      · 未执行 v6 SQL 时此处只读并给出升级提示，主站会静默使用本机默认值<br>
+      · 本机仍可保留：自带 API Key、自定义模型、后端线路自救、「强制省电」开关</p>
   </div>
 
   <div class="panel">
@@ -610,7 +714,7 @@
     <p class="note">· 注册码只在「首次建档」时判定 owner；SQL v2 起重复注册不能提权，但默认码仍建议立刻改掉<br>· 修改后新用户注册需用新码，已存在的管理员不受影响<br>· 若提示「函数不存在」，说明还没执行 Supabase 部署脚本 v2</p>
   </div>
 
-  <div class="foot-meta">XIAOYIN ADMIN v5.1.2 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
+  <div class="foot-meta">XIAOYIN ADMIN v5.4 · 登录门禁 / 每日额度 / 模型体检 / 智能体能力 / 平台共享池 / BYOK · 估算费用仅供参考</div>
 </div>
 
 <div id="toast"></div>
@@ -673,49 +777,71 @@ function fmtTime(t) {
   catch { return t; }
 }
 /* ============================================================
-   v5.0.9 · 后端线路（与主站 v5.4 同一套机制，已内置反代）
-   在 XY_BACKENDS 里加一行自定义域名 / 反代地址，后台全员立即生效。
+   后端线路：在 XY_BACKENDS 第一行写自定义域名 / 反代地址，后台全员立即生效。
    ============================================================ */
 const XY_BACKENDS = [
-  "https://xiaoyin-relay.3459468498.workers.dev",   /* 已部署的 Cloudflare 反代：优先走这条 */
-  SUPA_URL/* 原域名兜底 */
+  "https://xiaoyin-relay-d5gu5l4p4e44ca270-1532532211.ap-shanghai.app.tcloudbase.com",  /* v5.4：国内中转，手机可直接进后台 */
+  SUPA_URL,                               /* 官方直连：国内 TLS 握手会被 RST */
+  "https://xiaoyin-relay.3459468498.workers.dev"   /* 旧 Worker 反代，最后兜底 */
 ];
 const LS_ENDPOINTS = "xiaoyin_admin_endpoints";
 let __xyActive = "", __xyProbe = [], __xyReachable = "";
 const __xyDown = new Set();
 function normUrl(u) { return String(u || "").trim().replace(/\/+$/, ""); }
+
+/* v5.12：不可达线路 12 小时内排到队尾，刷新后不再重复撞同一个死地址 */
+const LS_BACKEND_DOWN = "xiaoyin_admin_backend_down";
+function downMap() {
+  try { const v = JSON.parse(lsGet(LS_BACKEND_DOWN) || "{}"); return (v && typeof v === "object") ? v : {}; } catch { return {}; }
+}
+function isDownPersist(u) { const m = downMap(), r = m[normUrl(u)]; return !!(r && Date.now() < r); }
+function markDownPersist(u) {
+  const m = downMap(); m[normUrl(u)] = Date.now() + 12 * 3600e3;
+  const now = Date.now(); for (const k of Object.keys(m)) if (m[k] < now) delete m[k];
+  try { lsSet(LS_BACKEND_DOWN, JSON.stringify(m)); } catch {}
+}
+function clearDownPersist(u) { const m = downMap(); delete m[normUrl(u)]; try { lsSet(LS_BACKEND_DOWN, JSON.stringify(m)); } catch {} }
+
 function backendList() {
   let extra = [];
   try { const v = JSON.parse(lsGet(LS_ENDPOINTS) || "[]"); if (Array.isArray(v)) extra = v; } catch {}
   const all = [...(Array.isArray(XY_BACKENDS) ? XY_BACKENDS : []), cfg.url, ...extra, SUPA_URL]
     .map(normUrl).filter(u => /^https:\/\/[a-z0-9.-]+/i.test(u));
-  return [...new Set(all)];
+  const uniq = [...new Set(all)];
+  return [...uniq.filter(u => !isDownPersist(u)), ...uniq.filter(u => isDownPersist(u))];
 }
 const LS_BACKEND_FAST = "xiaoyin_admin_backend_fast";
 function cachedBackend() {
   try {
     const c = JSON.parse(lsGet(LS_BACKEND_FAST) || "null");
-    if (c && c.url && Date.now() - (c.ts || 0) < 7 * 864e5 && backendList().includes(normUrl(c.url)))
+    if (c && c.url && Date.now() - (c.ts || 0) < 7 * 864e5 && backendList().includes(normUrl(c.url))
+        && !isDownPersist(c.url))
       return normUrl(c.url);
   } catch {}
   return "";
 }
 function applyBackend(u) {
   __xyActive = u; __xyReachable = u; __xyDown.delete(u);
+  clearDownPersist(u);
   lsSet(LS_BACKEND_FAST, JSON.stringify({ url: u, ts: Date.now() }));
 }
 function activeBackend() {
-  if (__xyActive && !__xyDown.has(__xyActive)) return __xyActive;
+  if (__xyActive && !__xyDown.has(__xyActive) && !isDownPersist(__xyActive)) return __xyActive;
   /* v5.5：上次成功线路优先，二次打开无需等探测 */
   const fast = cachedBackend();
   if (fast && !__xyDown.has(fast)) return fast;
-  if (__xyReachable && !__xyDown.has(__xyReachable)) return __xyReachable;
+  if (__xyReachable && !__xyDown.has(__xyReachable) && !isDownPersist(__xyReachable)) return __xyReachable;
   const list = backendList();
-  return list.find(u => !__xyDown.has(u)) || list[0] || normUrl(SUPA_URL);
+  return list.find(u => !__xyDown.has(u) && !isDownPersist(u))
+      || list.find(u => !__xyDown.has(u))
+      || list[0] || normUrl(SUPA_URL);
 }
 function markBackendDown(u) {
-  __xyDown.add(u);
-  const next = backendList().find(x => !__xyDown.has(x));
+  const url = normUrl(u);
+  __xyDown.add(url);
+  markDownPersist(url);
+  const next = backendList().find(x => !__xyDown.has(x) && !isDownPersist(x))
+            || backendList().find(x => !__xyDown.has(x));
   if (next) { __xyActive = next; return true; }
   __xyDown.clear(); return false;
 }
@@ -761,7 +887,10 @@ async function backendFetch(path, opts = {}) {
   throw lastErr;
 }
 async function probeBackends() {
-  const list = backendList();
+  /* v5.12：有近期正常的线路时不再白等已知死地址（后台页面同样要能异地打开） */
+  const all = backendList();
+  const good = all.filter(u => !isDownPersist(u));
+  const list = good.length ? good : all;
   let first2xxApplied = false;
   /* v5.5：竞速 —— 一拿到 2xx 立刻生效，不等慢线路；超时 2800→1400ms */
   __xyProbe = await Promise.all(list.map(async u => {
@@ -876,9 +1005,14 @@ async function runAuthDiag() {
   const rows = [["页面协议", location.protocol === "file:" ? "file://（本地文件）" : location.protocol + "//" + location.host],
     ["本地存储", lsWritable() ? "✓ 可写" : "⚠ 不可写（登录仍可用，刷新后需重登；设置只保留在本次会话）"],
     ["后台项目", supaBase().replace(/^https?:\/\//, "").slice(0, 56)],
-    ["页面版本", "v5.0.9（已内置反代）"],
+    ["页面版本", ((document.body.textContent.match(/ADMIN v\d+\.\d+(?:\.\d+)?/) || [])[0] || "v5.1.3") + " · " + location.pathname],
     ["后端线路", backendList().length + " 条 · 当前 " + activeBackend().replace(/^https:\/\//, "").slice(0, 50)
       + ((window.__xyProbe || []).length ? " · " + window.__xyProbe.filter(r => r.ok).length + "/" + window.__xyProbe.length + " 条可达" : "")],
+    ...(window.__xyProbe || []).map((r, i) => ["线路 " + (i + 1),
+      (r.ok ? "✓ " : "✗ ") + r.url.replace(/^https:\/\//, "").slice(0, 56) + " · "
+      + (r.status ? "HTTP " + r.status : "连不上")]),
+    ["会话状态", (()=>{ try { return JSON.parse(lsGet(LS_AUTH)||"null")?.access_token
+        ? "✓ 本机有登录会话（报表缓存可用）" : "— 本机无登录记录"; } catch { return "— 未知"; } })()],
     ["上次错误", lastAuthErr ? "HTTP " + lastAuthErr.status + " · " + (lastAuthErr.errorCode || "-") + " · " + (lastAuthErr.msg || "").slice(0, 100) : "无"]];
   let reachable = false, cf = null;
   try {
@@ -960,6 +1094,7 @@ $("btnLogin").addEventListener("click", async () => {
 });
 $("inPass").addEventListener("keydown", e => { if (e.key === "Enter") $("btnLogin").click(); });
 $("btnDiagRun")?.addEventListener("click", () => runAuthDiag());
+window.__xyGate = { runAuthDiag };
 $("btnDiagCopy")?.addEventListener("click", async () => {
   if (!diagText) await runAuthDiag();
   const ok = await copyText(diagText);
@@ -1001,6 +1136,7 @@ function enterApp() {
   render();
   loadPlatformData();   // 会话自动恢复时也要拉平台池，否则面板一直是空
   loadQuotaData();      // v4 每日额度，独立 RPC，失败不影响主报表
+  loadGlobalPolicyAdmin();  // v6 全局策略，独立 RPC，失败不影响主报表
 }
 $("btnLogout").addEventListener("click", async () => {
   try { await supa("/auth/v1/logout", { method: "POST" }); } catch {}
@@ -1022,6 +1158,7 @@ async function refreshReport(silent) {
   loadPlatformData();     // 独立 RPC，失败不影响主报表
   loadCapsData();         // v5 智能体能力，独立 RPC
   loadQuotaData();        // v4 每日额度
+  loadGlobalPolicyAdmin();// v6 全局策略
   if (!silent) toast("✦ 数据已刷新");
   return true;
 }
@@ -1034,6 +1171,93 @@ $("autoRefresh").addEventListener("change", e => {
     toast("◈ 已开启自动刷新（60 秒）");
   } else { autoTimer = null; toast("已关闭自动刷新"); }
 });
+
+/* ============================================================
+   v5.2 · 全局策略（配合主站 v5.11 + SQL v6）
+   ============================================================ */
+var gsReady = false, gsData = null;
+const GS_NUM = ["ttftTimeout", "contextBudget", "historyDepth", "budgetCny", "paidAvg",
+  "ttftFloor", "maxFailover"];
+const GS_BOOL = ["latencyAware", "cacheOn"];
+const GS_ALL = ["system", "routeMode", "thinking", "replyLang", "fxLevel",
+  ...GS_NUM, ...GS_BOOL, "proxyMode", "proxyUrl", "fs", "density",
+  "backendFirst", "notice"];
+function gsSetStatus(text, ok) {
+  const el = $("gsStatus");
+  if (!el) return;
+  el.className = "gs-status " + (ok ? "ok" : "warn");
+  el.textContent = text;
+}
+function gsFill(settings) {
+  const s = settings || {};
+  for (const k of GS_ALL) {
+    const el = $("gs_" + k);
+    if (!el) continue;
+    const v = s[k];
+    el.value = (v === undefined || v === null) ? "" : String(v);
+    el.disabled = !gsReady;
+  }
+  const n = Object.keys(s).length;
+  $("gsCount").textContent = gsReady ? "已设置 " + n + " / " + GS_ALL.length + " 项" : "策略服务不可用";
+}
+function gsPatch(allNull) {
+  const p = {};
+  for (const k of GS_ALL) {
+    const el = $("gs_" + k);
+    if (!el) continue;
+    if (allNull) { p[k] = null; continue; }
+    const raw = String(el.value || "").trim();
+    if (raw === "") { p[k] = null; continue; }
+    if (GS_NUM.includes(k)) {
+      const n = Number(raw);
+      if (!isFinite(n)) { toast("⚠ 「" + k + "」不是有效数字"); return null; }
+      p[k] = n;
+    } else if (GS_BOOL.includes(k)) p[k] = (raw === "true");
+    else p[k] = raw;
+  }
+  return p;
+}
+async function loadGlobalPolicyAdmin() {
+  try {
+    const r = await supa("/rest/v1/rpc/xy_admin_settings", { method: "POST", body: "{}" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    if (!j || j.ok === false) throw new Error((j && j.error) || "RPC 返回失败");
+    gsReady = true; gsData = j;
+    gsFill(j.settings || {});
+    gsSetStatus("● 全局策略 v6 已就绪 · 上次更新 " + (j.updated_at ? fmtTime(j.updated_at) : "从未修改")
+      + " · 修改后用户刷新主站即生效", true);
+  } catch (e) {
+    gsReady = false; gsData = null;
+    gsFill({});
+    gsSetStatus("△ 未检测到 v6 全局策略服务。请在 Supabase SQL Editor 执行 "
+      + "「小银AI-全局统一设置-v6增量.sql」（幂等，不动已有数据）；"
+      + "当前主站使用本机默认值，其余后台功能不受影响。", false);
+  }
+  try { renderDiag(); } catch {}
+}
+async function gsSubmit(allNull) {
+  if (!gsReady) { toast("⚠ 请先执行 v6 增量 SQL 并刷新"); return; }
+  const patch = gsPatch(allNull);
+  if (!patch) return;
+  try {
+    const r = await supa("/rest/v1/rpc/xy_admin_set_settings",
+      { method: "POST", body: JSON.stringify({ p_patch: patch }) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    if (!j || j.ok === false) throw new Error((j && j.error) || "保存失败");
+    gsData = j; gsFill(j.settings || {});
+    gsSetStatus("✦ 已保存并下发 " + (j.applied || 0) + " 项策略 · 用户刷新主站即生效", true);
+    toast("✦ 全局策略已下发（" + (j.count || 0) + " 项生效）");
+    try { renderDiag(); } catch {}
+  } catch (e) { toast("⚠ 保存失败：" + (e.message || e)); }
+}
+$("btnGsSave").addEventListener("click", () => gsSubmit(false));
+$("btnGsReset").addEventListener("click", () => {
+  if (!confirm("确定清空全部全局策略？所有设备将回落到前端内置默认值。")) return;
+  gsSubmit(true);
+});
+$("btnGsReload").addEventListener("click", () => loadGlobalPolicyAdmin());
 
 function render() {
   if (!report || report.ok === false) return;
@@ -1065,37 +1289,54 @@ function render() {
 /* ---------- 部署诊断：旧 SQL 也能进后台，只是提示去升级 ---------- */
 function renderDiag() {
   const m = report.meta || {};
-  const v2 = m.schema_version >= 2;
+  const ss = Number(m.settings_schema) || 0;            /* v7 起报表携带 settings_schema */
+  const loaded = !!(m.schema_version || ss || m.generated_at);
+  const v2 = loaded && (m.schema_version >= 2 || ss >= 2);
   const c = m.table_counts || {};
   const hasProviders = Array.isArray(report.providers);
   const hasDaily30 = Array.isArray(report.daily30);
   const v3 = !!window.__platformDeployed;
+  const quotaOk = !!(quotaData && quotaData.ok !== false);
+  /* 全局策略：报表带 settings_schema=7 才认 v7；只有 xy_settings_get 通按 v6 显示 */
+  const gsVer = ss >= 7 ? 7 : (gsReady ? 6 : 0);
   const items = [
-    ["schema", v2 ? "v2 ✓" : "v1（旧）", v2 ? "SQL 部署脚本 v2 已就绪" : "未检测到 v2 字段", v2 ? "good" : "warn"],
+    ["SQL 契约", !loaded ? "检测中…" : ss >= 7 ? "v7 ✓" : (v2 ? "v2–v6" : "v1（旧）"),
+     !loaded ? "等待报表返回" : ss >= 7 ? "报表含 settings_schema · 全量就绪"
+       : v2 ? "缺 v7 策略键校验 · 建议升级" : "未检测到 v2 字段",
+     !loaded ? "" : ss >= 7 ? "good" : "warn"],
     ["报表生成", fmtTime(m.generated_at) || "—", "xy_admin_report()", ""],
     ["档案 / 消息 / 用量", (c.profiles ?? "—") + " / " + (c.msgs ?? c.chats ?? "—") + " / " + (c.usage ?? "—"),
      "xy_profiles / xy_chats / xy_usage", ""],
     ["管理员注册码", m.owner_code_is_default === true ? "仍是默认值" : (v2 ? "已修改" : "未知"),
-     m.owner_code_is_default === true ? "建议立刻改掉" : "—", m.owner_code_is_default === true ? "warn" : ""],
+     m.owner_code_is_default === true ? "有被猜中的风险 · 建议立刻改" : "非默认值 · 可放心使用",
+     m.owner_code_is_default === true ? "warn" : (v2 ? "good" : "")],
     ["厂商归类数据", hasProviders ? "后端提供" : "前端降级", hasProviders ? "rpc xy_provider()" : "浏览器端前缀匹配", hasProviders ? "good" : ""],
     ["30 天趋势", hasDaily30 ? "可用" : "仅 14 天", hasDaily30 ? "daily30 补零返回" : "旧报表无此字段", hasDaily30 ? "good" : ""],
     ["平台模型池", v3 ? "v3 已就绪" : "未部署", v3 ? "xy_platform_* RPC" : "执行增量部署脚本 v3", v3 ? "good" : "warn"],
-    ["每日语句额度", (quotaData && quotaData.ok !== false) ? "v4 已就绪" : "未部署",
-     (quotaData && quotaData.ok !== false) ? "xy_quota_daily + xy_quota_consume()" : "执行 v4 增量脚本", (quotaData && quotaData.ok !== false) ? "good" : "warn"],
-    ["智能体能力", capsDeployed ? "v5 已就绪" : "未部署",
-     capsDeployed ? "xy_platform_caps · 图像/视频/语音" : "执行 v5 增量脚本 + 重新部署 xy-platform", capsDeployed ? "good" : "warn"]
+    ["每日消息额度", quotaOk ? "v4 已就绪" : "未部署", quotaOk ? "xy_quota_daily + xy_quota_consume()" : "执行 v4 增量脚本", quotaOk ? "good" : "warn"],
+    ["智能体能力", capsDeployed ? "v5 已就绪" : "未部署", capsDeployed ? "xy_platform_caps · 图像/视频/语音" : "执行 v5 增量脚本 + 重新部署 xy-platform", capsDeployed ? "good" : "warn"],
+    ["全局策略", gsVer ? "v" + gsVer + " 已就绪" : "未部署",
+     gsVer === 7 ? "xy_settings_get · 含线路与稳定性 4 键"
+       : gsVer === 6 ? "xy_settings_get / xy_admin_set_settings · 缺 v7 策略键"
+       : "执行 v6 增量脚本（含统一动效/人设/路由）",
+     gsVer === 7 ? "good" : "warn"]
   ];
+  const okCnt = items.filter(i => i[3] === "good").length;
+  const warnCnt = items.filter(i => i[3] === "warn").length;
   $("diagGrid").innerHTML = items.map(([k, val, d, cls]) =>
-    `<div class="diag-item ${cls}"><b>${esc(val)}</b><span class="d">${esc(k)} · ${esc(d)}</span></div>`).join("");
+    `<div class="diag-item ${cls}"><span class="lbl"><i class="dot"></i>${esc(k)}</span><b>${esc(val)}</b><span class="d">${esc(d)}</span></div>`).join("");
+  $("diagSum").innerHTML = okCnt ? `<span class="ok">✔ ${okCnt} 就绪</span>` + (warnCnt ? `<span class="w">⚠ ${warnCnt} 待升级</span>` : "") : "";
   const rpc = "xy_admin_report / xy_admin_set_user / xy_admin_set_key / xy_admin_del_user / xy_admin_set_owner_code";
-  $("diagNote").innerHTML = v2
-    ? "· 契约：<code>" + esc(rpc) + "</code><br>· 权限收敛、索引、daily 补零、删除级联清理均已生效；重置他人密码仍需 Edge Function <code>xy-admin</code>"
-    : "· 检测到旧版报表契约。执行 <code>小银AI-Supabase部署脚本-v2.sql</code> 后可获得：趋势补零、按厂商归类、删除用户同步清理用量、注册防提权、改注册码。<br>· 当前后台已自动降级，所有功能仍可用，不会报错。";
-  if (!v3) $("diagNote").innerHTML += "<br>· 平台共享模型池需执行 <code>小银AI-平台模型池-增量部署.sql</code>；未部署时下方管理面板会自动隐藏配置表单。";
-  if (!quotaData || quotaData.ok === false)
-    $("diagNote").innerHTML += "<br>· 登录门禁与每日 10 条额度需执行 <code>小银AI-登录门禁与每日额度-v4增量.sql</code>；未部署时主站仍要求登录，但额度只在本机计数（可被绕过）。";
-  if (!capsDeployed)
-    $("diagNote").innerHTML += "<br>· 智能体能力需执行 <code>小银AI-智能体能力-v5增量.sql</code> 并重新部署 <code>xy-platform</code> Edge Function（v3，GET 应返回 version: 3）。未部署时主站图像/语音自动降级到内置能力，视频会给出明确提示。";
+  const todo = [];
+  if (loaded && !v2) todo.push("执行 <code>小银AI-Supabase部署脚本-v2.sql</code> 后可获得：趋势补零、按厂商归类、删除用户同步清理用量、注册防提权、改注册码。当前后台已自动降级，功能仍可用。");
+  if (loaded && ss && ss < 7) todo.push("后台「线路与稳定性」4 个新键（<code>ttftFloor / maxFailover / backendFirst / notice</code>）需要 <code>xy_admin_set_settings</code> 白名单放行 → 执行 <code>小银AI-数据库完整SQL-v7.sql</code> 或 <code>小银AI-增量SQL-v7-策略键扩展.sql</code>。");
+  if (!v3) todo.push("平台共享模型池：执行 <code>小银AI-平台模型池-增量部署.sql</code>；未部署时下方管理面板会自动隐藏配置表单。");
+  if (!quotaOk) todo.push("登录门禁与每日额度：执行 <code>小银AI-登录门禁与每日额度-v4增量.sql</code>；未部署时主站仍要求登录，但额度只在本机计数（可被绕过）。");
+  if (!capsDeployed) todo.push("智能体能力：执行 <code>小银AI-智能体能力-v5增量.sql</code> 并重新部署 <code>xy-platform</code>（GET 应返回 version: 3）；未部署时主站图像/语音自动降级到内置能力，视频会给出明确提示。");
+  if (!gsReady) todo.push("全局策略：执行 <code>小银AI-全局统一设置-v6增量.sql</code>（或直接上 v7 全量）；未部署时主站使用本机默认值，仍可正常登录与对话。");
+  $("diagNote").innerHTML = todo.length
+    ? "<ul>" + todo.map(n => `<li>${n}</li>`).join("") + "</ul>"
+    : `<span class="allok">✔ 全部就绪</span> — 契约 <code>${esc(rpc)}</code> 均已生效；权限收敛、索引、daily 补零、删除级联清理均已应用；重置他人密码仍需 Edge Function <code>xy-admin</code>。`;
 }
 
 /* 活跃趋势：7 / 14 / 30 天切换；SQL v2 的 daily / daily30 已补零，空天也会画出来 */
