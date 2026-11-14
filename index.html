@@ -1493,7 +1493,7 @@ details.advanced .field { margin-bottom: 10px; }
     <div class="foot-tip" id="footHint"></div>
     <span class="input-count" id="inputCount"></span>
   </div>
-  <div class="foot-tip foot-tip-meta">XIAOYIN v5.12 · 登录门禁 · 每日额度 · 内容由 AI 生成请自行甄别</div>
+  <div class="foot-tip foot-tip-meta">XIAOYIN v5.13 · 登录门禁 · 每日额度 · 内容由 AI 生成请自行甄别</div>
   <input type="file" id="fileInput" hidden accept=".txt,.md,.json,.csv,.docx,.xlsx,.xls,.pptx,.pdf">
 </footer>
 
@@ -1671,7 +1671,7 @@ details.advanced .field { margin-bottom: 10px; }
 
 <script>
 /* ================================================================
-   小银 XIAOYIN v5.12 —— 浏览器端智能体（登录门禁 / 每日额度 / 平台共享池 / BYOK）
+   小银 XIAOYIN v5.13 —— 浏览器端智能体（登录门禁 / 每日额度 / 平台共享池 / BYOK）
    本版优化：顶栏窄屏收纳、键盘与读屏支持、动效偏好适配、背景粒子性能、
              HTML 属性转义与文档预览消毒、弹窗焦点管理、移动端弹窗滚动修正。
    原有能力：账号登录注册 / 对话云同步 / 云端 Key 下发 / 管理员权限控制 / 用量上报
@@ -1939,12 +1939,16 @@ const account = {
    启动时并发探测选最快可达的一条，失败自动换下一条重试一次。
    备用地址需同时提供 /auth/v1、/rest/v1、/functions/v1 三类路径。
    ============================================================ */
-const XY_VERSION = "v5.12";
+const XY_VERSION = "v5.13";
+/* v5.13：腾讯云 CloudBase 自建中转。国内网络对 *.supabase.co 会在 TLS 握手阶段
+   直接 RST（TCP 能连上、证书还没换成 Connection was reset），所以「官方直连」
+   在大陆手机上永远是必然失败的一条路。中转放在 CloudBase 云函数上，
+   国内可达、免备案、免域名，实测 /auth/v1 与 /functions/v1 均 200。 */
+const XY_RELAY_URL = "https://xiaoyin-relay-d5gu5l4p4e44ca270-1532532211.ap-shanghai.app.tcloudbase.com";
 const XY_BACKENDS = [
-  SUPA_URL,   /* v5.12：官方直连放第一位。Supabase 官方域名全球可达，
-                 第三方反代（*.workers.dev 等）在国内运营商 / 校园网常被 DNS 污染，
-                 排第一会让「换一台机器 / 换一个网络」直接连不上。 */
-  "https://xiaoyin-relay.3459468498.workers.dev"   /* 反代仅作备用：直连被墙时才用 */
+  XY_RELAY_URL,   /* ① 国内中转：手机/电脑都能直连 */
+  SUPA_URL,       /* ② 官方直连：海外网络或开了代理时最快 */
+  "https://xiaoyin-relay.3459468498.workers.dev"   /* ③ 旧 Worker 反代，留作最后兜底 */
 ];
 const LS_ENDPOINTS = "xiaoyin_endpoints";
 let __xyActive = "", __xyProbe = [], __xyReachable = "";
@@ -1984,7 +1988,7 @@ function backendList() {
   const uniq = [...new Set(all)];
   /* v5.12：后台可切「首选线路」。默认官方直连优先 —— 第三方反代在部分运营商 /
      校园网不可达，放第一会让换设备、换网络直接连不上。 */
-  if (String(cfg.backendFirst || "supa") === "relay") {
+  if (String(cfg.backendFirst || "relay") === "relay") {
     uniq.sort((a, b) => (/supabase\.co$/i.test(a) ? 1 : 0) - (/supabase\.co$/i.test(b) ? 1 : 0));
   } else {
     uniq.sort((a, b) => (/supabase\.co$/i.test(b) ? 1 : 0) - (/supabase\.co$/i.test(a) ? 1 : 0));
