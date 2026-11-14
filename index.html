@@ -54,14 +54,19 @@
   ::selection { background: rgba(0,229,255,.28); color: #fff; }
   button, select, input, textarea { touch-action: manipulation; }
 
-  /* ===== 背景：极光渐变层 + 网格 + 粒子网络 ===== */
-  .aurora { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(64px); }
-  .aurora.a1 { width: 58vw; height: 58vw; top: -14%; left: -12%; background: radial-gradient(closest-side, rgba(0,229,255,.30), transparent 70%); animation: drift1 22s ease-in-out infinite alternate; }
-  .aurora.a2 { width: 52vw; height: 52vw; bottom: -18%; right: -12%; background: radial-gradient(closest-side, rgba(124,108,255,.32), transparent 70%); animation: drift2 26s ease-in-out infinite alternate; }
-  .aurora.a3 { width: 44vw; height: 44vw; top: 34%; left: 32%; background: radial-gradient(closest-side, rgba(79,140,255,.20), transparent 70%); animation: drift3 30s ease-in-out infinite alternate; }
-  @keyframes drift1 { to { transform: translate(11vw, 9vh) scale(1.18); } }
-  @keyframes drift2 { to { transform: translate(-9vw, -7vh) scale(1.12); } }
-  @keyframes drift3 { to { transform: translate(-7vw, 8vh) scale(.9); } }
+  /* ===== 背景：极光渐变层 + 网格 + 粒子网络 =====
+     v5.11 GPU：radial-gradient 本身已经柔和，再叠 filter: blur(64px) 是重复劳动，
+     且「大模糊层 + 无限 transform 动画」会被浏览器逐帧重新栅格化 —— 桌面风扇狂转、
+     手机合成线程被占满的元凶。改成静态渐变；仅 full 档保留极慢的 opacity 呼吸，
+     只改 alpha、不触发重绘。视觉仍是青紫极光，但 GPU 常驻负载大幅下降。 */
+  .aurora { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+  .aurora.a1 { width: 66vw; height: 66vw; top: -18%; left: -16%; background: radial-gradient(closest-side, rgba(0,229,255,.26), transparent 78%); }
+  .aurora.a2 { width: 60vw; height: 60vw; bottom: -22%; right: -16%; background: radial-gradient(closest-side, rgba(124,108,255,.28), transparent 78%); }
+  .aurora.a3 { width: 50vw; height: 50vw; top: 32%; left: 30%; background: radial-gradient(closest-side, rgba(79,140,255,.17), transparent 78%); }
+  @keyframes auroraPulse { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+  html[data-fx="full"] .aurora.a1 { animation: auroraPulse 26s ease-in-out infinite; }
+  html[data-fx="full"] .aurora.a2 { animation: auroraPulse 31s ease-in-out infinite -8s; }
+  html[data-fx="full"] .aurora.a3 { animation: auroraPulse 37s ease-in-out infinite -17s; }
 
   #bgGrid, #bgParticles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
   #bgGrid {
@@ -122,8 +127,36 @@
     color: #a9d4e2; border-radius: 7px; padding: 4px 10px; font-size: 10.5px; cursor: pointer;
     font-family: var(--mono); }
   .gate-diag-tools button:hover { border-color: rgba(0,229,255,.5); }
+  /* v5.9 离线宽限横幅 */
+  .offline-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
+    display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+    padding: 8px 14px; font-size: 11.5px; line-height: 1.6;
+    font-family: var(--mono); color: #ffd9a1;
+    background: rgba(38,26,8,.94); border-bottom: 1px solid rgba(255,180,80,.42);
+    box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+  .offline-bar b { color: #ffc46b; }
+  .ob-dot { width: 7px; height: 7px; border-radius: 50%; background: #ffc46b;
+    box-shadow: 0 0 9px #ffc46b; flex: none; animation: obPulse 1.8s ease-in-out infinite; }
+  @keyframes obPulse { 0%,100%{opacity:.35} 50%{opacity:1} }
+  .ob-sub { color: #b9a888; }
+  .offline-bar button { margin-left: auto; padding: 4px 11px; border-radius: 7px; cursor: pointer;
+    border: 1px solid rgba(255,180,80,.5); background: rgba(255,180,80,.1);
+    color: #ffd9a1; font-family: var(--mono); font-size: 11px; }
+  .offline-bar button:hover { border-color: #ffc46b; }
+  body:has(.offline-bar) header, body:has(.offline-bar) #gate { top: 34px; }
+  @media (max-width: 760px) { .offline-bar { font-size: 10.5px; padding: 7px 10px; }
+    .ob-sub { width: 100%; order: 3; } .offline-bar button { margin-left: 0; } }
+  /* v5.13 本地文件提示 */
+  .env-warn { margin: 14px auto 0; max-width: 480px; padding: 10px 13px; border-radius: 9px;
+    font-size: 12px; line-height: 1.7; white-space: pre-wrap; text-align: left;
+    border: 1px solid rgba(255,196,107,.4); background: rgba(255,196,107,.08); color: #ffe0ad; }
+  .env-warn.bad { border-color: rgba(255,95,122,.5); background: rgba(255,95,122,.09); color: #ffc2cc; }
   .gate-note { margin-top: 16px; font-size: 11px; color: var(--text-dim);
     font-family: var(--mono); letter-spacing: .5px; }
+  /* v5.12 后台公告 */
+  .gate-notice { margin-top: 14px; max-width: 460px; padding: 8px 12px; border-radius: 8px;
+    font-size: 12px; line-height: 1.6; color: #ffe6b8; white-space: pre-wrap;
+    border: 1px solid rgba(255,180,80,.32); background: rgba(255,180,80,.07); }
   /* v4 每日额度徽标 */
   .quota-badge { margin-left: 10px; padding: 2px 9px; border-radius: 999px; font-size: 10px;
     font-family: var(--mono); white-space: nowrap; color: #9fe8f5;
@@ -1097,10 +1130,29 @@ html[data-density="compact"] .msg-meta { display: none; }
 html[data-density="relaxed"] .chat { gap: 34px; }
 html[data-density="relaxed"] .bubble { padding: 14px 18px; line-height: 1.85; }
 html[data-fx="off"] .aurora,
-html[data-fx="off"] #bgParticles { display: none; }
+html[data-fx="off"] #bgParticles, html[data-fx="off"] #fxParticles { display: none; }
 html[data-fx="off"] *, html[data-fx="off"] *::before, html[data-fx="off"] *::after {
   animation-duration: .001ms !important; animation-iteration-count: 1 !important;
   transition-duration: .001ms !important;
+}
+/* v5.11：常驻全宽元素的 backdrop-filter 会让浏览器每帧重新采样「正在动的
+   背景 canvas + 极光」，这是滚动/流式输出掉帧的主因。lite/still/off 档
+   一律换成实色面板（视觉差别极小），只有桌面 full 档保留玻璃质感。 */
+html[data-fx="lite"] header, html[data-fx="still"] header, html[data-fx="off"] header,
+html[data-fx="lite"] footer, html[data-fx="still"] footer, html[data-fx="off"] footer,
+html[data-fx="lite"] .sd,    html[data-fx="still"] .sd,    html[data-fx="off"] .sd,
+html[data-fx="lite"] .modal, html[data-fx="still"] .modal, html[data-fx="off"] .modal {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  background: rgba(8, 14, 28, .96);
+}
+html[data-fx="lite"] .aurora, html[data-fx="still"] .aurora { opacity: .62; }
+/* 顶栏 / 底栏是常驻全宽元素：只要它们带 backdrop-filter，浏览器每帧都要
+   重新采样「正在动的背景 canvas + 极光」。所有档位一律换成实色面板，
+   视觉只差一层极淡的玻璃感，却直接消掉桌面 GPU 持续满载的大头。
+   弹窗、抽屉、预览层不常驻，仍保留 blur 质感。 */
+header, footer {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  background: rgba(8, 14, 28, .94) !important;
 }
 .appearance-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .appearance-row button {
@@ -1110,6 +1162,15 @@ html[data-fx="off"] *, html[data-fx="off"] *::before, html[data-fx="off"] *::aft
   transition: all .15s;
 }
 .appearance-row button:hover { color: var(--text); border-color: var(--border); }
+/* v5.11 只读全局策略摘要 */
+.gp-box { border: 1px solid rgba(0,229,255,.16); border-radius: 10px; padding: 10px 12px;
+  background: rgba(6,12,24,.55); margin-bottom: 10px; }
+.gp-head { font-size: 11.5px; color: #9fe8f5; font-family: var(--mono); margin-bottom: 8px; }
+.gp-row { display: flex; justify-content: space-between; gap: 12px; font-size: 11.5px;
+  padding: 3px 0; color: var(--text-dim); }
+.gp-row b { color: #eafcff; font-weight: 500; text-align: right; word-break: break-all; }
+.gp-foot { margin-top: 8px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,.07);
+  font-size: 10.5px; color: var(--text-dim); font-family: var(--mono); }
 .appearance-row button.on {
   color: #eafcff; border-color: transparent;
   background: linear-gradient(rgba(11,18,38,.95), rgba(11,18,38,.95)) padding-box,
@@ -1140,9 +1201,26 @@ html[data-fx="off"] *, html[data-fx="off"] *::before, html[data-fx="off"] *::aft
   .welcome-cap b { font-size: 17px; }
 }
 
+/* ---- v5.9.2 · 触屏：操作栏不再常驻，点一下本条消息才出现 ----
+   iOS / Android WebView 点击后 :hover 会「粘住」，旧版干脆让操作栏常显 .6，
+   结果每条气泡顶着一排按钮压住正文；现在触屏下显式覆盖 hover 规则，
+   只认 .show-actions。展开时回到文档流另起一行，不占正文半分空间。
+   桌面不受影响：.show-actions 只在本媒体查询里有样式。 */
 @media (hover: none) {
-  .msg-actions { opacity: .6; transform: none; pointer-events: auto; }
-  .msg:focus-within .msg-actions { opacity: 1; }
+  /* 默认彻底不渲染：不占空间，也不压住气泡第一行 */
+  .msg-actions,
+  .msg:hover .msg-actions { display: none; }
+  /* 点选后回到文档流，在气泡内另起一行，正文一个字都不遮 */
+  .msg.show-actions .msg-actions,
+  .msg.show-actions:hover .msg-actions {
+    display: flex; position: static; width: fit-content;
+    margin: 10px 0 2px auto; opacity: 1; transform: none; pointer-events: auto;
+    box-shadow: 0 2px 12px rgba(0,0,0,.4);
+  }
+  .msg.user .msg-actions { margin-left: 0; margin-right: auto; }
+  .msg-meta, .msg:hover .msg-meta { opacity: .42; }
+  .msg.show-actions .msg-meta { opacity: 1; }
+  .bubble { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 }
 
 .msg.user .md h1, .msg.user .md h2, .msg.user .md h3, .msg.user .md h4 {
@@ -1324,13 +1402,10 @@ details.advanced .field { margin-bottom: 10px; }
       <span class="chip">📽 PPT 制作</span>
       <span class="chip">👁 文件预览</span>
       <span class="chip">🧠 本地记忆</span>
-      <span class="chip">⚡ 零成本智能路由</span>
-      <span class="chip">🧯 多模型池自动降级</span>
-      <span class="chip">🔐 登录后使用</span>
-      <span class="chip">📊 每日 10 条额度</span>
-      <span class="chip">🔌 多模型 API</span>
+      <span class="chip">🎨 图像 / 视频 / 语音</span>
     </div>
     <div class="gate-boot" id="gateBoot"></div>
+    <div class="env-warn" id="envWarn" hidden></div>
     <div class="gate-auth" id="gateAuth" hidden>
       <label for="gateUser">用户名</label>
       <input id="gateUser" type="text" placeholder="3-20 位字母 / 数字 / 下划线" autocomplete="username">
@@ -1344,15 +1419,16 @@ details.advanced .field { margin-bottom: 10px; }
       <span class="gate-link" id="gateSwitch">没有账号？点此注册 →</span>
       <div class="gate-msg" id="gateMsg"></div>
       <details class="gate-diag" id="gateDiag">
-        <summary>🔧 登录诊断 · 连不上时点这里看原因</summary>
-        <div class="gate-diag-body" id="gateDiagBody">点「重新检测」读取本机环境与后端设置。</div>
+        <summary>🔧 登录自检</summary>
+        <div class="gate-diag-body" id="gateDiagBody">点「重新检测」查看本机与后端状态。</div>
         <div class="gate-diag-tools">
           <button type="button" id="btnDiagRun">重新检测</button>
           <button type="button" id="btnDiagCopy">复制诊断信息</button>
         </div>
       </details>
     </div>
-    <div class="gate-note">🔒 本实例需登录后使用 · 默认每日 10 条语句<br>额度用完后请联系管理员在后台授权</div>
+    <div class="gate-notice" id="gateNotice" hidden></div>
+    <div class="gate-note" id="gateNote">🔒 登录后可使用</div>
   </div>
 </div>
 
@@ -1360,11 +1436,11 @@ details.advanced .field { margin-bottom: 10px; }
   <div class="logo"><span>银</span></div>
   <div class="title-wrap">
     <div class="title-row"><h1>小银 AI<span class="title-en"> · XIAOYIN</span></h1><button class="cur-session" id="curSession" title="打开对话列表">💬 默认对话 ▾</button></div>
-    <div class="hud-line"><span class="hud-dot" aria-hidden="true"></span><span id="statusLine" role="status" aria-live="polite">SYSTEM ONLINE · 智能路由 · 记忆已启用 · 办公模块就绪</span><span class="cursor">▌</span><span id="quotaBadge" class="quota-badge" hidden title="每日语句额度"></span></div>
+    <div class="hud-line"><span class="hud-dot" aria-hidden="true"></span><span id="statusLine" role="status" aria-live="polite">正在连接 …</span><span class="cursor">▌</span><span id="quotaBadge" class="quota-badge" hidden title="今日剩余额度"></span></div>
   </div>
   <div class="controls">
     <select id="modelSel" title="切换模型" aria-label="切换模型">
-      <option value="auto">◈ 智能路由（推荐 · 按需求自动切换模型）</option>
+      <option value="auto">智能路由（自动选择模型）</option>
     </select>
     <button class="icon-btn" id="btnSessions" title="对话列表 / 新建对话" aria-label="对话列表">💬</button>
     <div class="ctrl-extra" id="morePanel">
@@ -1417,7 +1493,7 @@ details.advanced .field { margin-bottom: 10px; }
     <div class="foot-tip" id="footHint"></div>
     <span class="input-count" id="inputCount"></span>
   </div>
-  <div class="foot-tip foot-tip-meta">XIAOYIN v5.7 · 登录门禁 · 每日额度 · 内容由 AI 生成请自行甄别</div>
+  <div class="foot-tip foot-tip-meta">XIAOYIN v5.12 · 登录门禁 · 每日额度 · 内容由 AI 生成请自行甄别</div>
   <input type="file" id="fileInput" hidden accept=".txt,.md,.json,.csv,.docx,.xlsx,.xls,.pptx,.pdf">
 </footer>
 
@@ -1457,24 +1533,9 @@ details.advanced .field { margin-bottom: 10px; }
     </details>
 
     <div class="field-group-title">◈ 接入方式 PROXY / CORS</div>
-    <div class="field">
-      <label>请求方式（豆包、百炼、混元等厂商必须走代理）</label>
-      <select id="cfgProxyMode">
-        <option value="auto">自动（内置代理 → 自定义代理 → 直连）</option>
-        <option value="custom">只用自定义代理</option>
-        <option value="direct">强制浏览器直连（本地模型）</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>自定义代理地址（可选，Cloudflare Worker / 本地 Node 转发）</label>
-      <div class="proxy-row">
-        <input id="cfgProxyUrl" type="text" placeholder="https://your-worker.workers.dev">
-        <button type="button" class="proxy-copy" id="btnCopyWorker">复制代理模板</button>
-      </div>
-      <div class="proxy-state" id="proxyState"></div>
-    </div>
-    <p class="model-hint">协议与内置 xy-ai 一致：POST <code>{ upstream, key, payload }</code>，代理负责把 payload 转发到 upstream 并透传流式响应。Key 不会写进前端代码。</p>
-    <p class="sec-note">⚠ 安全提示：本页所有 Key（含内置共享 Key）都保存在浏览器本地，前端代码对访问者完全可见。请勿填写生产环境私有密钥；正式部署建议改由服务端代理转发请求。</p>
+    <div class="proxy-state" id="proxyState">读取后台统一策略 …</div>
+    <p class="model-hint">厂商请求的代理方式、自定义代理地址由管理员在后台「◈ 全局策略设置」统一下发；本机无需配置。协议 <code>{ upstream, key, payload }</code> 保持不变。</p>
+    <p class="sec-note">⚠ 安全提示：本页的 API Key 保存在浏览器本地，前端代码对访问者完全可见。请勿填写生产环境私有密钥；正式部署建议改由服务端代理转发请求。</p>
     <div class="field-group-title">🌐 后端线路 BACKEND</div>
     <div class="field">
       <label>账号 / 云同步 / AI 代理的入口（多条自动选最快可达的一条）</label>
@@ -1483,31 +1544,16 @@ details.advanced .field { margin-bottom: 10px; }
         <input id="cfgBackendAdd" type="text" placeholder="https://api.yourdomain.com 或反代地址">
         <button type="button" class="proxy-copy" id="btnBackendAdd">添加并探测</button>
       </div>
-      <p class="model-hint">✅ 已内置 Cloudflare 反代 <code>xiaoyin-relay…workers.dev</code>，<strong>所有设备自动生效</strong>；v5.5 记住上次成功线路，二次打开不再等探测；v5.6 加了 9 秒请求超时，弱网下不会一直转圈。此处添加的地址<b>只保存在本机</b>，仅供临时自救；备用地址需同时提供 <code>/auth/v1</code>、<code>/rest/v1</code>、<code>/functions/v1</code> 三类路径。</p>
+      <p class="model-hint">此处添加的地址<b>只保存在本机</b>，需同时提供 <code>/auth/v1</code>、<code>/rest/v1</code>、<code>/functions/v1</code> 三类路径。要让所有设备生效，把地址写进两个 HTML 顶部的 <code>XY_BACKENDS</code> 第一行。</p>
     </div>
     <div class="field-group-title">◈ 外观偏好 APPEARANCE</div>
     <div class="field">
-      <label>正文字号</label>
+      <label>外观（字号 / 密度 / 动效档位由后台统一设置）</label>
       <div class="appearance-row">
-        <button type="button" data-akey="fs" data-appear="small">偏小</button>
-        <button type="button" data-akey="fs" data-appear="normal">标准</button>
-        <button type="button" data-akey="fs" data-appear="large">偏大</button>
+        <button type="button" data-akey="fx" data-appear="auto">跟随后台</button>
+        <button type="button" data-akey="fx" data-appear="off">本机省电 · 关闭动效</button>
       </div>
-    </div>
-    <div class="field">
-      <label>消息密度</label>
-      <div class="appearance-row">
-        <button type="button" data-akey="density" data-appear="compact">紧凑</button>
-        <button type="button" data-akey="density" data-appear="normal">标准</button>
-        <button type="button" data-akey="density" data-appear="relaxed">宽松</button>
-      </div>
-    </div>
-    <div class="field">
-      <label>背景动效</label>
-      <div class="appearance-row">
-        <button type="button" data-akey="fx" data-appear="on">开启</button>
-        <button type="button" data-akey="fx" data-appear="off">关闭 · 省电</button>
-      </div>
+      <div class="proxy-state" id="fxState" style="margin-top:8px;"></div>
     </div>
     <div class="field" style="margin-top:10px;">
       <label>✦ 智能体能力（图像 / 视频 / 语音 · 共享 Key 只在服务端）</label>
@@ -1521,58 +1567,9 @@ details.advanced .field { margin-bottom: 10px; }
         · 图像降级：智谱 CogView（内置 Key）；语音降级：浏览器原生语音合成 / 识别（零 Key、零费用）<br>
         · 视频必须配置平台能力，因为它使用独立端点与异步任务，不能走 /chat/completions</p>
     </div>
-    <div class="field" style="margin-top:4px;">
-      <label>系统提示词（小银的性格与规则，可自定义人设）</label>
-      <input id="cfgSystem" type="text" placeholder="留空使用默认">
-    </div>
-    <div class="field">
-      <label>路由档位偏好</label>
-      <select id="cfgRouteMode">
-        <option value="eco">省额度优先（难度整体降一档，最多 5 步）</option>
-        <option value="balanced" selected>均衡（默认，最多 8 步）</option>
-        <option value="quality">高质量优先（难度整体升一档，最多 10 步）</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>深度思考（豆包 Seed 2.1 / Kimi K3 等默认开启，简单问题会慢 20~40 秒）</label>
-      <select id="cfgThinking">
-        <option value="auto" selected>⚡ 自动：简单问题关闭、代码/推理才开（推荐，最快）</option>
-        <option value="on">始终开启 · 质量优先</option>
-        <option value="off">始终关闭 · 极速优先</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>回复语言（智能路由自动识别提问语种）</label>
-      <select id="cfgReplyLang">
-        <option value="follow" selected>跟随提问语言（中文问中文答、英文问英文答）</option>
-        <option value="auto">自动判断（混合语种以中文为主）</option>
-        <option value="zh">始终中文</option>
-        <option value="en">始终英文</option>
-        <option value="ja">始终日文</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>首字超时提示（秒；再等 6 秒仍无首字会自动换快模型，0=关闭）</label>
-      <input id="cfgTtft" type="number" min="0" max="180" step="1" placeholder="8">
-    </div>
-    <div class="field">
-      <label>上下文预算（字符，超出自动折叠旧消息，越小首字越快）</label>
-      <input id="cfgContextBudget" type="number" min="4000" max="48000" step="1000" placeholder="14000">
-    </div>
-    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:6px;">
-      <input type="checkbox" id="cfgLatencyAware" checked style="accent-color:#00e5ff;"> 路由参考历史实测延迟（自动优先更快的模型）
-    </label>
-    <div class="field">
-      <label>日预算（元，0=不限；超限后自动只用免费模型）</label>
-      <input id="cfgBudget" type="number" min="0" step="0.5" placeholder="0">
-    </div>
-    <div class="field">
-      <label>付费模型估算均价（元/百万 token，仅用于成本估算显示）</label>
-      <input id="cfgPaidAvg" type="number" min="0" step="0.1" placeholder="1">
-    </div>
-    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:6px;">
-      <input type="checkbox" id="cfgCacheOn" style="accent-color:#00e5ff;"> 启用本地答案缓存（重复问题 0 消耗）
-    </label>
+    <div class="field-group-title">◈ 全局策略 UNIFIED POLICY</div>
+    <div id="globalPolicyBox" class="gp-box"></div>
+    <p class="model-hint">系统人设、路由偏好、深度思考、回复语言、首字超时、上下文预算、缓存、接入方式与动效档位均由管理员在后台统一设置，登录时自动下发到所有设备。本机只保留自带 API Key、自定义模型、后端线路自救与「强制省电」开关。</p>
     </div><!-- /modal-body -->
     <div class="modal-btns">
       <button class="btn-danger" id="btnReset">恢复默认</button>
@@ -1674,7 +1671,7 @@ details.advanced .field { margin-bottom: 10px; }
 
 <script>
 /* ================================================================
-   小银 XIAOYIN v5.7 —— 浏览器端智能体（登录门禁 / 每日额度 / 平台共享池 / BYOK）
+   小银 XIAOYIN v5.12 —— 浏览器端智能体（登录门禁 / 每日额度 / 平台共享池 / BYOK）
    本版优化：顶栏窄屏收纳、键盘与读屏支持、动效偏好适配、背景粒子性能、
              HTML 属性转义与文档预览消毒、弹窗焦点管理、移动端弹窗滚动修正。
    原有能力：账号登录注册 / 对话云同步 / 云端 Key 下发 / 管理员权限控制 / 用量上报
@@ -1937,57 +1934,103 @@ const account = {
   user: null, profile: null, cloudKey: null
 };
 /* ============================================================
-   v5.6 · 后端线路：多端点自动择优 + 网络故障自动切换（已内置反代 + 请求级超时）
-   国内网络下 supabase.co 常不可达。部署者在 XY_BACKENDS 里加一行
-   「官方自定义域名」或「反代地址」，所有用户立即生效；启动时并发探测
-   选最快可达的一条，某条线路网络层失败自动换下一条重试一次。
-   注意：备用地址必须同时提供 /auth/v1、/rest/v1、/functions/v1 三类路径。
+   后端线路：多端点自动择优 + 网络故障自动切换。
+   部署者把自定义域名 / 反代地址写进 XY_BACKENDS 第一行，所有用户立即生效；
+   启动时并发探测选最快可达的一条，失败自动换下一条重试一次。
+   备用地址需同时提供 /auth/v1、/rest/v1、/functions/v1 三类路径。
    ============================================================ */
+const XY_VERSION = "v5.12";
 const XY_BACKENDS = [
-  "https://xiaoyin-relay.3459468498.workers.dev",   /* 已部署的 Cloudflare 反代：优先走这条（所有用户立即生效） */
-  SUPA_URL/* 原域名兜底：反代异常时仍可回退 */
+  SUPA_URL,   /* v5.12：官方直连放第一位。Supabase 官方域名全球可达，
+                 第三方反代（*.workers.dev 等）在国内运营商 / 校园网常被 DNS 污染，
+                 排第一会让「换一台机器 / 换一个网络」直接连不上。 */
+  "https://xiaoyin-relay.3459468498.workers.dev"   /* 反代仅作备用：直连被墙时才用 */
 ];
 const LS_ENDPOINTS = "xiaoyin_endpoints";
 let __xyActive = "", __xyProbe = [], __xyReachable = "";
 const __xyDown = new Set();
 function normUrl(u) { return String(u || "").trim().replace(/\/+$/, ""); }
+
+/* ============================================================
+   v5.12 · 不可达线路持久化降权
+   旧版 markBackendDown 只记在内存 Set 里，刷新页面就忘 → 每次打开都先撞一次
+   不可达线路，等 probeMs（手机 2.6~3.4s）才切换；cachedBackend 又把它缓存 7 天。
+   结果就是「换设备 / 换网络后一直转圈」。现在把失败线路写进 localStorage，
+   12 小时内排到队尾（仍保留为最后兜底，不会彻底消失）。
+   ============================================================ */
+const LS_BACKEND_DOWN = "xiaoyin_backend_down";
+function downMap() {
+  try { const v = JSON.parse(lsGet(LS_BACKEND_DOWN) || "{}"); return (v && typeof v === "object") ? v : {}; } catch { return {}; }
+}
+function downSave(m) { try { lsSet(LS_BACKEND_DOWN, JSON.stringify(m)); } catch {} }
+function isDownPersist(u) {
+  const m = downMap(), r = m[normUrl(u)];
+  return !!(r && Date.now() < r);
+}
+function markDownPersist(u) {
+  const m = downMap(); m[normUrl(u)] = Date.now() + 12 * 3600e3;
+  /* 顺手清理过期项，避免 localStorage 无限膨胀 */
+  const now = Date.now();
+  for (const k of Object.keys(m)) if (m[k] < now) delete m[k];
+  downSave(m);
+}
+function clearDownPersist(u) { const m = downMap(); delete m[normUrl(u)]; downSave(m); }
+
 function backendList() {
   let extra = [];
   try { const v = JSON.parse(lsGet(LS_ENDPOINTS) || "[]"); if (Array.isArray(v)) extra = v; } catch {}
-  /* cfg.supaUrl 是旧版本「自有项目」的兼容位，优先级最高 */
-  /* v5.4：XY_BACKENDS 排最前（反代优先）；cfg.supaUrl 是旧版兼容位，降到后面 */
   const all = [...(Array.isArray(XY_BACKENDS) ? XY_BACKENDS : []), cfg.supaUrl, ...extra, SUPA_URL]
     .map(normUrl).filter(u => /^https:\/\/[a-z0-9.-]+/i.test(u));
-  return [...new Set(all)];
+  const uniq = [...new Set(all)];
+  /* v5.12：后台可切「首选线路」。默认官方直连优先 —— 第三方反代在部分运营商 /
+     校园网不可达，放第一会让换设备、换网络直接连不上。 */
+  if (String(cfg.backendFirst || "supa") === "relay") {
+    uniq.sort((a, b) => (/supabase\.co$/i.test(a) ? 1 : 0) - (/supabase\.co$/i.test(b) ? 1 : 0));
+  } else {
+    uniq.sort((a, b) => (/supabase\.co$/i.test(b) ? 1 : 0) - (/supabase\.co$/i.test(a) ? 1 : 0));
+  }
+  /* v5.12：把「12 小时内失败过」的线路挪到队尾，好线路先试；
+     但不能删掉它们 —— 全部失败时仍要留最后一条兜底。 */
+  const good = uniq.filter(u => !isDownPersist(u));
+  const bad = uniq.filter(u => isDownPersist(u));
+  return [...good, ...bad];
 }
 const LS_BACKEND_FAST = "xiaoyin_backend_fast";
 function cachedBackend() {
   try {
     const c = JSON.parse(lsGet(LS_BACKEND_FAST) || "null");
     /* 7 天内有效；且必须仍在候选线路里，避免换了项目还用旧地址 */
-    if (c && c.url && Date.now() - (c.ts || 0) < 7 * 864e5 && backendList().includes(normUrl(c.url)))
+    if (c && c.url && Date.now() - (c.ts || 0) < 7 * 864e5
+        && backendList().includes(normUrl(c.url))
+        && !isDownPersist(c.url))   /* v5.12：缓存命中也要避开已知不可达线路 */
       return normUrl(c.url);
   } catch {}
   return "";
 }
 function applyBackend(u, persist) {
   __xyActive = u; __xyReachable = u; __xyDown.delete(u);
+  clearDownPersist(u);   /* 成功过一次就解除降权 */
   if (persist !== false) lsSet(LS_BACKEND_FAST, JSON.stringify({ url: u, ts: Date.now() }));
 }
 function activeBackend() {
   if (cfg.backendLock) return normUrl(cfg.backendLock);
-  if (__xyActive && !__xyDown.has(__xyActive)) return __xyActive;
+  if (__xyActive && !__xyDown.has(__xyActive) && !isDownPersist(__xyActive)) return __xyActive;
   /* v5.5：上次成功线路优先，第二次打开无需等探测就能用对线路 */
   const fast = cachedBackend();
   if (fast && !__xyDown.has(fast)) return fast;
   /* v5.4：探测全部失败时，优先用「至少拿到过 HTTP 响应」的那条 */
-  if (__xyReachable && !__xyDown.has(__xyReachable)) return __xyReachable;
+  if (__xyReachable && !__xyDown.has(__xyReachable) && !isDownPersist(__xyReachable)) return __xyReachable;
   const list = backendList();
-  return list.find(u => !__xyDown.has(u)) || list[0] || normUrl(SUPA_URL);
+  return list.find(u => !__xyDown.has(u) && !isDownPersist(u))
+      || list.find(u => !__xyDown.has(u))
+      || list[0] || normUrl(SUPA_URL);
 }
 function markBackendDown(u) {
-  __xyDown.add(u);
-  const next = backendList().find(x => !__xyDown.has(x));
+  const url = normUrl(u);
+  __xyDown.add(url);
+  markDownPersist(url);          /* v5.12：写入 12 小时降权，刷新后依然最后才试 */
+  const next = backendList().find(x => !__xyDown.has(x) && !isDownPersist(x))
+            || backendList().find(x => !__xyDown.has(x));
   if (next) { __xyActive = next; return true; }
   __xyDown.clear(); return false;
 }
@@ -1996,8 +2039,97 @@ function markBackendDown(u) {
    浏览器 fetch 本身没有超时，弱网 / DNS 黑洞下会 pending 几十秒甚至更久。
    注意：外部 signal（用户点 ⏹ 停止）优先，不误判成线路故障。
    ============================================================ */
-let XY_RPC_TIMEOUT = 9000;   /* 弱网可调；自动化验证会临时改小 */
-let XY_AUTH_TIMEOUT = 12000;  /* Auth 握手单独给宽一点 */
+
+/* ============================================================
+   v5.10 · 运行环境与超时矩阵
+   iOS WKWebView（尤其微信/QQ 内置）会缓冲 SSE、冷启动慢、弱网下 fetch 挂很久；
+   Android WebView 省电策略会冻结后台 timer；Windows 桌面链路最短。
+   之前一套 9s / 1.4s 打天下，手机端必然连锁超时 → 换模型 → 再超时。
+   ============================================================ */
+const XY_ENV = (() => {
+  const ua = String(navigator.userAgent || "");
+  const iOS = /iPad|iPhone|iPod/i.test(ua) || (/Macintosh/i.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+  const inApp = /MicroMessenger|wxwork|QQ\/|QQBrowser|Weibo|DingTalk/i.test(ua);
+  const android = /Android/i.test(ua);
+  const windows = /Windows NT/i.test(ua);
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const weak = !!(conn && (/(^|-)2g$/.test(String(conn.effectiveType || "")) || conn.saveData));
+  const file = location.protocol === "file:";
+  return {
+    iOS, android, windows, inApp, weak, file,
+    /* iOS 内置浏览器最需要余量，桌面最短 */
+    label: iOS ? (inApp ? "iOS·内置浏览器" : "iOS Safari")
+         : android ? (inApp ? "Android·内置WebView" : "Android Chrome")
+         : windows ? "Windows" : "桌面",
+    /* 探测（并发竞速，短一点无妨，但 1.4s 对微信偏紧） */
+    probeMs: (iOS && inApp ? 2600 : iOS ? 2000 : android ? 2000 : 1400) * (weak ? 1.3 : 1),
+    /* 普通 RPC：登录态/额度/列表 */
+    rpcMs:   (iOS && inApp ? 14000 : iOS ? 11000 : android ? 11000 : 9000) * (weak ? 1.25 : 1),
+    /* Auth 握手 */
+    authMs:  (iOS && inApp ? 18000 : iOS ? 15000 : android ? 15000 : 12000) * (weak ? 1.25 : 1),
+    /* SSE 只等响应头（body 由 awaitFirstByte 管），要能扛住 EF 冷启动 */
+    headMs:  (iOS && inApp ? 30000 : iOS ? 24000 : android ? 24000 : 18000) * (weak ? 1.25 : 1)
+  };
+})();
+const XY_MAX_FAILOVER = 3;   /* 一次提问最多试 3 个模型，杜绝「19 个挨个试」 */
+
+/* ============================================================
+   v5.13 · 本地文件（file://）环境提示
+   手机浏览器与微信内置 WebView 会拦掉 file:// 页面发起的所有跨域请求，
+   表现就是「一直转圈 / 连接不上 / 登录失败」，但页面本身能正常显示，
+   极容易被误判成后端挂了。
+   这里在入口页直接说清楚，避免再白折腾一轮。
+   ============================================================ */
+function renderEnvWarn() {
+  const box = document.getElementById("envWarn");
+  if (!box) return;
+  const file = location.protocol === "file:";
+  const mobile = XY_ENV.iOS || XY_ENV.android || XY_ENV.inApp || /Mobi/i.test(navigator.userAgent || "");
+  if (!file) { box.hidden = true; box.textContent = ""; return; }
+  const msg = mobile
+    ? "⚠ 手机上是本地文件打开的（file://）\n"
+      + "手机浏览器 / 微信内置浏览器会拦掉这种页面发出的全部跨域请求，"
+      + "所以登录、对话一定失败，跟后端无关。\n"
+      + "请在电脑上把本文件放到任意 https 网址（或电脑开个局域网服务）再在手机访问。"
+    : "⚠ 当前用 file:// 打开。桌面 Chrome 通常可用；"
+      + "如果登录或对话失败，多是被浏览器的跨域策略拦住，换 https 地址打开即可。";
+  box.hidden = false;
+  box.textContent = msg;
+  box.className = "env-warn " + (mobile ? "bad" : "warn");
+}
+try { renderEnvWarn(); } catch {}
+
+/* ============================================================
+   v5.11 · 动效档位（GPU 预算）
+   full  : 桌面默认，星尘/拖尾/辉光/能量环/彗星/涟漪/鼠标光晕全部保留
+   lite  : 手机/平板默认，保留粒子网络 + 连线 + 呼吸光点，去掉彗星/涟漪/光晕
+   still : 弱网 / 省流量 / 生成中，只画一帧静态星空
+   off   : 管理员或用户显式关闭，两层 canvas 都隐藏
+   后台「全局策略」可强制任意档；auto = 按设备与网络自动选。
+   ============================================================ */
+const FX_PROFILE = {
+  full:  { nodes: 58, fps: 30, comets: 2, ripples: true,  mouseGlow: true,  burst: 1,    star: true  },
+  lite:  { nodes: 26, fps: 20, comets: 0, ripples: false, mouseGlow: false, burst: .55,  star: true  },
+  still: { nodes: 18, fps: 0,  comets: 0, ripples: false, mouseGlow: false, burst: 0,    star: false },
+  off:   { nodes: 0,  fps: 0,  comets: 0, ripples: false, mouseGlow: false, burst: 0,    star: false }
+};
+let XY_APPEAR_OFF = false;   /* 由外观 UI 同步，避免 fxLevel 读取尚未初始化的 appear */
+function fxLevel() {
+  /* 本机「省电」覆盖优先级最高：用户主动关掉就该彻底关掉 */
+  if (XY_APPEAR_OFF) return "off";
+  const g = String((typeof cfg !== "undefined" && cfg && cfg.fxLevel) || "auto").toLowerCase();
+  if (FX_PROFILE[g]) return g;
+  /* auto：内置浏览器 / 弱网最保守，手机保守，桌面完整 */
+  if (XY_ENV.weak) return "still";                    /* 2G / 省流量：静态星空 */
+  if (XY_ENV.inApp || XY_ENV.iOS || XY_ENV.android) return "lite";  /* 内置浏览器保留轻量粒子 */
+  return "full";
+}
+function fxProfile() { return FX_PROFILE[fxLevel()] || FX_PROFILE.lite; }
+window.__xyFxLevel = fxLevel;
+window.__xyFxProfile = fxProfile;
+let XY_RPC_TIMEOUT = (window.__xyTestRpcTimeout != null ? window.__xyTestRpcTimeout : XY_ENV.rpcMs);
+let XY_AUTH_TIMEOUT = (window.__xyTestAuthTimeout != null ? window.__xyTestAuthTimeout : XY_ENV.authMs);
+let XY_HEAD_TIMEOUT = XY_ENV.headMs;
 function withFetchTimeout(opts, ms) {
   const ctrl = new AbortController();
   const outer = opts && opts.signal;
@@ -2015,9 +2147,25 @@ function withFetchTimeout(opts, ms) {
   };
 }
 function timeoutErr(ms) {
-  const e = new Error("连接超时（" + Math.round(ms / 1000) + " 秒无响应）：可能是手机网络到后端不稳，已尝试切换线路。点「🔧 登录诊断」查看。");
+  const e = new Error("连接超时（" + Math.round(ms / 1000) + " 秒无响应 · " + XY_ENV.label
+    + "）：网络到后端不稳，已尝试切换线路；请点「🔧 登录自检」查看可达性，或换 WiFi / 蜂窝重试。");
   e.name = "XYTimeout";
   return e;
+}
+/* 所有模型请求统一走「只等响应头」超时，body 由 awaitFirstByte 看门。
+   iOS 内置浏览器尤其需要：原生 fetch 在弱网下能挂几十秒不报错。 */
+async function fetchTimed(url, opts, ms) {
+  const limit = ms || XY_HEAD_TIMEOUT;
+  const w = withFetchTimeout(opts, limit);
+  try {
+    const r = await fetch(url, w.opts);
+    w.done();
+    return r;
+  } catch (e) {
+    w.done();
+    if (w.timedOut() && !w.outerAborted()) throw timeoutErr(limit);
+    throw e;
+  }
 }
 function isNetErr(e) {
   if (e && e.name === "AbortError") return false;   /* 用户主动停止生成，不切线路 */
@@ -2026,12 +2174,17 @@ function isNetErr(e) {
 function supaUrl() { return activeBackend(); }
 async function backendFetch(path, opts = {}, allowSwitch = true) {
   const n = backendList().length;
-  /* 登录 token 请求给宽一点（弱网下 Auth 握手更慢），其余 RPC 9 秒 */
-  const ms = /\/auth\/v1\/token/.test(path) ? XY_AUTH_TIMEOUT : XY_RPC_TIMEOUT;
+  /* v5.10：__stream 标记 SSE 模型请求。fetch() 只等 headers，
+     所以这里给的是「响应头超时」，必须远大于普通 RPC 的 9 秒，
+     否则平台共享模型在手机上会被 9 秒掐断 → 误判模型失败 → 连锁换模型。 */
+  const clean = Object.assign({}, opts);
+  const isStream = !!clean.__stream; delete clean.__stream;
+  const ms = isStream ? XY_HEAD_TIMEOUT
+    : (/\/auth\/v1\/token/.test(path) ? XY_AUTH_TIMEOUT : XY_RPC_TIMEOUT);
   let lastErr;
   for (let i = 0; i < Math.max(1, n); i++) {
     const base = activeBackend();
-    const w = withFetchTimeout(opts, ms);
+    const w = withFetchTimeout(clean, ms);
     try {
       const resp = await fetch(base + path, w.opts);
       w.done();
@@ -2052,15 +2205,19 @@ async function backendFetch(path, opts = {}, allowSwitch = true) {
   throw lastErr;
 }
 async function probeBackends() {
-  const list = backendList();
+  const all = backendList();
+  /* v5.12：有「近期没失败过」的线路时，不再浪费 probeMs 去撞已知不可达线路。
+     手机内置浏览器单条要等 2.6~3.4s，两条一起撞就是 3 秒白屏 —— 正是
+     「换台设备打开一直转圈」的直接原因。全部线路都降权时才回退到全量探测。 */
+  const good = all.filter(u => !isDownPersist(u));
+  const list = good.length ? good : all;
   let first2xxApplied = false;
-  /* v5.5：竞速 —— 每条线路一拿到 2xx 就立刻生效，不等慢线路超时。
-     超时 2800→1400ms，避免国内不可达线路白等近 3 秒。 */
+  /* v5.5：竞速 —— 每条线路一拿到 2xx 就立刻生效，不等慢线路超时。 */
   __xyProbe = await Promise.all(list.map(async u => {
     const t = performance.now();
     try {
       const c = new AbortController();
-      const to = setTimeout(() => c.abort(), 1400);
+      const to = setTimeout(() => c.abort(), XY_ENV.probeMs);
       const r = await fetch(u + "/auth/v1/settings", { headers: { apikey: supaAnon() }, signal: c.signal });
       clearTimeout(to);
       const reachable = r.status > 0 && r.status < 500;
@@ -2084,6 +2241,81 @@ async function probeBackends() {
   window.__xyProbe = __xyProbe;
   try { renderBackendUI(); } catch {}
   return __xyProbe;
+}
+/* ============================================================
+   v5.10.1 · 模型通道探测
+   登录只走 /auth/v1 + /rest/v1/rpc/*，模型走 /functions/v1/*。
+   旧版「SYSTEM ONLINE」由登录态直接写死，导致「登录全绿、模型全挂」时
+   界面还在报 SYSTEM ONLINE，把排查方向带偏（本次截图正是这个场景）。
+   这里并发 GET 两个 EF：200 = 已部署；404/501 = 未部署；0 = 连不上。
+   只在放行后并发跑，绝不 await 到登录关键路径上（不拖慢登录）。
+   ============================================================ */
+async function probeEdgeFunctions() {
+  const base = activeBackend();
+  const one = async name => {
+    const c = new AbortController();
+    const to = setTimeout(() => c.abort(), 3500);
+    try {
+      const r = await fetch(base + "/functions/v1/" + name, {
+        method: "GET", headers: { apikey: supaAnon() }, signal: c.signal
+      });
+      clearTimeout(to);
+      /* 401/403 也可能是 EF 存在但要求 JWT —— 只要不是 404/501 就算已部署 */
+      /* 注意：这里不能叫 base —— 会遮蔽上面的 base 并触发 TDZ，
+         导致 fetch(base + …) 抛 Cannot access 'base' before initialization，
+         两个函数被误报成「不可达」。教训：内层别复用外层同名变量。 */
+      const info = { name, status: r.status, ok: r.status >= 200 && r.status < 300,
+                     deployed: r.status !== 404 && r.status !== 501 };
+      /* v5.12：顺手把函数自报的 version 读出来。
+         「已部署但部署的是旧版」是排查里最容易漏的一种 —— 以前只能看到 HTTP 200，
+         看不出跑的是 v1 还是 v2，白白怀疑后端 / 网络 / Key。 */
+      if (r.ok) {
+        try {
+          const j = JSON.parse(await r.text());
+          if (j && j.version != null) info.version = j.version;
+          if (j && j.build) info.build = String(j.build);
+          if (j && j.sseFlush) info.sseFlush = true;
+        } catch { /* 非 JSON 也无所谓 */ }
+      }
+      return info;
+    } catch (e) {
+      clearTimeout(to);
+      return { name, status: 0, ok: false, deployed: false, err: String(e && e.message || e) };
+    }
+  };
+  const res = await Promise.all([one("xy-platform"), one("xy-ai")]);
+  window.__xyEf = Object.fromEntries(res.map(x => [x.name, x]));
+  /* 探测完刷新一次状态行；生成中不打断 */
+  try { if (!busy) refreshHudLine(); } catch {}
+  try { renderBackendUI(); } catch {}
+  return window.__xyEf;
+}
+function efMissing() {
+  return Object.values(window.__xyEf || {}).filter(x => x && !x.deployed).map(x => x.name);
+}
+function efSuffix() {
+  const m = efMissing();
+  return m.length ? " · ⚠ 模型通道未就绪（" + m.join(" / ") + " 未部署）"
+                  : (window.__xyEf ? " · ✓ 模型通道就绪" : "");
+}
+/* ============================================================
+   v5.12 · 状态行统一出口
+   旧文案「SYSTEM ONLINE · 零成本路由 · 池内 N 个模型 · 今日 ¥0.000」
+   是营销词而不是状态信息：用户看不懂「池内」是什么，「零成本」也不是事实。
+   现在只说三件事：能不能用、有几个模型、通道有没有问题。
+   ============================================================ */
+function hudText() {
+  const n = modelPool().length;
+  const miss = efMissing();
+  if (miss.length) return `模型通道未就绪（${miss.join(" / ")}）`;
+  if (!n) return "尚未配置可用模型";
+  return `已就绪 · ${n} 个模型可用`;
+}
+function refreshHudLine() {
+  if (!statusLine) return;
+  const cur = String(statusLine.textContent || "");
+  if (/DONE|STOPPED|THINKING|GENERATING|EXECUTING|ROUTING|SLOW/.test(cur)) return;
+  statusLine.textContent = hudText();
 }
 function renderBackendUI() {
   const box = document.getElementById("backendState");
@@ -2185,6 +2417,13 @@ function renderQuotaBadge() {
       + (quota.unlimited ? " · 管理员已开启不限量" : "") + ` · ${quota.day}（北京时间）`
       + (out ? " · 联系管理员在后台授权" : "")
     : "⚠ 服务端额度 RPC 未部署，当前为本机计数（可被绕过）。请执行 v4 增量 SQL";
+  /* v5.12：入口页脚注改为按后台真实额度显示，不再写死「每日 10 条」 */
+  const gn = document.getElementById("gateNote");
+  if (gn && !appUnlocked) {
+    gn.textContent = !quota.server ? "🔒 登录后可使用"
+      : quota.unlimited ? "🔒 登录后可使用 · 不限量"
+      : `🔒 登录后可使用 · 每日 ${quota.cap} 条`;
+  }
 }
 /* 读取服务端额度；RPC 不存在时降级本地计数并给出醒目警示 */
 async function quotaRefresh() {
@@ -2270,6 +2509,98 @@ async function quotaRefund(n) {
   try { const j = await quotaRpc("xy_quota_refund", { p_n: n || 1 }); if (j && j.ok) await quotaRefresh(); }
   catch { try { await quotaRefresh(); } catch {} }
 }
+
+/* ============================================================
+   v5.9 · 门禁「离线宽限」：网络故障 ≠ 会话失效
+   ------------------------------------------------------------
+   旧版 boot() 的 catch 对任何错误都 lsDel(LS_AUTH)：一次断网就把
+   refresh token 删掉，老设备瞬间变成「新设备」，必须重新输密码；
+   而后端恰好不通 → 永远卡在登录页。这是换设备登不上的真正放大器。
+   现在的规则：
+     · 网络层失败 + 本机有会话 → 保留会话，放行「离线只读」界面
+     · 离线时禁止发送（不绕过服务端额度）、本地历史与草稿仍可用
+     · 15s 自动重连 / online 事件 / 横幅手动重试，成功自动校准额度
+     · 401/403/banned/档案缺失 等鉴权错误 → 仍按原逻辑清会话并退回登录页
+     · 新设备无会话 + 网络不通 → 仍停在登录页（保持「必须登录」）
+   ============================================================ */
+let offlineMode = false, offlineTimer = 0, offlineReason = "";
+function isNetworkFailure(e) {
+  if (!e) return false;
+  if (e.name === "XYTimeout" || e.name === "TypeError" || e.name === "NetworkError") return true;
+  const s = String(e.message || e || "");
+  if (/Failed to fetch|Load failed|NetworkError|network request failed|连接不上|超时|timeout|所有线路|连不上后端/i.test(s)) return true;
+  const hasStatus = e.status !== undefined && e.status !== null;
+  const st = Number(e.status || 0);
+  /* 注意：普通 Error 没有 status，不能因为 Number(undefined||0)===0 就判成网络故障 */
+  return hasStatus && (st === 0 || st >= 500 || st === 408 || st === 429);
+}
+function offlineUserLabel() {
+  try {
+    const em = (account.session && account.session.user && account.session.user.email) || "";
+    return em ? String(em).split("@")[0] : "已登录账号";
+  } catch { return "已登录账号"; }
+}
+function ensureOfflineProfile() {
+  if (account.profile) return;
+  account.profile = { username: offlineUserLabel(), role: "user", perms: {} };
+}
+function setOffline(on, reason) {
+  offlineMode = !!on; offlineReason = reason || "";
+  let bar = document.getElementById("offlineBar");
+  if (!on) {
+    if (bar) bar.remove();
+    try { updateInputState(); renderQuotaBadge(); updateAccountUI(); } catch {}
+    return;
+  }
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "offlineBar"; bar.className = "offline-bar"; bar.setAttribute("role", "status");
+    bar.addEventListener("click", ev => {
+      if (ev.target && ev.target.closest("#btnOfflineRetry")) void tryReconnect(true);
+    });
+    document.body.appendChild(bar);
+  }
+  bar.innerHTML = '<span class="ob-dot"></span><b>离线模式</b> · 后端暂不可达（网络或中转被拦）'
+    + '<span class="ob-sub">本地历史与草稿可用；AI 回复、云同步、额度校验暂停，连上后自动校准。</span>'
+    + '<button type="button" id="btnOfflineRetry">↻ 立即重试</button>';
+  try { updateInputState(); renderQuotaBadge(); } catch {}
+}
+async function tryReconnect(manual) {
+  if (!offlineMode || !account.session || !account.session.access_token) return false;
+  const btn = document.getElementById("btnOfflineRetry");
+  if (btn) { btn.disabled = true; btn.textContent = "连接中 …"; }
+  try {
+    await initAccount();
+    setOffline(false);
+    if (offlineTimer) { clearInterval(offlineTimer); offlineTimer = 0; }
+    toast("✦ 已重新连上后端，额度与云同步已恢复", 4200);
+    return true;
+  } catch (e) {
+    if (!isNetworkFailure(e)) {
+      /* 鉴权类失败：会话真的失效了，按原逻辑退回登录页 */
+      setOffline(false);
+      account.session = null; account.user = null; account.profile = null;
+      lsDel(LS_AUTH); appUnlocked = false; updateAccountUI();
+      location.reload();
+      return false;
+    }
+    if (manual) toast("⚠ 仍未连上：" + String(e.message || e).slice(0, 90), 4600);
+    return false;
+  } finally {
+    const b2 = document.getElementById("btnOfflineRetry");
+    if (b2) { b2.disabled = false; b2.textContent = "↻ 立即重试"; }
+  }
+}
+function startOfflineWatch() {
+  if (offlineTimer) return;
+  offlineTimer = setInterval(() => {
+    if (!offlineMode) { clearInterval(offlineTimer); offlineTimer = 0; return; }
+    if (document.hidden) return;
+    void tryReconnect(false);
+  }, 15000);
+  try { addEventListener("online", () => { if (offlineMode) void tryReconnect(true); }); } catch {}
+}
+
 function enterApp() {
   if (appUnlocked) return;
   appUnlocked = true;
@@ -2490,6 +2821,104 @@ async function authLogout() {
    各自完成后局部刷新 UI —— 不会「必须刷新页面才生效」。
    ============================================================ */
 let __hydrating = null;
+/* ============================================================
+   v5.11 · 全局统一策略（由后台管理系统下发）
+   这些键过去每台设备都要在设置页各填一遍，容易出现「这台快那台慢」、
+   「同一句 prompt 不同人设」。现在统一放后台，主站只读。
+   本机仍保留：自带 API Key / 自定义模型 / 后端线路自救 / 字号密度。
+   ============================================================ */
+const GLOBAL_KEYS = [
+  "system", "routeMode", "thinking", "replyLang", "ttftTimeout", "contextBudget",
+  "historyDepth", "latencyAware", "cacheOn", "budgetCny", "paidAvg",
+  "proxyMode", "proxyUrl", "fxLevel", "fs", "density",
+  /* v5.12 新增：全部在后台「全局策略」里可调，前端不再写死 */
+  "ttftFloor",     /* 首字超时下限（秒）：手机端保底等待 */
+  "maxFailover",   /* 单轮最多换几个模型 */
+  "backendFirst",  /* 首选线路：supa=官方直连优先 / relay=反代优先 */
+  "notice"         /* 登录页与顶栏公告，留空则不显示 */
+];
+const LS_GLOBAL = "xiaoyin_global_v6";
+let globalPolicy = { ok: false, settings: {}, from: "未连接", at: 0 };
+function globalLabel(k, v) {
+  const map = {
+    routeMode: { eco: "省额度优先", balanced: "均衡", quality: "高质量优先" },
+    thinking: { auto: "自动（推荐）", on: "始终开启", off: "始终关闭" },
+    replyLang: { follow: "跟随提问", auto: "自动判断", zh: "始终中文", en: "始终英文", ja: "始终日文" },
+    proxyMode: { auto: "自动分流", custom: "只用自定义代理", direct: "强制直连" },
+    fxLevel: { auto: "按设备自动（推荐）", full: "完整炫酷", lite: "轻量省电", still: "静态星空", off: "关闭动效" },
+    fs: { small: "偏小", normal: "标准", large: "偏大" },
+    density: { compact: "紧凑", normal: "标准", relaxed: "宽松" },
+    backendFirst: { supa: "官方直连优先", relay: "反代优先" }
+  };
+  if (map[k] && map[k][v]) return map[k][v];
+  if (v === true) return "开启"; if (v === false) return "关闭";
+  if (v == null || v === "") return "默认";
+  if (k === "system") return String(v).length > 28 ? String(v).slice(0, 28) + "…" : String(v);
+  return String(v);
+}
+const GLOBAL_NAMES = {
+  system: "系统人设", routeMode: "路由偏好", thinking: "深度思考", replyLang: "回复语言",
+  ttftTimeout: "首字超时(秒)", contextBudget: "上下文预算", historyDepth: "历史条数",
+  latencyAware: "延迟感知", cacheOn: "答案缓存", budgetCny: "日预算(元)",
+  paidAvg: "估算均价", proxyMode: "接入方式", proxyUrl: "自定义代理",
+  fxLevel: "动效档位", fs: "正文字号", density: "消息密度",
+  ttftFloor: "首字超时下限(秒)", maxFailover: "最多换模型数",
+  backendFirst: "首选线路", notice: "公告"
+};
+function applyGlobalPolicy(obj) {
+  if (!obj || typeof obj !== "object") return;
+  let n = 0;
+  for (const k of GLOBAL_KEYS) {
+    if (!Object.prototype.hasOwnProperty.call(obj, k)) continue;
+    if (obj[k] === null) delete cfg[k];
+    else cfg[k] = obj[k];
+    n++;
+  }
+  globalPolicy.ok = true; globalPolicy.settings = obj; globalPolicy.at = Date.now();
+  lsSet(LS_GLOBAL, JSON.stringify({ settings: obj, at: globalPolicy.at }));
+  MAX_STEPS = STEPS_BY_MODE[cfg.routeMode] || 8;
+  try { applyAppear(); } catch {}
+  try { if (window.__xyBgReload) window.__xyBgReload(); } catch {}
+  try { updateProxyUI(); } catch {}
+  try { renderGlobalPolicy(); } catch {}
+  try { applyNotice(); } catch {}
+  return n;
+}
+/* v5.12：后台「公告」统一下发，显示在入口页。留空即不显示。 */
+function applyNotice() {
+  const el = document.getElementById("gateNotice");
+  if (!el) return;
+  const t = String(cfg.notice == null ? "" : cfg.notice).trim();
+  if (!t) { el.hidden = true; el.textContent = ""; return; }
+  el.hidden = false; el.textContent = t;
+}
+async function loadGlobalPolicy() {
+  try {
+    const resp = await supa("/rest/v1/rpc/xy_settings_get", { method: "POST", body: "{}" });
+    if (!resp.ok) throw new Error("settings rpc " + resp.status);
+    const r = await resp.json();
+    if (r && r.ok !== false && r.settings) { applyGlobalPolicy(r.settings); globalPolicy.from = "后台统一策略"; return true; }
+  } catch (e) { /* 旧 SQL / 网络不通：静默降级，不拦登录也不弹错 */ }
+  /* 离线时沿用上次成功下发的策略，避免每次刷新都变回本机默认 */
+  try {
+    const g = JSON.parse(lsGet(LS_GLOBAL) || "null");
+    if (g && g.settings) { applyGlobalPolicy(g.settings); globalPolicy.from = "上次同步（离线）"; return true; }
+  } catch {}
+  globalPolicy.ok = false; globalPolicy.from = "本机默认（未读到后台策略）";
+  try { renderGlobalPolicy(); } catch {}
+  return false;
+}
+function renderGlobalPolicy() {
+  const box = document.getElementById("globalPolicyBox");
+  if (!box) return;
+  const keys = GLOBAL_KEYS.filter(k => cfg[k] !== undefined && cfg[k] !== null);
+  const rows = keys.length ? keys.map(k =>
+    `<div class="gp-row"><span>${esc(GLOBAL_NAMES[k] || k)}</span><b>${esc(globalLabel(k, cfg[k]))}</b></div>`).join("")
+    : `<div class="gp-row"><span>全部策略</span><b>使用内置默认值</b></div>`;
+  box.innerHTML = `<div class="gp-head">${globalPolicy.ok ? "● 已由后台管理系统统一设置" : "△ 未读到后台策略 · 使用本机默认"}</div>`
+    + rows + `<div class="gp-foot">${esc(globalPolicy.from)} · 修改请到后台「◈ 全局策略设置」，本机无需逐台配置</div>`;
+}
+
 function hydrateAfterLogin(showWelcome) {
   if (__hydrating) return __hydrating;      /* 会话恢复与按钮点击可能同时触发，去重 */
   /* v5.7：放行后只并发两个「立刻影响界面」的 RPC。
@@ -2498,7 +2927,8 @@ function hydrateAfterLogin(showWelcome) {
        避免与平台模型 / 能力清单抢同一条 TCP 连接 —— 手机弱网下体感明显 */
   const jobs = [
     ["平台模型", loadPlatformModels],
-    ["智能体能力", loadAgentCaps]
+    ["智能体能力", loadAgentCaps],
+    ["全局策略", loadGlobalPolicy]
   ];
   if (!quota.server || !account.profile) jobs.push(["额度校准", quotaRefresh]);
   const deferCloud = () => {
@@ -2753,9 +3183,14 @@ function buildRoundMessages(modelId, decision, lastStep) {
       boot.appendChild(d);
       setTimeout(next, 300);
     } else {
-      /* 启动流程（脚本末尾）决定是自动放行还是弹出登录表单 */
-      if (window.__gateDecision === "login") showGateLogin(window.__gateMessage || "");
-      else if (window.__gateDecision === "enter") enterApp();
+      /* v5.12：这里改成纯兜底。放行 / 弹登录的主动权已交给脚本末尾的启动流程，
+         动画结束只是「顺便检查一下有没有漏掉」，不再抢占决策权。
+         已放行（appUnlocked）或登录框已显示时完全不动作，避免覆盖提示文案。 */
+      if (appUnlocked) return;
+      if (window.__gateDecision === "login") {
+        const auth = document.getElementById("gateAuth");
+        if (auth && auth.hidden) showGateLogin(window.__gateMessage || "");
+      } else if (window.__gateDecision === "enter") enterApp();
       else window.__gateBootDone = true;
     }
   })();
@@ -2775,11 +3210,24 @@ function buildRoundMessages(modelId, decision, lastStep) {
     rows.push(["浏览器", String(navigator.userAgent).replace(/\s+/g, " ").slice(0, 96)]);
     rows.push(["本地存储", lsWritable() ? "✓ 可写（能记住登录）" : "⚠ 不可写（无痕 / 站点数据被禁用）→ 登录仍可用，但刷新后需重登"]);
     rows.push(["存储状态", authStorageWarn || "✓ 会话写入正常"]);
+    rows.push(["会话状态", offlineMode
+      ? "⚠ 离线宽限中：本机会话已保留，网络恢复后自动校准（不会因断网被删）"
+      : (account.session && account.session.access_token
+          ? "✓ 本机有登录会话（refresh token 可用）"
+          : "— 本机无登录记录，首次登录需联网")]);
     rows.push(["后台项目", supaUrl().replace(/^https?:\/\//, "").slice(0, 60)]);
     const pr = window.__xyProbe || [];
-    rows.push(["页面版本", "v5.4（旧版没有内置反代，别的设备会卡在登录页）"]);
+    /* v5.8：原来这行写死 "v5.4（旧版没有内置反代…）"，与真实版本无关，
+       截图里的 v5.4 根本不是页面版本 —— 改成读页脚真实文本。 */
+    const foot = document.querySelector(".foot-tip-meta");
+    const ver = (foot && (String(foot.textContent).match(/v\d+\.\d+(?:\.\d+)?/) || [])[0]) || XY_VERSION;
+    rows.push(["页面版本", ver + " · " + location.pathname]);
     rows.push(["后端线路", backendList().length + " 条 · 当前 " + activeBackend().replace(/^https:\/\//, "").slice(0, 52)
       + (pr.length ? " · " + pr.filter(r => r.ok).length + "/" + pr.length + " 条可达" : "")]);
+    /* 逐条列出，别再让用户只看到「0/2 条可达」而不知道哪条死了 */
+    pr.forEach((r, i) => rows.push(["线路 " + (i + 1),
+      (r.ok ? "✓ " : "✗ ") + r.url.replace(/^https:\/\//, "").slice(0, 58)
+      + " · " + (r.status ? "HTTP " + r.status : "连不上") + (r.ms >= 0 ? " · " + r.ms + "ms" : "")]));
     rows.push(["anon Key", supaAnon().slice(0, 14) + "…（长度 " + supaAnon().length + "）"]);
     const le = window.__lastAuthErr;
     rows.push(["上次错误", le ? "HTTP " + le.status + " · " + (le.errorCode || "-") + " · " + (le.msg || "(空)").slice(0, 120) : "无"]);
@@ -2807,15 +3255,40 @@ function buildRoundMessages(modelId, decision, lastStep) {
       rpcExists = !(r2.status === 404 || r2.status === 501);
       rows.push(["xy_session", rpcExists ? "✓ 函数存在（HTTP " + r2.status + "，未登录时报错属正常）" : "✗ 函数不存在 → 该项目没跑过部署 SQL"]);
     } catch (e) { rows.push(["xy_session", "✗ 探测失败：" + String(e.message || e).slice(0, 70)]); }
+    /* v5.10.1：模型通道单独探测。登录全绿但这两个挂了，表现就是
+       「已试 N 个模型均不可用 / 空响应 / 网络不通」，与密码、额度、Key 都无关。 */
+    let ef = null;
+    if (reachable) {
+      try {
+        ef = window.__xyEf || await probeEdgeFunctions();
+        for (const name of ["xy-ai", "xy-platform"]) {
+          const x = ef[name] || {};
+          /* v5.12：把版本号 + 部署标记一并显示，能直接看出「部署了但是旧版」 */
+          const verTxt = x.version != null ? " · v" + x.version : "";
+          const buildTxt = x.build ? " · " + x.build : "";
+          const outdated = name === "xy-ai" && x.deployed && x.version != null && Number(x.version) < 3;
+          rows.push(["模型通道 " + name,
+            x.deployed
+              ? "✓ 已部署（HTTP " + x.status + verTxt + buildTxt + "）"
+                + (outdated ? " · ⚠ 仍是旧版，请重新部署交付的 xy-ai v3" : "")
+              : (x.status === 404 || x.status === 501)
+                ? "✗ 未部署（HTTP " + x.status + "）→ 内置对话 / 平台模型会报空响应或网络不通"
+                : "✗ 不可达（" + (x.err || "HTTP " + x.status) + "）"]);
+        }
+      } catch (e) { rows.push(["模型通道", "✗ 探测失败：" + String(e.message || e).slice(0, 70)]); }
+    } else rows.push(["模型通道", "— 后端不可达，跳过"]);
 
     /* 结论：按优先级给一条确定的处置 */
     let verdict = "", bad = false;
     if (!reachable) {
       bad = true;
-      verdict = "结论：连不上后端（已试 " + backendList().length + " 条线路），与账号密码无关。\n"
-        + "① 国内网络访问 *.supabase.co 常不稳定，换网络或开代理；"
-        + "② 到 Supabase Dashboard 确认项目状态是 Active（免费项目长期不活跃会被暂停）；"
-        + "③ 企业/校园网或广告拦截扩展可能拦掉跨域请求，换个浏览器或关扩展再试。";
+      const anyRelay = backendList().some(u => !/supabase\.co$/i.test(u));
+      const relayOk = pr.some(r => r.ok && !/supabase\.co$/i.test(r.url || ""));
+      verdict = (anyRelay && !relayOk)
+        ? "连不上后端（反代与直连都不通），与密码无关。\n"
+          + "换网络（WiFi ↔ 蜂窝）重试；确认 Supabase 项目为 Active。"
+        : "连不上后端，与密码无关。\n"
+          + "换网络重试；确认 Supabase 项目为 Active。";
     } else if (settings && settings.mailer_autoconfirm === false) {
       bad = true;
       verdict = "★ 找到主因：项目开启了「Confirm email」。\n"
@@ -2829,6 +3302,16 @@ function buildRoundMessages(modelId, decision, lastStep) {
     } else if (rpcExists === false) {
       bad = true;
       verdict = "结论：这个项目里没有 xy_session 函数 —— 多半是别的电脑用了旧 HTML / 连到了别的 Supabase 项目，或 SQL 没跑。请用最新版 HTML 与最新版全量 SQL 重新部署。";
+    } else if (ef && efMissing().length) {
+      bad = true;
+      verdict = "★ 登录与额度都正常，但模型代理函数没部署："
+        + efMissing().join(" / ") + "。\n"
+        + "这就是「能登录、SYSTEM ONLINE，但发消息报空响应 / 网络不通 / 已试 3 个模型均不可用」的原因——"
+        + "登录走 /auth/v1 和 /rest/v1/rpc/*，模型走 /functions/v1/*，两条路互不相干。\n"
+        + "【修复】Supabase Dashboard → Edge Functions → 新建 "
+        + efMissing().join(" 与 ") + "，分别粘贴交付的 .ts → Deploy（Verify JWT 开启）；"
+        + "xy-platform 的 GET 应返回 version 3，xy-ai 的 GET 应返回 version 1。"
+        + "如果走 Cloudflare 中转，确认 Worker 已升级到 v3.3（放行禁缓冲头）。";
     } else if (le && /invalid_credentials/i.test([le.errorCode, le.msg].join(" "))) {
       bad = true;
       verdict = "结论：后端可达、Confirm email 正常，服务端判定「用户名或密码不对」。\n"
@@ -2843,6 +3326,8 @@ function buildRoundMessages(modelId, decision, lastStep) {
     diagText = "小银 AI 登录诊断\n" + rows.map(([k, v]) => k + "：" + v).join("\n") + "\n\n结论：" + verdict;
   }
   document.getElementById("btnDiagRun")?.addEventListener("click", () => runAuthDiag());
+  /* 调试钩子：登录门禁是 IIFE，暴露给自动化回归与现场排查用（无副作用） */
+  window.__xyGate = { runAuthDiag };
   document.getElementById("btnDiagCopy")?.addEventListener("click", async () => {
     if (!diagText) await runAuthDiag();
     const ok = await copyText(diagText);
@@ -2892,11 +3377,23 @@ function buildRoundMessages(modelId, decision, lastStep) {
       if (window.__authAutoLogin) { toast("✦ 该用户名已注册，已自动切换为登录", 4200); window.__authAutoLogin = false; }
       if (authStorageWarn) toast("⚠ " + authStorageWarn, 7000);
     } catch (e) {
-      msg.textContent = "⚠ " + (e && e.name === "XYTimeout"
-        ? "连接超时：手机网络到后端不稳，已自动切换线路。点下方「🔧 登录诊断」看具体原因，或换个网络再试。"
-        : (e.message || "登录失败，请重试"));
-      console.error("[小银] 门禁登录失败 →", e);
-      showDiagOnFail();          /* v5.1.1：把真实原因摆出来，不再只说「密码错误」 */
+      /* v5.9：密码已经验证通过、token 已落盘，只是 xy_session 没回来的情况，
+         不该把用户退回登录页 —— 直接进离线宽限，恢复后自动校准。 */
+      if (account.session && account.session.access_token && isNetworkFailure(e)) {
+        ensureOfflineProfile();
+        quotaApply({ ok: true, day: bjToday(), limit: QUOTA_DEFAULT, extra: 0,
+          cap: QUOTA_DEFAULT, used: 0, remaining: QUOTA_DEFAULT, unlimited: false }, false);
+        setOffline(true, e.message);
+        enterApp();
+        startOfflineWatch();
+        toast("✦ 凭据已拿到，但后端暂时不可达 → 进入离线模式，连上后自动校准", 5200);
+      } else {
+        msg.textContent = "⚠ " + (e && e.name === "XYTimeout"
+          ? "连接超时：手机网络到后端不稳，已自动切换线路。点下方「🔧 登录诊断」看具体原因，或换个网络再试。"
+          : (e.message || "登录失败，请重试"));
+        console.error("[小银] 门禁登录失败 →", e);
+        showDiagOnFail();        /* 把真实原因摆出来，不再只说「密码错误」 */
+      }
     } finally {
       clearTimeout(stage);
       btn.disabled = false;
@@ -2916,6 +3413,11 @@ function buildRoundMessages(modelId, decision, lastStep) {
   const ctx = cv.getContext("2d");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
   const MAX = 320;                       // 同时活跃粒子上限，清空长对话也不会爆炸
+  /* v5.11：lite 档粒子数减半、still/off 不发射；full 档效果原样保留 */
+  function allowed() {
+    const lv = fxLevel();
+    return lv !== "off" && lv !== "still" && !reduce.matches;
+  }
   let W = 0, H = 0, dpr = 1, raf = 0, parts = [], rings = [];
 
   function resize() {
@@ -2927,11 +3429,12 @@ function buildRoundMessages(modelId, decision, lastStep) {
   }
 
   function emit(rect, mode, colors) {
-    if (reduce.matches || document.documentElement.dataset.fx === "off") return;
+    if (!allowed()) return;
     const cols = colors || ["0,229,255", "124,108,255", "201,214,232"];
     const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
     const spread = Math.max(rect.width, rect.height);
-    const n = Math.min(42, Math.max(20, Math.round(spread / 12)));
+    const pf = fxProfile();
+    const n = Math.max(8, Math.round(Math.min(42, Math.max(20, Math.round(spread / 12))) * pf.burst));
     const now = performance.now();
     /* 一圈扩散能量环：只是一次 arc 描边，视觉冲击远大于成本 */
     rings.push({
@@ -2951,7 +3454,7 @@ function buildRoundMessages(modelId, decision, lastStep) {
         ex, ey, px: 0, py: 0,
         c: cols[Math.floor(Math.random() * cols.length)],
         sz: Math.random() * 2.5 + 1.4,
-        star: i % 7 === 0,                   // 少量十字星芒
+        star: pf.star && i % 7 === 0,        // 少量十字星芒（lite 仍保留）
         t0: now + Math.random() * 90,        // 错峰入场，像星尘依次汇聚
         dur: 520 + Math.random() * 280,
         mode
@@ -3043,10 +3546,23 @@ function buildRoundMessages(modelId, decision, lastStep) {
   const ctx = canvas.getContext("2d");
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const COL = ["0,229,255", "124,108,255", "79,140,255"];
-  const CELL = 130, R = 130, R2 = R * R, FRAME = 1000 / 45;
+  const CELL = 130, R = 130, R2 = R * R;
   let W = 0, H = 0, dpr = 1, nodes = [], comets = [], ripples = [], grid = new Map();
-  let raf = 0, last = 0;
+  let raf = 0, last = 0, lastInteract = performance.now(), builtLevel = "";
   const mouse = { x: -1e4, y: -1e4, on: false };
+  /* v5.11：帧预算按档位 + 是否正在生成 + 是否久无交互动态计算。
+     旧版固定 45fps 常驻，桌面 GPU 一直满载；生成回答时还要和 Markdown
+     流式重排抢合成线程，手机端就表现为「回答慢」。 */
+  function frameMs() {
+    const p = fxProfile();
+    if (!p.fps) return 0;
+    let fps = p.fps;
+    if (document.body.classList.contains("generating")) fps = Math.max(6, Math.round(fps * .5));
+    else if (performance.now() - lastInteract > 8000) fps = Math.max(6, Math.round(fps * .4));
+    return 1000 / fps;
+  }
+  function levelOf() { return fxLevel(); }
+  function isStill() { return levelOf() === "still"; }
 
   function spawnComet() {
     const fromLeft = Math.random() > .5;
@@ -3058,21 +3574,26 @@ function buildRoundMessages(modelId, decision, lastStep) {
     };
   }
   function resize() {
-    const nW = innerWidth, nH = innerHeight, nDpr = Math.min(devicePixelRatio || 1, 1.5);
+    const lv = levelOf(), p = fxProfile();
+    /* 手机端 DPR 收到 1：3× 物理像素全屏 canvas 是纯浪费，肉眼几乎看不出差别 */
+    const maxDpr = (XY_ENV.iOS || XY_ENV.android) ? 1 : 1.5;
+    const nW = innerWidth, nH = innerHeight, nDpr = Math.min(devicePixelRatio || 1, maxDpr);
     /* 小变动（拖窗口几像素、软键盘弹起）只改画布尺寸，不重建节点：
        否则粒子会突然全部跳位，且每次都重分配数组。 */
     const rebuild = !nodes.length || Math.abs(nW - W) > 48 || Math.abs(nH - H) > 48
-      || nDpr !== dpr;
+      || nDpr !== dpr || lv !== builtLevel;
+    builtLevel = lv;
     W = nW; H = nH; dpr = nDpr;
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     canvas.style.width = W + "px"; canvas.style.height = H + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     if (!rebuild) {
       for (const n of nodes) { n.x = Math.min(Math.max(n.x, 0), W); n.y = Math.min(Math.max(n.y, 0), H); }
-      if (reduceMotion.matches) draw(0); else start();
+      if (reduceMotion.matches || isStill() || !p.fps) draw(0); else start();
       return;
     }
-    const count = Math.min(reduceMotion.matches ? 20 : 58, Math.max(18, Math.floor(W * H / 23000)));
+    if (lv === "off") { nodes = []; comets = []; ctx.clearRect(0, 0, W, H); if (raf) { cancelAnimationFrame(raf); raf = 0; } return; }
+    const count = Math.max(10, Math.min(p.nodes, Math.floor(W * H / 23000)));
     nodes = Array.from({ length: count }, () => {
       const t = Math.random();
       return {
@@ -3084,8 +3605,9 @@ function buildRoundMessages(modelId, decision, lastStep) {
         ph: Math.random() * Math.PI * 2, sp: .6 + Math.random() * .9
       };
     });
-    comets = reduceMotion.matches ? [] : Array.from({ length: 2 }, spawnComet);
-    if (reduceMotion.matches) draw(0); else start();
+    comets = p.comets ? Array.from({ length: p.comets }, spawnComet) : [];
+    if (reduceMotion.matches || isStill() || !p.fps) { buildGrid(); draw(performance.now()); }
+    else start();
   }
   function buildGrid() {
     grid.clear();
@@ -3098,7 +3620,7 @@ function buildRoundMessages(modelId, decision, lastStep) {
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
     /* 鼠标光晕 */
-    if (mouse.on && !reduceMotion.matches) {
+    if (mouse.on && fxProfile().mouseGlow && !reduceMotion.matches && !isStill()) {
       const g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 175);
       g.addColorStop(0, "rgba(0,229,255,.085)");
       g.addColorStop(1, "rgba(0,229,255,0)");
@@ -3107,7 +3629,7 @@ function buildRoundMessages(modelId, decision, lastStep) {
     }
     /* 连线：按距离 / 鼠标邻近分三档，每档一次 stroke */
     const p1 = new Path2D(), p2 = new Path2D(), p3 = new Path2D();
-    const near = mouse.on && !reduceMotion.matches;
+    const near = mouse.on && fxProfile().mouseGlow && !reduceMotion.matches && !isStill();
     for (let i = 0; i < nodes.length; i++) {
       const a = nodes[i], gx = (a.x / CELL) | 0, gy = (a.y / CELL) | 0;
       for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) {
@@ -3161,7 +3683,10 @@ function buildRoundMessages(modelId, decision, lastStep) {
     }
     /* 点击涟漪 */
     for (const r of ripples) {
-      const age = (t - r.t) / 720;
+      /* v5.9.2：draw(0) 会在 resize / 减少动效时被调用，此时 t=0 而 r.t 是
+         performance.now()，age 为负 → 8+age*95 变负 → iOS WebKit 直接抛
+         "The radius provided (-4.95) is negative"。钳到 0 即可，视觉无损。 */
+      const age = Math.max(0, (t - r.t) / 720);
       if (age >= 1) continue;
       ctx.beginPath(); ctx.arc(r.x, r.y, 8 + age * 95, 0, 6.2832);
       ctx.strokeStyle = `rgba(0,229,255,${(.5 * (1 - age)).toFixed(3)})`;
@@ -3170,10 +3695,11 @@ function buildRoundMessages(modelId, decision, lastStep) {
   }
   function tick(t) {
     if (document.hidden || reduceMotion.matches) { raf = 0; return; }
-    if (document.documentElement.dataset.fx === "off") {
-      raf = 0; ctx.clearRect(0, 0, W, H); return;
-    }
-    if (t - last < FRAME) { raf = requestAnimationFrame(tick); return; }
+    const lv = levelOf(), p = fxProfile();
+    if (lv === "off") { raf = 0; ctx.clearRect(0, 0, W, H); return; }
+    if (isStill() || !p.fps) { raf = 0; buildGrid(); draw(t); return; }
+    const ms = frameMs();
+    if (t - last < ms) { raf = requestAnimationFrame(tick); return; }
     last = t;
     for (const n of nodes) {
       n.x += n.vx; n.y += n.vy;
@@ -3191,14 +3717,28 @@ function buildRoundMessages(modelId, decision, lastStep) {
     buildGrid(); draw(t);
     raf = requestAnimationFrame(tick);
   }
-  function start() { if (!raf && !document.hidden) raf = requestAnimationFrame(tick); }
+  function start() {
+    if (!raf && !document.hidden && !isStill() && fxProfile().fps)
+      raf = requestAnimationFrame(tick);
+  }
+  /* 档位切换 / 后台策略下发后强制重建节点，否则节点数不会跟着变 */
+  window.__xyBgReload = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    nodes = []; last = 0; buildGrid(); resize();
+  };
   /* 与 fxLayer 的 __xyFxStats 对称，便于验证「小变动不重建节点」 */
   window.__xyBgStats = () => ({ nodes: nodes.length, comets: comets.length,
-    running: !!raf, dpr, w: W, h: H, firstX: nodes.length ? Math.round(nodes[0].x) : -1 });
+    running: !!raf, dpr, w: W, h: H, level: levelOf(), frameMs: Math.round(frameMs()),
+    firstX: nodes.length ? Math.round(nodes[0].x) : -1 });
   window.__xyBgRefresh = () => {
-    if (document.documentElement.dataset.fx === "off" || reduceMotion.matches) {
+    lastInteract = performance.now();
+    const lv = levelOf();
+    if (lv === "off" || reduceMotion.matches) {
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       ctx.clearRect(0, 0, W, H);
+    } else if (isStill() || !fxProfile().fps) {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      buildGrid(); draw(performance.now());
     } else { last = 0; start(); }
   };
   let bgResizeTimer = 0;
@@ -3206,18 +3746,27 @@ function buildRoundMessages(modelId, decision, lastStep) {
     clearTimeout(bgResizeTimer);
     bgResizeTimer = setTimeout(resize, 140);
   }, { passive: true });
-  addEventListener("pointermove", e => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true; }, { passive: true });
+  addEventListener("pointermove", e => {
+    mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true;
+    lastInteract = performance.now();
+    if (!fxProfile().mouseGlow) mouse.on = false;
+  }, { passive: true });
+  addEventListener("keydown", () => { lastInteract = performance.now(); }, { passive: true });
+  addEventListener("scroll", () => { lastInteract = performance.now(); }, { passive: true, capture: true });
   addEventListener("pointerleave", () => { mouse.on = false; });
   addEventListener("pointerdown", e => {
-    if (reduceMotion.matches || document.documentElement.dataset.fx === "off") return;
+    if (reduceMotion.matches || !fxProfile().ripples) return;
+    lastInteract = performance.now();
     ripples.push({ x: e.clientX, y: e.clientY, t: performance.now() });
     if (ripples.length > 6) ripples.shift();
   }, { passive: true });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
-    else { last = 0; start(); }
+    else { last = 0; lastInteract = performance.now(); start(); }
   });
-  resize(); start();
+  resize();
+  if (isStill() || !fxProfile().fps) { buildGrid(); draw(performance.now()); }
+  else start();
 })();
 
 /* ================= 消息粒子动效（统一走共享层） ================= */
@@ -3884,12 +4433,13 @@ async function platformCall(pm, body, signal) {
   /* 调试模式：Key 由 xy_platform_list 下发到内存，不写 localStorage、不经过 xy-ai */
   if (platformMode === "passthrough" && pm.apiKey) {
     try {
-      return await fetch(pm.endpoint, {
+      const r = await fetch(pm.endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: "Bearer " + pm.apiKey },
         body: JSON.stringify(Object.fromEntries(Object.entries(body)
           .filter(([k]) => !["params"].includes(k)))), signal
       });
+      return assertStreamable(r, pm.name || pm.model);
     } catch (e) {
       if (e && e.name === "AbortError") throw e;
       throw new Error("平台模型直连失败（多为厂商 CORS 限制）。请在后台把接入模式切回「服务端代理」"
@@ -3897,12 +4447,16 @@ async function platformCall(pm, body, signal) {
     }
   }
 
+  /* v5.10：X-Accel-Buffering 让中间层别缓冲 SSE；no-store 避免 WebView 复用旧响应。
+     这两个头只对自家 Edge Function / 反代发，直连厂商不加（会触发额外 CORS 预检）。 */
   const headers = { apikey: supaAnon(), "Content-Type": "application/json",
+                    "X-Accel-Buffering": "no", "Cache-Control": "no-store",
                     Authorization: "Bearer " + account.session.access_token };
   let resp;
   try {
     resp = await backendFetch("/functions/v1/xy-platform", {
       method: "POST", headers, signal,
+      __stream: true,
       body: JSON.stringify({ platform_id: pm.id, messages: body.messages,
                              stream: !!body.stream, tools: body.tools || [],
                              params: SAFE_GEN_PARAMS.reduce((o, k) => {
@@ -3940,11 +4494,11 @@ async function aiFetch(endpoint, key, payload, signal) {
   if (directHint) {
     directTried = true;
     try {
-      return await fetch(endpoint, {
+      return await fetchTimed(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
         body: bodyStr, signal
-      });
+      }, XY_HEAD_TIMEOUT);
     } catch (e) {
       if (e && e.name === "AbortError") throw e;
       /* Failed to fetch → 继续走下面的代理链路 */
@@ -3954,12 +4508,14 @@ async function aiFetch(endpoint, key, payload, signal) {
   /* ① 内置 Supabase Edge Function 代理（auto 模式） */
   if (mode === "auto" && supaReady()) {
     try {
-      const headers = { apikey: supaAnon(), "Content-Type": "application/json" };
+      const headers = { apikey: supaAnon(), "Content-Type": "application/json",
+                         "X-Accel-Buffering": "no", "Cache-Control": "no-store" };
       if (account.session?.access_token) headers.Authorization = "Bearer " + account.session.access_token;
       const resp = await backendFetch("/functions/v1/xy-ai", {
-        method: "POST", headers, signal, body: wrap
+        method: "POST", headers, signal, body: wrap, __stream: true
       });
-      if (resp.status !== 404 && resp.status !== 501) return resp;
+      if (resp.status === 404 || resp.status === 501) window.__xyAiMissing = true;
+      else return resp;
     } catch (e) {
       if (e && e.name === "AbortError") throw e;
     }
@@ -3968,10 +4524,10 @@ async function aiFetch(endpoint, key, payload, signal) {
   /* ② 自定义代理：Cloudflare Worker / 本地 Node 服务，协议与 xy-ai 相同 */
   if (mode !== "direct" && /^https?:\/\//i.test(pUrl)) {
     try {
-      const resp = await fetch(pUrl, {
+      const resp = await fetchTimed(pUrl, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: wrap, signal
-      });
+      }, XY_HEAD_TIMEOUT);
       if (resp.status !== 404 && resp.status !== 501) return resp;
     } catch (e) {
       if (e && e.name === "AbortError") throw e;
@@ -3989,11 +4545,11 @@ async function aiFetch(endpoint, key, payload, signal) {
     throw new Error("该厂商不放行浏览器跨域（CORS），必须走代理。请在 ⚙ 设置 → 接入方式 填自定义代理地址（可一键复制 Worker 模板），或确认内置代理已部署");
   }
   try {
-    return await fetch(endpoint, {
+    return await fetchTimed(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
       body: bodyStr, signal
-    });
+    }, XY_HEAD_TIMEOUT);
   } catch (e) {
     if (e && e.name === "AbortError") throw e;
     throw new Error("直连失败（多为 CORS 拦截）：" + (e.message || "Failed to fetch")
@@ -4038,30 +4594,8 @@ async function testModelConnection(id) {
   };
 }
 
-/* ============================================================
-   自定义代理 Worker 模板（用户可一键复制）
-   ============================================================ */
-const WORKER_TEMPLATE = `// Cloudflare Worker：把这段部署后把 URL 填进「自定义代理地址」
-export default {
-  async fetch(request) {
-    if (request.method === 'OPTIONS') return new Response(null, {
-      headers: { 'Access-Control-Allow-Origin': '*',
-                 'Access-Control-Allow-Headers': 'Content-Type',
-                 'Access-Control-Allow-Methods': 'POST, OPTIONS' }
-    });
-    const { upstream, key, payload } = await request.json();
-    const r = await fetch(upstream, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-      body: payload
-    });
-    return new Response(r.body, {
-      status: r.status,
-      headers: { 'Content-Type': r.headers.get('Content-Type') || 'application/json',
-                 'Access-Control-Allow-Origin': '*' }
-    });
-  }
-};`;
+/* v5.11：本机「自定义代理地址」已收归后台统一设置，一键复制的 Worker 模板不再需要。
+   需要完整模板请见部署包内的 小银AI-后端反代-Worker.js / Cloudflare 中转修正版。 */
 
 /* 重建顶栏模型选择器选项（内置 + 自定义） */
 /* ================================================================
@@ -4370,9 +4904,24 @@ function candidateOrder(tier) {
 }
 
 /* ---- 带自动降级的调用：逐个试候选，成功即返回 ---- */
-async function chatWithFailover(candidates, messagesOrBuilder, noTools, onSwitch, signal) {
-  let lastErr = null;
+async function chatWithFailover(candidates, messagesOrBuilder, noTools, onSwitch, signal, turn) {
+  /* v5.10 防死循环：
+     · turn.tried 是「本轮提问」共享集合，跨 agent step 记忆，同一模型一轮只试一次
+     · 单轮最多 XY_MAX_FAILOVER 次，杜绝整池 19 个模型挨个试
+     · 连续 2 次「网络层」失败立即停手：换模型救不了网络，继续换只会雪崩
+     · 失败提示合并成一条，不再每个模型刷一条 toast
+     成功时由 onSwitch 的上层写明「已由 X 回复」。 */
+  const state = turn || (turn = { tried: new Set(), maxTries: XY_MAX_FAILOVER, total: 0 });
+  const tried = state.tried;
+  /* v5.12：上限可由后台统一下发；默认 3，最少 1，最多 5，避免「整池挨个试」 */
+  const cap = Math.max(1, Math.min(5, Number(cfg.maxFailover) || XY_MAX_FAILOVER));
+  const maxTries = state.maxTries || cap;
+  if (state.total == null) state.total = 0;   /* 跨 agent step 持久：整轮最多 maxTries 次 */
+  let lastErr = null, switches = 0, netFails = 0;
+  const fails = [];
   for (const id of candidates) {
+    if (tried.has(id) || state.total >= maxTries) break;
+    tried.add(id); state.total++; switches++;
     const label = modelDisplayName(id);
     /* v5.1：每次切换候选都重建提示词，身份里的模型名跟着实际调用走 */
     const messages = typeof messagesOrBuilder === "function"
@@ -4380,24 +4929,72 @@ async function chatWithFailover(candidates, messagesOrBuilder, noTools, onSwitch
     if (onSwitch) onSwitch(label, id, messages);
     try {
       const resp = await callModel(id, messages, true, !noTools, signal);
-      return { resp, model: id };
+      /* v5.12：切换成功不再弹 toast。
+         「✦ 前 N 个模型不可用，本轮已由「X」回复」对用户没有信息量，
+         只是在正常使用里制造焦虑；需要排障时看控制台。 */
+      if (switches > 1) console.info("[failover] 本轮由「" + label + "」回复（序号 " + switches + "）");
+      return { resp, model: id, switches };
     } catch (e) {
       if (e && e.name === "AbortError") throw e;   // 用户主动停止：不参与降级重试
       lastErr = e;
       const s = String((e && e.message) || e);
-      const why = /429|rate|限流|too many/i.test(s) ? "限流 429"
+      const isNet = /XYTimeout|Failed to fetch|NetworkError|Load failed|连接超时|网络请求失败|代理不可达/i.test(s);
+      /* v5.12：首字超时与「模型挂了」分开记。首字超时多半是手机弱网 / 厂商排队，
+         不该按 429/5xx 那样重罚 45s 冷却，否则同一个模型下次直接被排到最后。 */
+      const isTtft = e && (e.name === "FirstByteTimeout"
+        || /首字超时|timeout|超时/i.test(s)) && !isNet;
+      if (isNet) netFails++;
+      const why = isNet ? "网络不通"
+        : isTtft ? "首字超时"
+        : /429|rate|限流|too many/i.test(s) ? "限流 429"
         : /402|余额|quota|arrears|insufficient|exhaust/i.test(s) ? "额度耗尽 402"
-        : /超时|timeout|firstbyte/i.test(s) ? "首字超时"
-        : /API 5\d\d/.test(s) ? "服务异常 5xx" : "调用失败";
-      noteFailure(id, why);
+        : /API 5\d\d/.test(s) ? "服务异常 5xx"
+        : /空响应|EmptyResponseBody|NotAStream/.test(s) ? "空响应（代理未透传流）" : "调用失败";
+      fails.push(label + "：" + why);
+      if (isTtft) {
+        /* 只轻微降权 20s，且不叠加失败计数，保留它下一次被选中的机会 */
+        const h = healthOf(id); h.coolUntil = Date.now() + 20000; saveHealth();
+      } else noteFailure(id, why);
       ledger.fallbacks.push({ at: Date.now(), from: label, why });
       if (ledger.fallbacks.length > 30) ledger.fallbacks.splice(0, ledger.fallbacks.length - 30);
       saveLedger();
-      toast("⚠ " + label + " " + (e && e.name === "FirstByteTimeout" ? "首字超时" : why)
-        + " → 自动换下一个模型（更快）", 4600);
+      /* 网络层连续失败：立刻收手，给人话提示，不再逐个换模型 */
+      if (netFails >= 2) {
+        const miss = efMissing();
+        const ne = new Error("网络连续失败（" + XY_ENV.label + "）：已试 " + switches
+          + " 个模型都没连上后端。请先点「🔧 登录自检」确认线路可达，或切换 WiFi / 蜂窝后重试；"
+          + "这不是模型的问题，继续换模型没有用。"
+          + (miss.length ? "\n另外检测到模型代理函数未部署：" + miss.join(" / ")
+              + "，请到 Supabase → Edge Functions 部署（交付包内附 .ts），"
+              + "登录与额度正常不代表模型通道已就绪。" : ""));
+        ne.name = "NetworkChainFailed";
+        throw ne;
+      }
     }
   }
-  throw lastErr || new Error("没有可用模型：请在 ⚙ 设置中配置至少一个 API Key");
+  if (lastErr) {
+    /* v5.12：把「去 ⚙ 设置检查 Key」这类用户无从下手的指引去掉，只留能真正执行的下一步。 */
+    const miss = efMissing();
+    const hasNet = fails.some(f => /网络不通|网络连续/.test(f));
+    const allSlow = fails.length && fails.every(f => /首字超时/.test(f));
+    let guide;
+    if (allSlow) {
+      guide = "这次都是「等首字超时」，不是模型坏了：多为当前网络到厂商的链路慢（手机蜂窝 / 校园网 / 晚高峰）。"
+        + "先换 WiFi 或蜂窝重试；仍反复出现的话，让管理员在后台把「首字超时」与「首字等待下限」调大，"
+        + "或把「深度思考」设为始终关闭。";
+    } else if (miss.length) {
+      guide = "模型代理函数未部署：" + miss.join(" / ")
+        + "。请到 Supabase → Edge Functions 部署（交付包内附完整 .ts），Verify JWT 开启。";
+    } else if (hasNet) {
+      guide = "多为网络到后端不稳。点「🔧 登录自检」看线路可达性，或切换 WiFi / 蜂窝重试。";
+    } else {
+      guide = "请在管理后台的「平台共享模型池」里核对模型 ID、端点与 Key。";
+    }
+    const e = new Error("本轮 " + switches + " 个候选模型都没能返回内容（" + fails.join("；") + "）。" + guide);
+    e.name = "AllModelsFailed";
+    throw e;
+  }
+  throw new Error("当前没有可用模型，请到管理后台配置平台共享模型池");
 }
 
 /* ---- 节流：工具结果入历史前截断 ---- */
@@ -4485,32 +5082,91 @@ function firstByteLimit(modelId) {
   if (!base) return 0;                       /* 用户设 0 = 关闭提醒与自动切换 */
   const d = callModel._decision || {};
   const heavy = ["code", "reasoning", "math"].includes(d.task) || d.tier === "strong" || d.longDoc;
-  let ms = (heavy ? Math.max(base + 30, 40) : base + 6) * 1000;
-  /* v5.7：按该模型历史首字 EWMA 自适应。
-     老是 20~35s 才出字的模型，等它 14s 纯属浪费 → 缩短到 60%；
-     历史很快的模型给一点余量，避免网络抖动误伤。 */
-  const t = modelId && modelHealth[modelId] && modelHealth[modelId].ttft;
-  if (t > 6000) ms = Math.max(4000, Math.round(ms * 0.6));
-  else if (t && t < 1500) ms = Math.round(ms * 1.25);
-  return ms;
+  /* v5.12：普通任务 base+6 → base+10。8s 基础值下等于 18s，
+     给「冷启动 + 排队 + 深度思考」留足余量，不再动不动判死。 */
+  let ms = (heavy ? Math.max(base + 30, 40) : base + 10) * 1000;
+
+  /* ============================================================
+     v5.12 · 修正方向性错误（手机端「回答慢 / 不停换模型」的根因）
+     旧逻辑：历史首字 > 6s 的模型把超时压到 60%（14s → 8.4s）。
+     结果恰好相反 —— 越慢的模型越早被判死，换下一个同样慢，
+     再换……用户看到的就是「模型一直在切换、一个字都没出」。
+     正确做法：慢模型要给更长耐心，快模型才给正常值。
+     ============================================================ */
+  const t = Number((modelId && modelHealth[modelId] && modelHealth[modelId].ttft) || 0);
+  if (t > 0) {
+    /* 以「历史首字 × 2.2 + 3s」为下限，最多再加到 45s，避免无限等待 */
+    ms = Math.max(ms, Math.min(45000, Math.round(t * 2.2 + 3000)));
+  }
+  /* 手机 / 内置浏览器：弱网 + WebView 缓冲，低于 15s 必然误杀。
+     v5.12：下限可由后台「首字超时下限」统一调整，不再写死。 */
+  const floor = Math.max(0, Number(cfg.ttftFloor == null ? 15 : cfg.ttftFloor));
+  if (XY_ENV.iOS || XY_ENV.android || XY_ENV.inApp) ms = Math.max(ms, floor * 1000);
+  else if (floor) ms = Math.max(ms, Math.min(floor, 8) * 1000);   /* 桌面只给很轻的保底 */
+  /* 硬上界：任何情况下不超过 75s，避免「卡住不动」 */
+  ms = Math.min(ms, 75000);
+  return Math.round(ms);
 }
 async function awaitFirstByte(resp, signal, stream, modelId) {
-  if (!stream || !resp || !resp.ok || !resp.body) return resp;
+  if (!stream) return resp;   /* 非流式请求由调用方自行解析 */
+  assertStreamable(resp, modelDisplayName(modelId));
   const limit = firstByteLimit(modelId);
   if (!limit) return resp;
-  const reader = resp.body.getReader();
-  let chunk;
+  /* v5.10.1：HTTP 200 但返回的不是流（旧版代理把 SSE JSON 化、或返回错误 JSON）
+     时，别让用户只看到含糊的「空响应」，直接点名是代理没透传。 */
   try {
-    chunk = await new Promise((resolve, reject) => {
-      const t = setTimeout(() => {
-        const e = new Error("首字超时，自动换下一个模型");
+    const ct = String(resp.headers && resp.headers.get && resp.headers.get("content-type") || "");
+    if (ct && /application\/json|text\/plain/i.test(ct) && !/event-stream/i.test(ct)) {
+      const e = new Error("「" + modelDisplayName(modelId) + "」返回的不是 SSE 流（HTTP 200 · "
+        + ct.slice(0, 40) + "）。多为 xy-ai 代理未部署或旧版把响应 JSON 化了；请部署交付的 xy-ai 函数。");
+      e.name = "NotAStream"; throw e;
+    }
+  } catch (e) { if (e && e.name === "NotAStream") throw e; }
+  const reader = resp.body.getReader();
+  /* v5.10：不再把「第一个 read() resolve」当成首字。
+     iOS WKWebView / 微信内置浏览器会缓冲 SSE，先吐空 chunk 或 `: ping` 心跳；
+     旧版一拿到就 clearTimeout，超时器彻底失效 → 38s、甚至永久等待。
+     现在持续读到「真正含内容的 chunk」为止，超时器全程有效，
+     期间所有 chunk（含心跳）都缓冲下来，包装流先原样吐出，不丢字节。 */
+  const chunks = [];
+  const dec = new TextDecoder();
+  let chunk = null, timer = 0;
+  const meaningful = v => {
+    if (!v || !v.length) return false;
+    const s = dec.decode(v, { stream: true });
+    /* 去掉 SSE 注释行与所有空白后还有内容，才算真数据 */
+    return s.replace(/^\s*:[^\n]*$/gm, "").replace(/\s/g, "").length >= 2;
+  };
+  try {
+    await new Promise((resolve, reject) => {
+      timer = setTimeout(() => {
+        const e = new Error("首字超时（" + Math.round(limit / 1000) + "s 未收到内容），自动换下一个模型");
         e.name = "FirstByteTimeout";
         reject(e);
       }, limit);
-      reader.read().then(v => { clearTimeout(t); resolve(v); },
-                         err => { clearTimeout(t); reject(err); });
+      const pump = () => {
+        reader.read().then(({ done, value }) => {
+          if (done) {
+            clearTimeout(timer);
+            /* 流结束了却一个真数据都没有：交给上层判空/换模型，别静默卡住 */
+            const e = new Error("空响应：流已结束但没有返回内容");
+            e.name = "EmptyResponseBody";
+            reject(e); return;
+          }
+          if (value && value.length) chunks.push(value);
+          if (signal && signal.aborted) {
+            clearTimeout(timer);
+            const a = new Error("已停止"); a.name = "AbortError"; reject(a); return;
+          }
+          if (meaningful(value)) { clearTimeout(timer); resolve(); return; }
+          /* 空 chunk / 心跳：继续读，超时器仍然在跑 */
+          pump();
+        }, err => { clearTimeout(timer); reject(err); });
+      };
+      pump();
     });
   } catch (e) {
+    clearTimeout(timer);
     try { reader.cancel(); } catch {}
     /* 用户主动停止：保持 AbortError 语义，不触发降级 */
     if (signal && signal.aborted) { const a = new Error("已停止"); a.name = "AbortError"; throw a; }
@@ -4523,8 +5179,9 @@ async function awaitFirstByte(resp, signal, stream, modelId) {
       let closed = false;
       const finish = () => { if (!closed) { closed = true; try { ctrl.close(); } catch {} } };
       const fail = e => { if (!closed) { closed = true; try { ctrl.error(e); } catch {} } };
-      if (!chunk.done && chunk.value) {
-        try { ctrl.enqueue(chunk.value); } catch { finish(); return; }
+      /* 先吐出等待首字期间缓冲的全部 chunk（含心跳，原样保留字节序） */
+      for (const v of chunks) {
+        try { ctrl.enqueue(v); } catch { finish(); return; }
       }
       (async () => {
         try {
@@ -4569,6 +5226,45 @@ function thinkingParams(model, decision) {
 }
 const SAFE_GEN_PARAMS = ["thinking", "reasoning_effort", "max_tokens", "max_completion_tokens", "temperature", "top_p", "stream_options"];
 
+
+/* ============================================================
+   v5.9.1 · 空响应防御：修掉 iOS / 微信里
+   `undefined is not an object (evaluating 'resp.body.getReader')`
+   ------------------------------------------------------------
+   链路：file:// 打开的临时 HTML（微信/QQ 内置浏览器常见）向跨域地址发 SSE，
+   WKWebView 会给出「200 但没有可读 body」「opaque」「204」等响应。
+   旧版 awaitFirstByte() 遇到 !resp.ok || !resp.body 时原样返回 resp，
+   sendMessage 再无条件 resp.body.getReader() → 直接崩，且错误看不懂。
+   现在统一在模型出口校验，抛可读错误，由 chatWithFailover 自动换下一个模型。
+   ============================================================ */
+function emptyRespReason(resp, label) {
+  const st = (resp && typeof resp.status === "number") ? resp.status : 0;
+  let ct = "";
+  try { ct = (resp && resp.headers && resp.headers.get && resp.headers.get("content-type")) || ""; } catch {}
+  const head = "「" + (label || "模型") + "」返回空响应（HTTP " + st + (ct ? " · " + ct.slice(0, 40) : "") + "）。";
+  if (location.protocol === "file:") {
+    return head + "当前是 file:// 本地文件，iOS / 微信内置浏览器会拦掉跨域流式响应；"
+      + "请用 Safari 打开正式 https 网址，或改用自选模型。已尝试自动换模型。";
+  }
+  return head + "多为代理 / 浏览器拦截了 SSE 流或上游返回 204；已尝试自动换下一个模型。";
+}
+function assertStreamable(resp, label) {
+  if (!resp || typeof resp !== "object") {
+    const e = new Error("「" + (label || "模型") + "」没有返回响应对象。已尝试自动换模型。");
+    e.name = "EmptyResponseBody"; throw e;
+  }
+  if (typeof resp.ok === "boolean" && !resp.ok) {
+    const e = new Error("「" + (label || "模型") + "」返回 HTTP " + resp.status + "。已尝试自动换模型。");
+    e.name = "EmptyResponseBody"; throw e;
+  }
+  const b = resp.body;
+  if (!b || typeof b.getReader !== "function") {
+    const e = new Error(emptyRespReason(resp, label));
+    e.name = "EmptyResponseBody"; throw e;
+  }
+  return resp;
+}
+
 async function callModel(model, messages, stream, useTools = true, signal) {
   /* ① 平台共享模型：走独立通道，绝不碰用户 Key / aiFetch / proxyMode */
   const pm = findPlatformModel(model);
@@ -4578,6 +5274,7 @@ async function callModel(model, messages, stream, useTools = true, signal) {
       model: pm.model, messages, stream: !!stream,
       tools: useTools ? activeTools() : undefined, ...gen
     }, signal);
+    assertStreamable(resp, modelDisplayName(model));
     return awaitFirstByte(resp, signal, stream, model);
   }
   /* ② 内置池 / 用户自带 BYOK：沿用原有链路，一行未改 */
@@ -4788,6 +5485,20 @@ document.addEventListener("click", async e => {
     setTimeout(() => { cp.textContent = old; }, 1600);
     return;
   }
+  /* v5.9.2 · 触屏：默认隐藏操作栏。点本条气泡 → 显示；再点 / 点另一条 / 点消息外 → 收起。
+     桌面 hover 不受影响（.show-actions 在桌面没有对应样式）。
+     链接、代码复制、图片预览、表单控件一律不参与切换，避免误触。 */
+  const tapMsg = e.target.closest(".msg");
+  const tapCtl = e.target.closest(
+    "a, button, input, textarea, select, video, audio, [data-pv], .md-copy, .pv-btn, .gen-img, .msg-actions");
+  const shownMsg = chatEl.querySelector(".msg.show-actions");
+  if (!tapMsg) {
+    if (shownMsg) shownMsg.classList.remove("show-actions");   /* 点消息外：收起 */
+  } else if (!tapCtl) {
+    if (shownMsg && shownMsg !== tapMsg) shownMsg.classList.remove("show-actions");
+    tapMsg.classList.toggle("show-actions");                   /* 点气泡：切换 */
+  }
+
   const act = e.target.closest("[data-act]");
   if (!act) return;
   const msg = act.closest(".msg");
@@ -4885,7 +5596,7 @@ let waitCard = null, waitPhase = "", waitT0 = 0, waitTimer = null;
 function showWait(phaseText) {
   const old = document.getElementById("typingMsg");
   if (old) old.remove();
-  if (waitCard && waitCard.isConnected) { waitCard._label.textContent = phaseText; return; }
+  if (waitCard && waitCard.el && waitCard.el.isConnected) { waitCard._label.textContent = phaseText; return; }
   const div = document.createElement("div");
   div.className = "msg bot"; div.id = "typingMsg";
   div.innerHTML = `<div class="avatar">银</div><div class="bubble"><div class="th-card" role="status" aria-live="polite">
@@ -4901,9 +5612,12 @@ function showWait(phaseText) {
   }, 250);
   stickToBottom();
 }
-function setWaitPhase(phaseText) {
-  if (waitCard && waitCard.el.isConnected) {
-    waitCard._label.textContent = phaseText; waitPhase = phaseText; waitT0 = Date.now();
+function setWaitPhase(phaseText, resetClock) {
+  if (waitCard && waitCard.el && waitCard.el.isConnected) {
+    waitCard._label.textContent = phaseText; waitPhase = phaseText;
+    /* v5.10：默认不重置计时。旧版 startThinking 每 250ms 调一次，
+       把 waitT0 刷成 now，于是状态行 38.1s、卡片里又冒一个 0.2s。 */
+    if (resetClock) waitT0 = Date.now();
   } else showWait(phaseText);
 }
 function hideWait() {
@@ -5126,6 +5840,12 @@ fileInput.addEventListener("change", async () => {
 /* ================= Agent Loop ================= */
 async function sendMessage(text) {
   if (!appUnlocked) { toast("🔒 请先登录后再使用"); return; }
+  /* v5.9 离线宽限：不偷偷发请求、不消耗服务端额度，保留草稿并顺手探一次网络 */
+  if (offlineMode) {
+    toast("⚠ 离线模式：点顶部横幅「↻ 立即重试」连上后再发送（草稿已保留）", 5200);
+    void tryReconnect(false);
+    return;
+  }
   if (busy) { pendingQueue.push(text); toast("⏳ 已加入队列，上一条完成后自动发送（共 " + pendingQueue.length + " 条）"); return; }
   if (account.profile && account.profile.role === "banned") {
     addMsg("bot", "⛔ 你的账号已被管理员停用，无法继续使用。");
@@ -5167,8 +5887,13 @@ async function sendMessage(text) {
       lastMdAt = 0; staticSig = "";
     }
     /* v5.2：长回复降低全量 Markdown 重建频率（短回复仍 180ms），
-       高频档只写 textContent，视觉上依旧是逐字流式，CPU 明显下降。 */
-    const mdGap = 180 + Math.min(420, Math.floor(fullText.length / 12));
+       高频档只写 textContent，视觉上依旧是逐字流式，CPU 明显下降。
+       v5.12：手机 / 内置 WebView 再加一档（最低 320ms，上限 900ms）。
+       解析一整篇 Markdown 在 A11y 手机上要几十毫秒，和 SSE 抢主线程时
+       表现出来就是「字一个一个卡着蹦」，用户会误以为模型很慢。 */
+    const mdBase = (XY_ENV.iOS || XY_ENV.android || XY_ENV.inApp) ? 320 : 180;
+    const mdCap = (XY_ENV.iOS || XY_ENV.android || XY_ENV.inApp) ? 900 : 600;
+    const mdGap = mdBase + Math.min(mdCap - mdBase, Math.floor(fullText.length / 12));
     if (force || !busy || now - lastMdAt > mdGap) {
       lastMdAt = now;
       raw.innerHTML = fmt(fullText);
@@ -5194,9 +5919,11 @@ async function sendMessage(text) {
     const tick = () => {
       if (!busy) return;
       const s = fmtSec(thinkingSince);
-      statusLine.textContent = `THINKING · ${modelName} · 已思考 ${s}s${firstTokenAt ? " · 生成中" : ""}`;
+      /* 单一时间源：秒数只由 statusLine 与卡片的 .th-time 呈现，
+         不再把 "已等待 Xs" 塞进 _label 又让另一个 timer 再写一遍。 */
+      statusLine.textContent = `THINKING · ${modelName} · 已等待 ${s}s${firstTokenAt ? " · 生成中" : ""}`;
       if (waitCard && waitCard.el && waitCard.el.isConnected)
-        setWaitPhase(`思考中 · ${modelName} · 已等待 ${s}s${firstTokenAt ? " · 生成中" : " · 超时会自动换快模型"}`);
+        waitCard._label.textContent = `思考中 · ${modelName}${firstTokenAt ? " · 生成中" : " · 超时会自动换快模型"}`;
     };
     tick(); thinkingTimer = setInterval(tick, 250);
   }
@@ -5224,13 +5951,20 @@ async function sendMessage(text) {
     /* 手动锁定某个通道后，失败降级只能在「同通道 + 内置」里进行：
        pm_ 不跳到 cm_（不花用户自己的钱），cm_ 不跳到 pm_（不占用平台额度）。 */
     const sameChannel = c => !((isPlatformId(manual) && isByokId(c)) || (isByokId(manual) && isPlatformId(c)));
-    candidates = [manual, ...rankCandidates(candidateOrder(tier).filter(c => c !== manual && sameChannel(c)), decision)];
+    /* v5.10：手动锁定也只留 2 个同通道兜底，不再把整池拉进来 */
+    candidates = [manual, ...rankCandidates(candidateOrder(tier).filter(c => c !== manual && sameChannel(c)), decision)
+      .slice(0, XY_MAX_FAILOVER - 1)];
     routeLast = { task: decision.task, model: manual };
   } else {
     statusLine.textContent = "ROUTING · 语种 / 任务 / 延迟综合判定（0 token）…";
     if (prevErr && ledger.escalate < 3) ledger.escalate++;
-    candidates = decision.candidates;
+    /* v5.10：自动路由最多 3 个候选（池里 19 个时代这里会挨个试到天荒地老） */
+    candidates = (decision.candidates || []).slice(0, XY_MAX_FAILOVER);
   }
+  candidates = [...new Set(candidates)].filter(Boolean);
+  /* v5.10：整轮共享一个 state，跨 agent step 记住「已试过的模型 + 总尝试次数」，
+     否则工具循环的每个 step 都会从头再试一遍候选链。 */
+  const turnState = { tried: new Set(), maxTries: Math.max(1, Math.min(5, Number(cfg.maxFailover) || XY_MAX_FAILOVER)), total: 0 };
   ledger.escalate = 0;
   callModel._decision = decision;      // thinking 参数按任务难度自适应
   if (overBudget()) toast("⚠ 已达日预算，本轮只使用免费模型（⚙ 可调预算或清零账本）");
@@ -5254,7 +5988,7 @@ async function sendMessage(text) {
       saveChat(); cloudPushOne({ role: "assistant", content: hit });
       addMsg("bot", hit, "命中本地答案缓存 · 0 token 消耗");
       ledger.cacheHits++; saveLedger();
-      statusLine.textContent = `CACHED · 重复问题直接返回 · 今日 ¥${ledger.spendCny.toFixed(2)}`;
+      statusLine.textContent = "已命中缓存";
       busy = false; currentAbort = null;
       document.body.classList.remove("generating");
       sendEl.textContent = "➤"; sendEl.title = "发送"; sendEl.classList.remove("stop-mode");
@@ -5273,20 +6007,31 @@ async function sendMessage(text) {
       startThinking();
       const ttftLimit = Math.max(0, cfg.ttftTimeout == null ? 8 : Number(cfg.ttftTimeout)) * 1000;
       let warned = false;
-      const slowTimer = ttftLimit ? setTimeout(() => {
+      /* v5.12：慢提示改成跟随真实首字上限（firstByteLimit）而不是固定的 8s 基础值。
+         旧版在 8s 就弹「即将自动换模型」，可实际要等到 15~18s 才换 —— 用户先被吓一次，
+         然后真的换了又是一次，体感就是「不停换模型」。现在只在状态行静静显示已等待秒数。 */
+      const warnAt = (() => {
+        try { const m0 = candidates && candidates[0]; return m0 ? Math.round(firstByteLimit(m0) * 0.8) : 0; }
+        catch { return 0; }
+      })();
+      const slowTimer = warnAt ? setTimeout(() => {
         if (!firstTokenAt && busy) {
           warned = true;
-          toast("⏳ 首字较慢：若该模型在「深度思考」，稍后将自动换快模型；也可点 ⏹ 停止", 6000);
-          statusLine.textContent = `SLOW · ${modelName} · 等待首字 ${fmtSec(tStart)}s · 即将自动换模型`;
+          statusLine.textContent = `SLOW · ${modelName} · 已等待 ${fmtSec(tStart)}s`;
         }
-      }, ttftLimit) : 0;
-      const { resp, model } = await chatWithFailover(candidates, buildMessages, lastStep,
+      }, warnAt) : 0;
+      const { resp, model, switches } = await chatWithFailover(candidates, buildMessages, lastStep,
         (label, id, msgs) => {
           modelName = label; roundMessages = msgs;
-          if (waitCard && waitCard.el && waitCard.el.isConnected) setWaitPhase(`思考中 · ${label}`);
-        }, abort.signal);
+          /* 切换候选时重置本模型计时与状态行，三处显示同步，不再「顶部 A / 卡片 B」 */
+          thinkingSince = Date.now();
+          statusLine.textContent = `THINKING · ${label} · 正在连接 …`;
+          if (waitCard && waitCard.el && waitCard.el.isConnected) setWaitPhase(`思考中 · ${label}`, true);
+        }, abort.signal, turnState);
       usedModel = model;
 
+      /* 双保险：即使将来有别的路径绕过 callModel，也不再抛看不懂的 WebKit 报错 */
+      assertStreamable(resp, modelDisplayName(usedModel));
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buf = "";
@@ -5386,6 +6131,10 @@ async function sendMessage(text) {
       let hint = e.message || e;
       if (/Failed to fetch|NetworkError|Load failed/i.test(hint))
         hint = "网络请求失败。可能原因：① Supabase Edge Function「xy-ai」尚未部署（见部署说明）；② 本地网络拦截；③ API 端点不可达。请按 F12 看 Console 详细报错。";
+      else if (/NetworkChainFailed|网络连续失败/.test(hint) || /已试 \d+ 个模型/.test(hint)
+               || /AllModelsFailed|模型代理函数未部署/.test(hint)) {
+        /* 这几类已经是人话结论，别再套「F12 看 Console」 */
+      }
       else if (/没有可用模型/.test(hint)) hint += "（当前池内模型均不可用，请检查 ⚙ 设置里的 Key 与管理员权限）";
       addMsg("bot", "❌ 出错了：" + hint);
       if (quotaConsumed) quotaRefund(1);   // 生成彻底失败不白扣一条
@@ -5397,7 +6146,7 @@ async function sendMessage(text) {
     document.querySelectorAll(".stream-cursor").forEach(n => n.remove());
     sendEl.textContent = "➤"; sendEl.title = "发送"; sendEl.classList.remove("stop-mode");
     if (!/DONE ·|STOPPED|CACHED/.test(statusLine.textContent))
-      statusLine.textContent = `SYSTEM ONLINE · 零成本路由 · 池内${modelPool().length}个模型 · 今日 ¥${ledger.spendCny.toFixed(3)} · 缓存命中${ledger.cacheHits}次`;
+      statusLine.textContent = hudText();
     if (pendingQueue.length) setTimeout(() => sendMessage(pendingQueue.shift()), 80);
   }
 }
@@ -5581,14 +6330,13 @@ modelSel.addEventListener("change", () => {
   const label = modelSel.options[modelSel.selectedIndex].text.trim();
   /* v5.1：切换模型后不沿用上一个模型的身份与路由记忆 */
   resetRouteMemory();
-  statusLine.textContent = "SYSTEM ONLINE · 当前模型 " + label + " · 身份已同步 · 失败自动换池内下一个模型";
+  statusLine.textContent = "当前模型 · " + label;
   const v = modelSel.value;
-  if (v !== "auto") toast("✦ 已切换到「" + modelDisplayName(v) + "」，之后的回答由它提供", 4200);
+  /* v5.12：只在「选中了就一定用不了」时提示，正常切换不再弹 toast */
   if (isPlatformId(v) && (!platformAllowed || !platformPermAllowed()))
-    toast("⛔ 管理员已关闭你的平台共享模型权限");
-  else if (isPlatformId(v) && platformMode === "passthrough") toast("⚠ 当前为「直接下发」调试模式，平台 Key 会经过浏览器");
-  else if (findCustomModel(v) && !findCustomModel(v).apiKey) toast("该自定义模型未填 API Key，请到 ⚙ 设置里补充");
-  else if (v !== "auto" && !isPlatformId(v) && !apiKey(v)) toast("⚠ 该模型暂无可用 Key，将自动降级到池内其他模型");
+    toast("当前账号没有平台模型权限，已回落到智能路由");
+  else if (isPlatformId(v) && platformMode === "passthrough") toast("调试模式：平台 Key 会经过浏览器");
+  else if (findCustomModel(v) && !findCustomModel(v).apiKey) toast("该模型还没填 API Key");
 });
 
 /* 设置弹窗 */
@@ -5613,21 +6361,11 @@ if (btnAddModel) btnAddModel.addEventListener("click", () => {
 
 const btnSettings = document.getElementById("btnSettings");
 if (btnSettings) btnSettings.addEventListener("click", () => {
+  /* v5.11：本机只保留两把自带 Key；其余策略展示为只读摘要 */
   document.getElementById("cfgZhipuKey").value = cfg.zhipuKey || "";
   document.getElementById("cfgDeepseekKey").value = cfg.deepseekKey || "";
-  document.getElementById("cfgSystem").value = cfg.system || "";
-  document.getElementById("cfgRouteMode").value = cfg.routeMode || "balanced";
-  document.getElementById("cfgBudget").value = cfg.budgetCny || "";
-  document.getElementById("cfgPaidAvg").value = cfg.paidAvg != null ? cfg.paidAvg : 1;
-  document.getElementById("cfgCacheOn").checked = cfg.cacheOn !== false;
-  const setv = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-  const setc = (id, v) => { const el = document.getElementById(id); if (el) el.checked = v; };
-  setv("cfgThinking", cfg.thinking || "auto");
-  setv("cfgReplyLang", cfg.replyLang || "follow");
-  setv("cfgTtft", cfg.ttftTimeout == null ? 8 : cfg.ttftTimeout);
-  setv("cfgContextBudget", cfg.contextBudget || 14000);
-  setc("cfgLatencyAware", cfg.latencyAware !== false);
-  renderCustomModels(); renderProviderGrid(); renderProviderPanel(); updateProxyUI(); renderPlatformPanel(); renderAgentPanel();
+  renderCustomModels(); renderProviderGrid(); renderProviderPanel(); updateProxyUI();
+  renderPlatformPanel(); renderAgentPanel(); renderGlobalPolicy(); applyAppear();
   if (mask) mask.classList.add("show");
 });
 const btnCancel = document.getElementById("btnCancel");
@@ -5636,36 +6374,25 @@ if (mask) mask.addEventListener("click", e => { if (e.target === mask) mask.clas
 document.getElementById("btnSave").addEventListener("click", () => {
   const z = document.getElementById("cfgZhipuKey").value.trim();
   const d = document.getElementById("cfgDeepseekKey").value.trim();
-  const s = document.getElementById("cfgSystem").value.trim();
   if (z) cfg.zhipuKey = z; else delete cfg.zhipuKey;
   if (d) cfg.deepseekKey = d; else delete cfg.deepseekKey;
-  if (s) cfg.system = s; else delete cfg.system;
-  cfg.routeMode = document.getElementById("cfgRouteMode").value || "balanced";
-  const bc = parseFloat(document.getElementById("cfgBudget").value);
-  if (bc > 0) cfg.budgetCny = bc; else delete cfg.budgetCny;
-  const pa = parseFloat(document.getElementById("cfgPaidAvg").value);
-  cfg.paidAvg = isNaN(pa) || pa < 0 ? 1 : pa;
-  cfg.cacheOn = document.getElementById("cfgCacheOn").checked;
-  cfg.thinking = document.getElementById("cfgThinking")?.value || "auto";
-  cfg.replyLang = document.getElementById("cfgReplyLang")?.value || "follow";
-  const tt = parseInt(document.getElementById("cfgTtft")?.value, 10);
-  cfg.ttftTimeout = isNaN(tt) ? 8 : tt;
-  const cb = parseInt(document.getElementById("cfgContextBudget")?.value, 10);
-  cfg.contextBudget = isNaN(cb) ? 14000 : Math.max(4000, Math.min(48000, cb));
-  cfg.latencyAware = !!document.getElementById("cfgLatencyAware")?.checked;
-  cfg.proxyMode = document.getElementById("cfgProxyMode").value || "auto";
-  const pu = document.getElementById("cfgProxyUrl").value.trim();
-  if (pu) cfg.proxyUrl = pu; else delete cfg.proxyUrl;
-  MAX_STEPS = STEPS_BY_MODE[cfg.routeMode] || 8;
-  lsSet(LS_CFG, JSON.stringify(cfg));
+  /* 只把「本机键」写进 localStorage，全局策略键绝不落盘：
+     否则下次后台改了策略，本机旧值会先生效一瞬，且「恢复默认」清不干净。 */
+  const local = Object.assign({}, cfg);
+  for (const k of GLOBAL_KEYS) delete local[k];
+  lsSet(LS_CFG, JSON.stringify(local));
   mask.classList.remove("show");
   updateAccountUI();
-  toast("◈ 设置已保存 · 深度思考 " + ({auto:"自动",on:"开启",off:"关闭"}[cfg.thinking]||"自动") + " · 回复语言 " + cfg.replyLang);
+  toast("◈ 本机设置已保存 · 全局策略由后台统一下发");
 });
 document.getElementById("btnReset").addEventListener("click", () => {
+  /* 只清本机键，不动运行时的全局策略（后台仍是唯一来源） */
+  const g = Object.assign({}, cfg);
   lsDel(LS_CFG);
+  for (const k of Object.keys(cfg)) if (!GLOBAL_KEYS.includes(k)) delete cfg[k];
+  for (const k of GLOBAL_KEYS) if (g[k] !== undefined) cfg[k] = g[k];
   mask.classList.remove("show");
-  toast("已恢复默认设置（模型配置保留）");
+  toast("已恢复本机默认（自带 Key 与全局策略不受影响）");
 });
 
 /* ================= 账号弹窗交互 ================= */
@@ -6066,22 +6793,37 @@ function inlineRename(item, id) {
    ============================================================ */
 const LS_APPEAR = "xiaoyin_appearance";
 let appear = (() => {
-  try { return Object.assign({ fs: "normal", density: "normal", fx: "on" },
-    JSON.parse(lsGet(LS_APPEAR) || "{}")); } catch { return { fs: "normal", density: "normal", fx: "on" }; }
+  try {
+    const a = Object.assign({ fs: "normal", density: "normal", fx: "auto" },
+      JSON.parse(lsGet(LS_APPEAR) || "{}"));
+    if (a.fx === "on") a.fx = "auto";      // 兼容旧版二值
+    return a;
+  } catch { return { fs: "normal", density: "normal", fx: "auto" }; }
 })();
 function applyAppear() {
   const r = document.documentElement;
-  r.dataset.fs = appear.fs; r.dataset.density = appear.density; r.dataset.fx = appear.fx;
+  XY_APPEAR_OFF = (appear.fx === "off");
+  const lv = (typeof fxLevel === "function") ? fxLevel() : "lite";
+  /* v5.11：字号 / 密度 / 动效档位统一由后台下发，本机只保留「强制省电」覆盖 */
+  r.dataset.fs = (typeof cfg !== "undefined" && cfg.fs) || "normal";
+  r.dataset.density = (typeof cfg !== "undefined" && cfg.density) || "normal";
+  r.dataset.fx = lv;
   document.querySelectorAll("[data-appear]").forEach(b =>
     b.classList.toggle("on", b.dataset.appear === appear[b.dataset.akey]));
+  const st = document.getElementById("fxState");
+  if (st) st.textContent = "当前档位：" + ({
+    full: "完整炫酷（桌面）", lite: "轻量省电（手机）", still: "静态星空（弱网/生成中）", off: "已关闭"
+  }[lv] || lv) + " · 字号/密度由后台统一";
 }
 (function appearanceUI() {
+  XY_APPEAR_OFF = (appear.fx === "off");
   applyAppear();
   document.querySelectorAll("[data-appear]").forEach(b => b.addEventListener("click", () => {
     appear[b.dataset.akey] = b.dataset.appear;
+    XY_APPEAR_OFF = (appear.fx === "off");
     lsSet(LS_APPEAR, JSON.stringify(appear));
     applyAppear();
-    try { if (window.__xyBgRefresh) window.__xyBgRefresh(); } catch {}
+    try { if (window.__xyBgReload) window.__xyBgReload(); } catch {}
     toast("◈ 外观已更新");
   }));
 })();
@@ -6090,12 +6832,15 @@ function applyAppear() {
 function updateInputState() {
   if (!inputEl || !sendEl) return;
   const qBlocked = appUnlocked && !quota.unlimited && quota.remaining <= 0;
+  const off = offlineMode && appUnlocked;
   sendEl.classList.toggle("has-text", inputEl.value.trim().length > 0 && !busy);
-  sendEl.disabled = !busy && qBlocked;
+  sendEl.disabled = !busy && (qBlocked || off);
   inputEl.disabled = qBlocked && !busy;
-  inputEl.placeholder = qBlocked
-    ? "今日额度已用完 · 请联系管理员在后台授权（北京时间 00:00 重置）"
-    : "给小银派个任务…";
+  inputEl.placeholder = off
+    ? "⚠ 离线模式 · 点顶部横幅重试连接后再发送"
+    : qBlocked
+      ? "今日额度已用完 · 请联系管理员在后台授权（北京时间 00:00 重置）"
+      : "给小银派个任务…";
   const c = document.getElementById("inputCount");
   if (c) {
     const n = inputEl.value.length;
@@ -6411,14 +7156,14 @@ function renderCustomModels() {
 /* ---- 顶栏下拉：按厂商分组 ---- */
 function renderModelSel() {
   const cur = modelSel.value;
-  const auto = `<option value="auto">◈ 智能路由（推荐 · 按需求自动切换模型）</option>`;
+  const auto = `<option value="auto">智能路由（自动选择模型）</option>`;
   let html = `<optgroup label="智能路由">${auto}</optgroup>`;
 
   /* ② 平台共享模型：管理员在后台部署，用户无需填 Key */
   if (platformModels.length && platformAllowed && platformPermAllowed()) {
     const pg = new Map();
     for (const m of platformModels) {
-      const label = `🏛 平台共享 · ${esc(m.brand || "平台")}`;
+      const label = `平台共享 · ${esc(m.brand || "平台")}`;
       if (!pg.has(label)) pg.set(label, []);
       pg.get(label).push(m);
     }
@@ -6433,7 +7178,7 @@ function renderModelSel() {
     const groups = new Map();
     for (const m of customModels) {
       const p = presetById(m.provider);
-      const label = p ? `✦ 我的模型 · ${p.icon} ${p.brand}` : "✦ 我的模型 · 自定义";
+      const label = p ? `我的模型 · ${p.icon} ${p.brand}` : "我的模型 · 自定义";
       if (!groups.has(label)) groups.set(label, []);
       groups.get(label).push(m);
     }
@@ -6450,26 +7195,10 @@ function renderModelSel() {
 
 /* 代理设置 UI 同步 */
 function updateProxyUI() {
-  const m = document.getElementById("cfgProxyMode");
-  if (m) m.value = proxyMode();
-  const u = document.getElementById("cfgProxyUrl");
-  if (u) u.value = cfg.proxyUrl || "";
   const st = document.getElementById("proxyState");
-  if (st) st.textContent = "当前：" + proxyHint();
+  if (st) st.textContent = "当前：" + proxyHint() + " · " + (globalPolicy.ok ? "后台统一设置" : "本机默认");
   refreshModelCount();
 }
-document.addEventListener("change", e => {
-  if (e.target && (e.target.id === "cfgProxyMode" || e.target.id === "cfgProxyUrl")) {
-    cfg.proxyMode = document.getElementById("cfgProxyMode").value || "auto";
-    const pu = document.getElementById("cfgProxyUrl").value.trim();
-    if (pu) cfg.proxyUrl = pu; else delete cfg.proxyUrl;
-    updateProxyUI();
-  }
-});
-document.getElementById("btnCopyWorker")?.addEventListener("click", async () => {
-  const ok = await copyText(WORKER_TEMPLATE);
-  toast(ok ? "✓ Cloudflare Worker 模板已复制" : "⚠ 复制失败，请手动选择");
-});
 function refreshModelCount() {
   const c = document.getElementById("modelCount");
   if (c) c.textContent = customModels.length ? "· " + customModels.length + " 个模型 / " + new Set(customModels.map(x => x.provider || "custom")).size + " 家厂商" : "";
@@ -6478,36 +7207,76 @@ updateSessionBadge();
 
 /* 启动 */
 MAX_STEPS = STEPS_BY_MODE[cfg.routeMode || "balanced"] || 8;
+/* v5.11：先把上次成功下发的策略补上，避免登录后短暂出现「本机默认值」 */
+try {
+  const _g = JSON.parse(lsGet(LS_GLOBAL) || "null");
+  if (_g && _g.settings) {
+    for (const k of GLOBAL_KEYS) if (_g.settings[k] !== undefined) cfg[k] = _g.settings[k];
+    globalPolicy.from = "上次同步（离线）";
+  }
+} catch {}
 renderModelSel();
+try { applyNotice(); } catch {}
 try { const dft = lsGet(LS_DRAFT); if (dft) { inputEl.value = dft; autoResize(); } } catch {}
 updateAccountUI();
-statusLine.textContent = `SYSTEM ONLINE · 池内${modelPool().length}个模型`
-  + (platformModels.length ? ` · 平台${platformModels.length}个` : "")
-  + ` · 今日 ¥${ledger.spendCny.toFixed(3)}`;
+/* v5.12：初始状态只写「正在连接」，等真实结果出来再改口，不预先宣称在线 */
+statusLine.textContent = "正在连接 …";
+/* ============================================================
+   v5.12 · 登录门禁重写（修两个真实缺陷）
+   ① 旧逻辑把「放行 / 弹登录」的执行权交给入口页打字动画的收尾：
+      启动流程若在动画结束前跑完，只设 __gateDecision 不执行动作；
+      若动画被后台标签页节流、或用户切走了页面，setTimeout 长时间不触发，
+      就会停在「一段打完字、下面什么都没有」的空入口页 —— 换设备时最容易碰到。
+   ② 断言失败时用 `window.__gateMessage = ""` 清消息，跨设备续登失败后
+      一句解释都不给，用户只看到登录框，以为是密码错。
+   现在：启动流程自己负责执行动作（enterApp / showGateLogin 都是幂等的），
+   动画收尾只作兜底；并对「握手过慢」加 12 秒看门狗，先给登录框再后台确认。
+   ============================================================ */
+const gateWatch = setTimeout(() => {
+  if (appUnlocked) return;
+  const auth = document.getElementById("gateAuth");
+  if (auth && auth.hidden)
+    showGateLogin("网络较慢，已先显示登录框；正在后台确认本机会话 …");
+}, 12000);
 (async () => {
   let verified = false;
+  let loginMsg = "";
+  const hadSession = !!(account.session && account.session.access_token);
   if (account.session && supaReady()) {
     try { await initAccount(); verified = !!account.profile; }
     catch (e) {
-      console.warn("账号恢复失败：", e);
       const msg = e.message || "账号会话已失效，请重新登录";
-      if (account.session) toast("⚠ " + msg, 6000);
-      /* v5.1.1：任何恢复失败都清掉本地坏 token，否则每次启动都卡在同一次失败 */
-      if (!/停用|banned/i.test(msg)) {
+      const net = isNetworkFailure(e);
+      console.warn("账号恢复失败（" + (net ? "网络层，会话保留" : "鉴权层") + "）：", e);
+      if (net && hadSession) {
+        /* ★ v5.9 修真 bug：断网不再删 refresh token。
+           放行离线只读界面，发消息仍被拦，不会绕过服务端额度。 */
+        ensureOfflineProfile();
+        quotaApply({ ok: true, day: bjToday(), limit: QUOTA_DEFAULT, extra: 0,
+          cap: QUOTA_DEFAULT, used: 0, remaining: QUOTA_DEFAULT, unlimited: false }, false);
+        setOffline(true, msg);
+        verified = true;
+      } else if (!/停用|banned/i.test(msg)) {
         account.session = null; account.user = null; account.profile = null;
         lsDel(LS_AUTH);
         updateAccountUI();
-        window.__gateMessage = "";
-      } else window.__gateMessage = msg;
+        loginMsg = "";
+      } else loginMsg = msg;
     }
   }
-  /* 门禁决策：只有「有效会话 + xy_session 通过」才放行 */
+  clearTimeout(gateWatch);
+  /* 门禁决策：有效会话 / 离线宽限 放行；新设备仍要求联网登录 */
   window.__gateDecision = verified ? "enter" : "login";
+  window.__gateMessage = loginMsg;
   if (verified) {
-    /* v5.5：xy_session 已带回额度并 quotaApply，这里不再重复发一次 RPC */
-    if (window.__gateBootDone) enterApp();
-    else window.__gateMessage = "";
-  } else if (window.__gateBootDone) showGateLogin(window.__gateMessage || "");
+    /* 放行后再并发探测模型通道，绝不阻塞登录 */
+    try { void probeEdgeFunctions(); } catch {}
+    enterApp();                      /* 幂等：内部 appUnlocked 守卫 */
+    if (offlineMode) startOfflineWatch();
+  } else {
+    const tip = hadSession ? "" : "\n本机没有登录记录，首次登录需要联网。";
+    showGateLogin(loginMsg + tip);
+  }
   loadChat();
   try { renderQuotaBadge(); updateInputState(); } catch {}
 })();
