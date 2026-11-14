@@ -42,6 +42,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; height: 100dvh; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     background: var(--bg);
@@ -50,6 +51,7 @@
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
   }
   ::selection { background: rgba(0,229,255,.28); color: #fff; }
   button, select, input, textarea { touch-action: manipulation; }
@@ -241,7 +243,7 @@
   /* ===== 顶栏 HUD ===== */
   header {
     display: flex; align-items: center; gap: 12px;
-    padding: 12px 18px; position: relative; z-index: 20;
+    padding: calc(12px + env(safe-area-inset-top)) 18px 12px; position: relative; z-index: 20;
     background: var(--panel); backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
   }
@@ -447,6 +449,8 @@
   @keyframes thspin { to { transform: rotate(360deg); } }
   .th-label { font-size: 12.5px; color: #9fdcec; font-family: var(--mono); }
   .th-time { font-size: 11px; color: var(--text-dim); font-family: var(--mono); min-width: 40px; }
+  /* v5.14：等待文案过长时最多两行，超出省略，避免压住计时器 */
+  .th-label { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
   /* ===== 输入区 ===== */
   footer {
@@ -696,7 +700,7 @@
   /* ===== 手机端（≤600px） ===== */
   @media (max-width: 600px) {
     /* 顶栏 */
-    header { padding: 9px 10px; gap: 8px; }
+    header { padding: calc(9px + env(safe-area-inset-top)) 10px 9px; gap: 8px; }
     .logo { width: 35px; height: 35px; font-size: 18px; border-radius: 11px; }
     .title-wrap h1 { font-size: 14.5px; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .title-en { display: none; }
@@ -756,7 +760,7 @@
     .modal-mask { padding: 0; align-items: stretch; }
     .modal { max-width: 100% !important; border-radius: 0; padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); max-height: 100dvh; overflow-y: auto; }
     .modal.modal-fit { max-height: 100dvh; overflow: hidden; }
-    .pv-modal { width: 100vw; height: 100vh; border-radius: 0; }
+    .pv-modal { width: 100vw; height: 100dvh; border-radius: 0; }
     .pv-head { padding: 11px 13px; gap: 9px; }
     .pv-title b { font-size: 13.5px; }
     .pv-body { padding: 13px; }
@@ -1493,7 +1497,7 @@ details.advanced .field { margin-bottom: 10px; }
     <div class="foot-tip" id="footHint"></div>
     <span class="input-count" id="inputCount"></span>
   </div>
-  <div class="foot-tip foot-tip-meta">XIAOYIN v5.13 · 登录门禁 · 每日额度 · 内容由 AI 生成请自行甄别</div>
+  <div class="foot-tip foot-tip-meta">XIAOYIN v5.14 · 登录门禁 · 每日额度 · 内容由 AI 生成请自行甄别</div>
   <input type="file" id="fileInput" hidden accept=".txt,.md,.json,.csv,.docx,.xlsx,.xls,.pptx,.pdf">
 </footer>
 
@@ -1671,7 +1675,7 @@ details.advanced .field { margin-bottom: 10px; }
 
 <script>
 /* ================================================================
-   小银 XIAOYIN v5.13 —— 浏览器端智能体（登录门禁 / 每日额度 / 平台共享池 / BYOK）
+   小银 XIAOYIN v5.14 —— 浏览器端智能体（登录门禁 / 每日额度 / 平台共享池 / BYOK）
    本版优化：顶栏窄屏收纳、键盘与读屏支持、动效偏好适配、背景粒子性能、
              HTML 属性转义与文档预览消毒、弹窗焦点管理、移动端弹窗滚动修正。
    原有能力：账号登录注册 / 对话云同步 / 云端 Key 下发 / 管理员权限控制 / 用量上报
@@ -1939,7 +1943,7 @@ const account = {
    启动时并发探测选最快可达的一条，失败自动换下一条重试一次。
    备用地址需同时提供 /auth/v1、/rest/v1、/functions/v1 三类路径。
    ============================================================ */
-const XY_VERSION = "v5.13";
+const XY_VERSION = "v5.14";
 /* v5.13：腾讯云 CloudBase 自建中转。国内网络对 *.supabase.co 会在 TLS 握手阶段
    直接 RST（TCP 能连上、证书还没换成 Connection was reset），所以「官方直连」
    在大陆手机上永远是必然失败的一条路。中转放在 CloudBase 云函数上，
@@ -5649,9 +5653,12 @@ function stopGeneration() {
 /* 快捷键提示条 */
 (function initFootHint() {
   const hint = document.getElementById("footHint");
-  if (hint) hint.textContent = matchMedia("(max-width: 600px)").matches
-    ? "Enter 发送 · Shift+Enter 换行 · Esc 停止生成"
-    : "Enter 发送 · Shift+Enter 换行 · Esc 停止生成 · ↑ 调出上一条 · ⌘/Ctrl+K 清空输入 · 自动保存草稿";
+  if (!hint) return;
+  /* v5.14：触屏设备没有物理键盘，Enter/Shift/Esc 提示纯属噪音，直接留空让行高塌掉 */
+  hint.textContent = matchMedia("(hover: none)").matches ? ""
+    : matchMedia("(max-width: 600px)").matches
+      ? "Enter 发送 · Shift+Enter 换行 · Esc 停止生成"
+      : "Enter 发送 · Shift+Enter 换行 · Esc 停止生成 · ↑ 调出上一条 · ⌘/Ctrl+K 清空输入 · 自动保存草稿";
 })();
 
 let toastTimer;
@@ -6406,7 +6413,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
   const loginForm = document.getElementById("authLoginForm");
   const infoForm = document.getElementById("authInfoForm");
   let regMode = false;
-  console.log("[authUI] 账号弹窗模块已加载");
+  /* 账号弹窗模块加载完成（v5.14：去掉 console.log 调试残留） */
 
   function refreshView() {
     const logged = !!account.profile;
@@ -6924,7 +6931,7 @@ function renderProviderPanel() {
     <div class="pv-panel-head">
       <span class="pv-ic">${p.icon}</span>
       <div><b>${esc(p.name)}</b><span class="pv-panel-sub">${esc(p.brand)} · ${esc(p.sub)}</span></div>
-      <button type="button" class="pv-x" id="pvClose" title="收起" aria-label="收起">✕</button>
+      <button type="button" class="pv-x" id="ppClose" title="收起" aria-label="收起">✕</button>
     </div>
     <p class="pv-desc">${esc(p.desc)}</p>
     <div class="pv-form">
@@ -6939,7 +6946,7 @@ function renderProviderPanel() {
         <input id="pvModelCustom" type="text" placeholder="手动填模型 ID" style="display:none">
       </div>
       <div class="pv-two">
-        <div><label>显示名称</label><input id="pvName" type="text" value="${esc(p.name)}"></div>
+        <div><label>显示名称</label><input id="ppName" type="text" value="${esc(p.name)}"></div>
         <div><label>路由档位</label><select id="pvTier">
           <option value="cheap">省额度</option><option value="standard" selected>均衡</option><option value="strong">高质量</option>
         </select></div>
@@ -6959,7 +6966,7 @@ function renderProviderPanel() {
   const mSel = box.querySelector("#pvModelSel");
   const mCustom = box.querySelector("#pvModelCustom");
   const tierSel = box.querySelector("#pvTier");
-  const nameInp = box.querySelector("#pvName");
+  const nameInp = box.querySelector("#ppName");
   const sync = () => {
     const opt = mSel.options[mSel.selectedIndex];
     const m = p.models[+opt.dataset.idx] || {};
@@ -6975,7 +6982,7 @@ function renderProviderPanel() {
     inp.value = inp.value === p.endpoint ? p.altEndpoint : p.endpoint;
     toast("已切换端点：" + inp.value);
   });
-  box.querySelector("#pvClose").addEventListener("click", () => { hubSelected = null; renderProviderGrid(); renderProviderPanel(); });
+  box.querySelector("#ppClose").addEventListener("click", () => { hubSelected = null; renderProviderGrid(); renderProviderPanel(); });
 
   const collect = () => {
     const endpoint = box.querySelector("#pvEndpoint").value.trim();
@@ -7158,6 +7165,16 @@ function renderCustomModels() {
 })();
 
 /* ---- 顶栏下拉：按厂商分组 ---- */
+/* v5.14：选项短文案。手机端原生 <select> 弹层会把选项整段渲染，
+   文字过长（如「平台 · xxx 经济版（方舟托管）· 寒暄走最省钱的档（…）」）
+   时微信内核的悬浮卡片能撑到盖住整屏。这里去厂商前缀、去括注、超长截断。 */
+function shortModelLabel(s) {
+  const raw = String(s || "").trim();
+  let t = raw.replace(/^平台\s*[·:：-]?\s*/, "");
+  t = t.replace(/[（(][^）)]*[）)]/g, " ").replace(/\s{2,}/g, " ").trim();
+  if (!t) t = raw;
+  return t.length > 26 ? t.slice(0, 25) + "…" : t;
+}
 function renderModelSel() {
   const cur = modelSel.value;
   const auto = `<option value="auto">智能路由（自动选择模型）</option>`;
@@ -7173,7 +7190,7 @@ function renderModelSel() {
     }
     html += [...pg.entries()].map(([label, arr]) =>
       `<optgroup label="${label}">` +
-      arr.map(m => `<option value="${esc(m.id)}" title="${esc(m.model)}">${esc(String(m.name || "").replace(/^平台\s*[·:：-]?\s*/, ""))}</option>`).join("") +
+      arr.map(m => `<option value="${esc(m.id)}" title="${esc(m.name)}">${esc(shortModelLabel(m.name))}</option>`).join("") +
       `</optgroup>`).join("");
   }
 
@@ -7188,7 +7205,7 @@ function renderModelSel() {
     }
     html += [...groups.entries()].map(([label, arr]) =>
       `<optgroup label="${esc(label)}">` +
-      arr.map(m => `<option value="${esc(m.id)}" title="${esc(m.model)}">${esc(String(m.name || "").replace(/^平台\s*[·:：-]?\s*/, ""))}</option>`).join("") +
+      arr.map(m => `<option value="${esc(m.id)}" title="${esc(m.name)}">${esc(shortModelLabel(m.name))}</option>`).join("") +
       `</optgroup>`).join("");
   }
   modelSel.innerHTML = html;
